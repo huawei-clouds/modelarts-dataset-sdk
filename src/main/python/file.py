@@ -17,42 +17,64 @@ from obs import *
 
 
 def is_local(path):
-    """
-    return whether is local path
-    TODO: enhance it
-    """
-    if path is None:
-        raise ValueError('path is None')
-    if str(path).lower().startswith("s3") or str(path).startswith("hdfs"):
-        return False
-    return True
+  """
+  return whether is local path
+  TODO: enhance it
+  """
+  if path is None:
+    raise ValueError('path is None')
+  if str(path).lower().startswith("s3") or str(path).startswith("hdfs"):
+    return False
+  return True
 
 
 def parser_path(path):
-    """
-    parser the path and return bucket_name and file_name
-    """
-    base_url = str(path)[len(prefix_s3):] or str(path)[len(prefix_s3_upper):]
-    split_array = base_url.split(separator)
-    bucket_name = split_array[0]
-    file_name = separator.join(split_array[1:])
-    return bucket_name, file_name
+  """
+  parser the path and return bucket_name and file_name
+  """
+  base_url = str(path)[len(prefix_s3):] or str(path)[len(prefix_s3_upper):]
+  split_array = base_url.split(separator)
+  bucket_name = split_array[0]
+  file_name = separator.join(split_array[1:])
+  return bucket_name, file_name
 
 
 def read(path, access_key, secret_key, end_point):
-    """
-    read data from OBS and return the binary of file
-    """
-    if str(path).lower().startswith(s3):
-        obs_client = ObsClient(
-            access_key_id=access_key,
-            secret_access_key=secret_key,
-            server=end_point,
-            long_conn_mode=True
-        )
-        bucket_name, file = parser_path(path)
+  """
+  read data from OBS and return the binary of file
+  """
+  if str(path).lower().startswith(s3):
+    obs_client = ObsClient(
+      access_key_id=access_key,
+      secret_access_key=secret_key,
+      server=end_point,
+      long_conn_mode=True
+    )
+    bucket_name, file = parser_path(path)
 
-        resp = obs_client.getObject(bucket_name, file, loadStreamInMemory=True)
-        return resp.body.buffer
-    else:
-        raise ValueError("Only support s3 now!")
+    resp = obs_client.getObject(bucket_name, file, loadStreamInMemory=True)
+    return resp.body.buffer
+  else:
+    raise ValueError("Only support s3 now!")
+
+
+def save(manifest_json, path, access_key, secret_key, end_point):
+  """
+  read data from OBS and return the binary of file
+  """
+  if str(path).lower().startswith(s3):
+    obs_client = ObsClient(
+      access_key_id=access_key,
+      secret_access_key=secret_key,
+      server=end_point,
+      long_conn_mode=True
+    )
+    bucket_name, file = parser_path(path)
+    content = AppendObjectContent()
+    for line in manifest_json:
+      content.content = line + "\n"
+      resp = obs_client.appendObject(bucket_name, file, content=content)
+      content.position = resp.body.nextPosition
+    return resp.body.buffer
+  else:
+    raise ValueError("Only support s3 now!")
