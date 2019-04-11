@@ -62,7 +62,7 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
         type = annotation.get_type()
         if not exactly_match_type:
           if str(type).endswith("/" + task_type):
-            if (task_type == field_name.image_classification or task_type == field_name.sound_classification
+            if (task_type == field_name.image_classification or task_type == field_name.audio_classification
                     or task_type == field_name.text_classification):
               label_list.append(annotation.get_name())
             if task_type == field_name.object_detection:
@@ -71,7 +71,7 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
         elif exactly_match_type:
           if type == task_type:
             if str(task_type).endswith("/" + field_name.image_classification) \
-                    or str(task_type).endswith("/" + field_name.sound_classification) \
+                    or str(task_type).endswith("/" + field_name.audio_classification) \
                     or str(task_type).endswith("/" + field_name.text_classification):
               label_list.append(annotation.get_name())
             if str(task_type).endswith("/" + field_name.object_detection):

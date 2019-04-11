@@ -18,6 +18,7 @@ package com.huaweicloud.modelarts.dataset.utils;
 import com.huaweicloud.modelarts.dataset.Annotation;
 import com.huaweicloud.modelarts.dataset.Dataset;
 import com.huaweicloud.modelarts.dataset.Sample;
+import org.junit.Assert;
 
 import java.util.List;
 
@@ -31,20 +32,46 @@ public class Validate {
     assertEquals(sampleList.size(), 19);
     for (int i = 0; i < sampleList.size(); i++) {
       Sample sample = sampleList.get(i);
-      assert sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles");
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
       assertEquals(sample.getInferenceLoc(), null);
       assertEquals(sample.getUsage(), "TRAIN");
       List<Annotation> annotationList = sample.getAnnotations();
       assertEquals(annotationList.size(), 1);
       for (int j = 0; j < annotationList.size(); j++) {
         Annotation annotation = annotationList.get(j);
-        assert ("Cat" == annotation.getName() || "Dog" == annotation.getName());
+        Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()));
         assertEquals(annotation.getType(), "modelarts/image_classification");
         assertEquals(annotation.getAnnotationLoc(), null);
-        // TODO: validate the property with value
-        assert (annotation.getProperty().isEmpty());
+        Assert.assertTrue("black".equals(annotation.getProperty().get("color")));
         assertEquals(annotation.getConfidence(), 0.8, 0);
-        assert (annotation.getCreationTime().startsWith("2019-02-20 08:23"));
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateClassification2(Dataset dataset) {
+    assertEquals(dataset.getSize(), 10);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 10);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/flowers"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      assertEquals(annotationList.size(), 1);
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("sunflowers".equals(annotation.getName()) || "daisy".equals(annotation.getName())
+            || "tulips".equals(annotation.getName())
+            || "dandelion".equals(annotation.getName()));
+        assertEquals(annotation.getType(), "modelarts/image_classification");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        Assert.assertTrue(annotation.getProperty().isEmpty());
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-03-30 17:22"));
         assertEquals(annotation.getAnnotatedBy(), "human");
         assertEquals(annotation.getAnnotationFormat(), null);
       }
@@ -57,20 +84,20 @@ public class Validate {
     assertEquals(sampleList.size(), 19);
     for (int i = 0; i < sampleList.size(); i++) {
       Sample sample = sampleList.get(i);
-      assert sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles");
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
       assertEquals(sample.getInferenceLoc(), null);
       assertEquals(sample.getUsage(), "TRAIN");
       List<Annotation> annotationList = sample.getAnnotations();
-      assert (2 == annotationList.size() || 1 == annotationList.size());
+      Assert.assertTrue(2 == annotationList.size() || 1 == annotationList.size());
       for (int j = 0; j < annotationList.size(); j++) {
         Annotation annotation = annotationList.get(j);
-        assert ("Cat" == annotation.getName() || "Dog" == annotation.getName());
+        Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()));
         assertEquals(annotation.getType(), "modelarts/image_classification");
         assertEquals(annotation.getAnnotationLoc(), null);
         // TODO: validate the property with value
         assertNotNull(annotation.getProperty());
         assertEquals(annotation.getConfidence(), 0.8, 0);
-        assert (annotation.getCreationTime().startsWith("2019-02-20 08:23"));
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
         assertEquals(annotation.getAnnotatedBy(), "human");
         assertEquals(annotation.getAnnotationFormat(), null);
       }
@@ -83,25 +110,24 @@ public class Validate {
     assertEquals(sampleList.size(), 5);
     for (int i = 0; i < sampleList.size(); i++) {
       Sample sample = sampleList.get(i);
-      assert sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles");
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
       assertEquals(sample.getInferenceLoc(), null);
-      assert sample.getId().startsWith("XGDVG");
-      assert (sample.getUsage().equalsIgnoreCase("TRAIN") || sample.getUsage().equalsIgnoreCase("INFERENCE"));
+      Assert.assertTrue(null == sample.getId() || sample.getId().startsWith("XGDVG"));
+      Assert.assertTrue(sample.getUsage().equalsIgnoreCase("TRAIN") || sample.getUsage().equalsIgnoreCase("INFERENCE"));
       List<Annotation> annotationList = sample.getAnnotations();
-      assert (2 == annotationList.size() || 1 == annotationList.size());
+      Assert.assertTrue(null == annotationList || 2 == annotationList.size());
       if (null != annotationList) {
         for (int j = 0; j < annotationList.size(); j++) {
           Annotation annotation = annotationList.get(j);
-          assert ("Cat" == annotation.getName() || "Dog" == annotation.getName());
-          assert (annotation.getType().equalsIgnoreCase("modelarts/object_detection")
+          Assert.assertTrue(null == annotation.getName() || "Cat".equals(annotation.getName()));
+          Assert.assertTrue(annotation.getType().equalsIgnoreCase("modelarts/object_detection")
               || annotation.getType().equalsIgnoreCase("modelarts/image_classification"));
-          assert (annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
-          // TODO: validate the property with value
-          assert (null == annotation.getProperty() || annotation.getProperty().isEmpty());
-          assert (0.8 == annotation.getConfidence() || 0 == annotation.getConfidence());
-          assert (annotation.getCreationTime().startsWith("2019-02-20 08:23"));
+          Assert.assertTrue(null == annotation.getAnnotationLoc() || annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
+          Assert.assertTrue(null == annotation.getProperty() || annotation.getProperty().isEmpty());
+          Assert.assertTrue(0.8 == annotation.getConfidence() || 0 == annotation.getConfidence());
+          Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20"));
           assertEquals(annotation.getAnnotatedBy(), "human");
-          assert (null == annotation.getAnnotationFormat() || annotation.getAnnotationFormat().equalsIgnoreCase("PASCAL VOC"));
+          Assert.assertTrue(null == annotation.getAnnotationFormat() || annotation.getAnnotationFormat().equalsIgnoreCase("PASCAL VOC"));
         }
       }
     }
@@ -113,25 +139,50 @@ public class Validate {
     assertEquals(sampleList.size(), 8);
     for (int i = 0; i < sampleList.size(); i++) {
       Sample sample = sampleList.get(i);
-      assert sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles");
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
       assertEquals(sample.getInferenceLoc(), null);
       assertEquals(sample.getUsage(), "TRAIN");
       List<Annotation> annotationList = sample.getAnnotations();
-      assert (1 == annotationList.size());
+      Assert.assertTrue(1 == annotationList.size());
       for (int j = 0; j < annotationList.size(); j++) {
         Annotation annotation = annotationList.get(j);
-        assert ("Cat" == annotation.getName() || "Dog" == annotation.getName());
+        Assert.assertTrue(null == annotation.getName());
         assertEquals(annotation.getType(), "modelarts/object_detection");
-        assert (annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
+        Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
         // TODO: validate the property with value
         assertEquals(annotation.getProperty(), null);
         assertEquals(annotation.getConfidence(), 0, 0);
-        assert (annotation.getCreationTime().startsWith("2019-02-20 08:23"));
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
         assertEquals(annotation.getAnnotatedBy(), "human");
         assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
       }
     }
   }
 
+  public static void validateDetectionMultiple(Dataset dataset) {
+    assertEquals(dataset.getSize(), 8);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 8);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size() || 2 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
+        // TODO: validate the property with value
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+      }
+    }
+  }
 
 }

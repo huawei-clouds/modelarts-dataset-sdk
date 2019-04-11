@@ -15,12 +15,13 @@
 
 package com.huaweicloud.modelarts.dataset;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.obs.services.ObsClient;
 import com.obs.services.model.ObsObject;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Manifest {
    * @param path manifest path
    * @return true if path is S3 path, other return false.
    */
-  public static boolean isS3(String path) {
+  private static boolean isS3(String path) {
     if (path.toLowerCase().startsWith(S3_PREFIX) || path.toLowerCase().startsWith(S3N_PREFIX)
         || path.toLowerCase().startsWith(S3A_PREFIX)) {
       return true;
@@ -57,7 +58,7 @@ public class Manifest {
    * @return dataset object for manifest
    * @throws IOException
    */
-  public static Dataset readFromLocal(String path) throws IOException {
+  private static Dataset readFromLocal(String path) throws IOException {
     File file = new File(path);
     InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
     BufferedReader bufferedReader = new BufferedReader(reader);
@@ -73,48 +74,18 @@ public class Manifest {
   }
 
   /**
-   * get string from json object by key
-   *
-   * @param jsonObject json object
-   * @param key        key name
-   * @return value if key exists in json object, return null if key doesn't exist in json object
-   */
-  public static String getString(JSONObject jsonObject, String key) {
-    if (jsonObject.isNull(key)) {
-      return null;
-    } else {
-      return jsonObject.getString(key);
-    }
-  }
-
-  /**
    * get double from json object by key
    *
    * @param jsonObject json object
    * @param key        key name
    * @return value if key exists in json object, return null if key doesn't exist in json object
    */
-  public static Double getDouble(JSONObject jsonObject, String key) {
-    if (jsonObject.isNull(key)) {
+  private static Double getDouble(JSONObject jsonObject, String key) {
+    if (null == jsonObject.getString(key)) {
       LOGGER.warn("Confidence is null in json object, so set confidence as 0.0");
       return 0.0;
     } else {
       return jsonObject.getDouble(key);
-    }
-  }
-
-  /**
-   * get json array from json object by key
-   *
-   * @param jsonObject json object
-   * @param key        key name
-   * @return json array if key exists in json object, return null if key doesn't exist in json object
-   */
-  public static JSONArray getJSONArray(JSONObject jsonObject, String key) {
-    if (jsonObject.isNull(key)) {
-      return null;
-    } else {
-      return jsonObject.getJSONArray(key);
     }
   }
 
@@ -126,8 +97,8 @@ public class Manifest {
    * @param key        key
    * @return true json object if the result is json object, empty json object if it has exception
    */
-  public static JSONObject getJSONObject(JSONObject jsonObject, String key) {
-    if (jsonObject.isNull(key)) {
+  private static JSONObject getJSONObject(JSONObject jsonObject, String key) {
+    if (null == jsonObject.getString(key)) {
       return null;
     } else {
       try {
@@ -145,23 +116,31 @@ public class Manifest {
    * @param jsonArray json Array
    * @return annotation list
    */
-  public static List<Annotation> parseAnnotations(JSONArray jsonArray) {
+  private static List<Annotation> parseAnnotations(JSONArray jsonArray) {
     List<Annotation> annotationList = new ArrayList<Annotation>();
     if (jsonArray == null) {
       return null;
     }
-    for (int i = 0; i < jsonArray.length(); i++) {
+    for (int i = 0; i < jsonArray.size(); i++) {
       JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-      annotationList.add(new Annotation(getString(jsonObject, NAME),
-          getString(jsonObject, ANNOTATION_TYPE),
-          getString(jsonObject, ANNOTATION_LOC),
+      annotationList.add(new Annotation(jsonObject.getString(NAME),
+          jsonObject.getString(ANNOTATION_TYPE),
+          getString(jsonObject, ANNOTATION_LOC, ANNOTATION_LOC2),
           getJSONObject(jsonObject, ANNOTATION_PROPERTY),
           getDouble(jsonObject, ANNOTATION_CONFIDENCE),
-          getString(jsonObject, ANNOTATION_CREATION_TIME),
-          getString(jsonObject, ANNOTATION_ANNOTATED_BY),
-          getString(jsonObject, ANNOTATION_FORMAT)));
+          getString(jsonObject, ANNOTATION_CREATION_TIME, ANNOTATION_CREATION_TIME2),
+          getString(jsonObject, ANNOTATION_ANNOTATED_BY, ANNOTATION_ANNOTATED_BY2),
+          getString(jsonObject, ANNOTATION_FORMAT, ANNOTATION_FORMAT2)));
     }
     return annotationList;
+  }
+
+  private static String getString(JSONObject jObject, String key1, String key2) {
+    String value = jObject.getString(key1);
+    if (null == value) {
+      value = jObject.getString(key2);
+    }
+    return value;
   }
 
   /**
@@ -170,14 +149,14 @@ public class Manifest {
    * @param line line string in manifest
    * @return sample object
    */
-  public static Sample parseSample(String line) {
-    JSONObject jObject = new JSONObject(line);
+  private static Sample parseSample(String line) {
+    JSONObject jObject = JSONObject.parseObject(line);
 
-    Sample sample = new Sample(getString(jObject, SOURCE),
-        getString(jObject, FiledName.USAGE),
-        getString(jObject, FiledName.INFERENCE_LOC),
-        parseAnnotations(getJSONArray(jObject, FiledName.ANNOTATIONS)),
-        getString(jObject, FiledName.ID)
+    Sample sample = new Sample(jObject.getString(SOURCE),
+        jObject.getString(FiledName.USAGE),
+        getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
+        parseAnnotations(jObject.getJSONArray(FiledName.ANNOTATIONS)),
+        jObject.getString(FiledName.ID)
     );
     return sample;
   }
@@ -205,7 +184,7 @@ public class Manifest {
    * @param path manifest path
    * @return bucketname and objectkey array
    */
-  public static String[] getBucketNameAndObjectKey(String path) {
+  private static String[] getBucketNameAndObjectKey(String path) {
     int index = 0;
     if (path.toLowerCase().startsWith(S3A_PREFIX) || path.toLowerCase().startsWith(S3N_PREFIX)) {
       index = 6;
@@ -218,6 +197,33 @@ public class Manifest {
     result[0] = arr[0];
     result[1] = path.substring(index + arr[0].length() + 1, path.length());
     return result;
+  }
+
+  /**
+   * parse manifest from S3, with obsClient.
+   *
+   * @param path      manifest path
+   * @param obsClient obsClient, already config ak, sk and endpoint
+   * @return Dataset of manifest
+   * @throws IOException
+   */
+  private static Dataset readFromOBS(String path, ObsClient obsClient) throws IOException {
+    String[] result = getBucketNameAndObjectKey(path);
+    ObsObject obsObject = obsClient.getObject(result[0], result[1]);
+    InputStream content = obsObject.getObjectContent();
+    Dataset dataset = new Dataset();
+    int sum = 0;
+    if (content != null) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        dataset.addSample(parseSample(line));
+        sum++;
+      }
+      reader.close();
+    }
+    dataset.setSize(sum);
+    return dataset;
   }
 
   /**
@@ -237,22 +243,25 @@ public class Manifest {
       return readFromLocal(path);
     } else {
       ObsClient obsClient = new ObsClient(access_key, secret_key, end_point);
-      String[] result = getBucketNameAndObjectKey(path);
-      ObsObject obsObject = obsClient.getObject(result[0], result[1]);
-      InputStream content = obsObject.getObjectContent();
-      Dataset dataset = new Dataset();
-      int sum = 0;
-      if (content != null) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-        String line;
-        while ((line = reader.readLine()) != null) {
-          dataset.addSample(parseSample(line));
-          sum++;
-        }
-        reader.close();
-      }
-      dataset.setSize(sum);
-      return dataset;
+      return readFromOBS(path, obsClient);
+    }
+  }
+
+  /**
+   * parse manifest from S3, with obsClient.
+   * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
+   *
+   * @param path      manifest path
+   * @param obsClient obsClient, already config ak, sk and endpoint
+   * @return Dataset of manifest
+   * @throws IOException
+   */
+  public static Dataset parseManifest(String path, ObsClient obsClient) throws IOException {
+    if (!isS3(path)) {
+      LOGGER.warn("Even though configure access_key, secret_key and end_point, but path is not S3 path, so it will read data from local! ");
+      return readFromLocal(path);
+    } else {
+      return readFromOBS(path, obsClient);
     }
   }
 

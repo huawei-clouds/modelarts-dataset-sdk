@@ -36,7 +36,7 @@ inference_loc = "inference-loc"
 inference_loc2 = "inference_loc"
 
 image_classification = "image_classification"
-sound_classification = "sound_classification"
+audio_classification = "audio_classification"
 text_classification = "text_classification"
 object_detection = "object_detection"
 
