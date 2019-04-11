@@ -21,7 +21,8 @@ package com.huaweicloud.modelarts.dataset;
 public class FiledName {
   public static String SOURCE = "source";
   public static String USAGE = "usage";
-  public static String INFERENCE_LOC = "inference_loc";
+  public static String INFERENCE_LOC = "inference-loc";
+  public static String INFERENCE_LOC2 = "inference_loc";
   public static String ID = "id";
   public static String ANNOTATIONS = "annotation";
   public static String NAME = "name";
@@ -43,7 +44,7 @@ public class FiledName {
   public static String SIZE = "size";
 
   public static String IMAGE_CLASSIFICATION = "image_classification";
-  public static String SOUND_CLASSIFICATION = "sound_classification";
+  public static String AUDIO_CLASSIFICATION = "audio_classification";
   public static String TEXT_CLASSIFICATION = "text_classification";
   public static String OBJECT_DETECTION = "object_detection";
 

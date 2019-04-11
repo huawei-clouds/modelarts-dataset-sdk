@@ -1,5 +1,6 @@
 .idea
 target/
+logs/
 eSDK_Storage_OBS_V3
 huaweicloud-sdk-java-modelarts-dataset.iml
 huaweicloud-sdk-python-modelarts-dataset/obs

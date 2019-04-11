@@ -17,6 +17,7 @@ package com.huaweicloud.modelarts.dataset;
 
 import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestCase;
+import org.junit.Assert;
 
 import java.util.LinkedHashMap;
 
@@ -32,16 +33,13 @@ public class ManifestWriteTest extends TestCase {
     map.put("inference-loc", "s3://southcarbon/1.txt");
     map.put("znference-loc", "s3://southcarbon/1.txt");
     String value = map.toString();
-    System.out.println(value);
     String value1 = value.replace("=", "\":\"").replace(", ", "\",\"").replace("{", "{\"").replace("}", "\"}");
-    System.out.println(value1);
     JSONObject jsonObject = new JSONObject(true);
     jsonObject.put("source", "s3://southcarbon/1.jpg");
     jsonObject.put("annotation", "s3://southcarbon/1.txt");
     jsonObject.put("inference-loc", "s3://southcarbon/1.txt");
     jsonObject.put("znference-loc", "s3://southcarbon/1.txt");
     String value2 = jsonObject.toString();
-    System.out.println(value2);
 
     JSONObject jsonObject3 = new JSONObject(new LinkedHashMap());
     jsonObject3.put("source", "s3://southcarbon/1.jpg");
@@ -49,35 +47,59 @@ public class ManifestWriteTest extends TestCase {
     jsonObject3.put("inference-loc", "s3://southcarbon/1.txt");
     jsonObject3.put("znference-loc", "s3://southcarbon/1.txt");
     String value3 = jsonObject3.toString();
-    System.out.println(value3);
 
     JSONObject jsonObject4 = new JSONObject(map);
     String value4 = jsonObject4.toString();
-    System.out.println(value4);
     assert value1.startsWith("{\"source\":");
     assert value2.startsWith("{\"source\":");
     assert value3.startsWith("{\"source\":");
     assert value4.startsWith("{\"source\":");
   }
 
-  public void testWriteManifestClassificationSample() throws Exception {
+  public void testWriteManifestClassificationSample() {
     String path = this.getClass().getResource("/").getPath() + "../../../resources/classification-xy-V201902220937263726.manifest";
     String path2 = this.getClass().getResource("/").getPath() + "../../../resources/classification-xy-V201902220937263726_2.manifest";
-    Dataset dataset = parseManifest(path);
+    Dataset dataset = null;
+    Dataset dataset2 = null;
+
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+
     validateClassification(dataset);
-    dataset.save(path2);
-    Dataset dataset2 = parseManifest(path2);
+    try {
+      dataset.save(path2);
+      dataset2 = parseManifest(path2);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
     validateClassification(dataset2);
     System.out.println("testParseManifestClassificationSample Success");
   }
 
-  public void testParseManifestDetectionSample() throws Exception {
+  public void testParseManifestDetectionSample() {
     String path = this.getClass().getResource("/").getPath() + "../../../resources/detect-test-xy-V201902220951335133.manifest";
     String path2 = this.getClass().getResource("/").getPath() + "../../../resources/detect-test-xy-V201902220951335133_6.manifest";
-    Dataset dataset = parseManifest(path);
+    Dataset dataset = null;
+    Dataset dataset2 = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
     validateDetectionSimple(dataset);
-    dataset.save(path2);
-    Dataset dataset2 = parseManifest(path2);
+    try {
+      dataset.save(path2);
+      dataset2 = parseManifest(path2);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
     validateDetectionSimple(dataset2);
     System.out.println("testParseManifestDetectionSample Success");
   }

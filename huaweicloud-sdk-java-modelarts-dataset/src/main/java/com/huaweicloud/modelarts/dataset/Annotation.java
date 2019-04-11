@@ -15,7 +15,7 @@
 
 package com.huaweicloud.modelarts.dataset;
 
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * Annotation, including name for classification, annotationLoc for object detection and so on.
@@ -29,7 +29,7 @@ public class Annotation {
 
   /**
    * annotation type, such as: modelarts/image_classification, modelarts/object_detection,
-   * modelarts/sound_classification, modelarts/test_classification
+   * modelarts/audio_classification, modelarts/test_classification
    * modelarts is product name, image_classification is the algorithm name.
    * Optional field
    */
