@@ -15,19 +15,18 @@
 import os
 import sys
 
-from modelarts.test import test_manifest_classification
+from modelarts.test import test_manifest_image_classification
 from modelarts.manifest import Annotation, Sample, DataSet
 
 
 def create_manifest():
-  size = 0
+  size = 0;
   sample_list = []
-  for i in range(10):
+  for i in range(19):
     size = size + 1
     source = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".jpg"
     usage = "TRAIN"
     inference_loc = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".txt"
-    id = "XGDVGS" + str(i)
     annotations_list = []
 
     for j in range(1):
@@ -47,34 +46,32 @@ def create_manifest():
                    creation_time=annotation_creation_time,
                    annotated_by=annotated_by, annotation_format=annotation_format, property=annotation_property))
     sample_list.append(
-      Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id))
-
-  for i in range(9):
-    id = "XGDVGS" + str(i)
-    size = size + 1
-    source = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".jpg"
-    usage = "TRAIN"
-    annotations_list = []
-    inference_loc = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".txt"
-    sample_list.append(
-      Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id))
+      Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc))
   return DataSet(sample=sample_list, size=size)
 
 
 def main(argv):
-  path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726_3.manifest"
+  path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726_2.manifest"
   dataset = create_manifest()
   if len(argv) < 2:
-    dataset.save(path)
+    dataset.save(path, saveMode="a")
     para = []
     para.append(path)
-    test_manifest_classification.main(para)
+    test_manifest_image_classification.main(para)
   else:
     path2 = argv[1]
     ak = argv[2]
     sk = argv[3]
     endpoint = argv[4]
-    dataset.save(path2, ak, sk, endpoint)
+    dataset.save(path2, ak, sk, endpoint, saveMode="a")
+    para = []
+    para.append(path2)
+    para.append(path2)
+    para.append(ak)
+    para.append(sk)
+    para.append(endpoint)
+    para.append(endpoint)
+    test_manifest_image_classification.main(para)
 
 
 if __name__ == '__main__':

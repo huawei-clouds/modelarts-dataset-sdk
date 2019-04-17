@@ -16,6 +16,7 @@
 import json
 
 from modelarts import field_name
+from modelarts.field_name import prefix_text
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 
@@ -50,11 +51,15 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   data_list = []
   label_type = field_name.single_lable
   for sample in sample_list:
+    flag = False
     annotations = sample.get_annotations()
     sample_usage = sample.get_usage()
+    sample_source = sample.get_source()
     if str(sample_usage).lower().__eq__(str(usage).lower()) or str(usage).lower().__eq__(field_name.default_usage):
       label_list = []
       i = 0
+      if str(usage).lower().__eq__(field_name.usage_inference):
+        flag = True
       for annotation in annotations:
         if i > 0:
           label_type = field_name.multi_lable
@@ -62,14 +67,16 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
         type = annotation.get_type()
         if not exactly_match_type:
           if str(type).endswith("/" + task_type):
+            flag = True
             if (task_type == field_name.image_classification or task_type == field_name.audio_classification
-                    or task_type == field_name.text_classification):
+                    or task_type == field_name.text_classification or task_type == field_name.text_entity):
               label_list.append(annotation.get_name())
             if task_type == field_name.object_detection:
               label_list.append(annotation.get_loc())
 
         elif exactly_match_type:
           if type == task_type:
+            flag = True
             if str(task_type).endswith("/" + field_name.image_classification) \
                     or str(task_type).endswith("/" + field_name.audio_classification) \
                     or str(task_type).endswith("/" + field_name.text_classification):
@@ -78,7 +85,11 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
               label_list.append(annotation.get_loc())
     else:
       continue
-    data_list.append([sample.get_source(), label_list])
+    if str(task_type).endswith(field_name.text_classification):
+      assert str(sample_source).startswith(prefix_text)
+      sample_source = str(sample_source)[len(prefix_text):]
+    if flag:
+      data_list.append([sample_source, label_list])
   return data_list, label_type
 
 
