@@ -22,8 +22,11 @@ import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 
 public class ManifestTest extends TestCase {
+
+  private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
+
   public void testParseManifestClassificationSample() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/classification-xy-V201902220937263726.manifest";
+    String path = resourcePath + "/classification-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);
@@ -36,7 +39,7 @@ public class ManifestTest extends TestCase {
   }
 
   public void testParseManifestClassificationSample2() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/V002.manifest";
+    String path = resourcePath + "/V002.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);
@@ -49,7 +52,7 @@ public class ManifestTest extends TestCase {
   }
 
   public void testParseManifestClassificationMultiple() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/classification-multi-xy-V201902220937263726.manifest";
+    String path = resourcePath + "/classification-multi-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);
@@ -62,7 +65,7 @@ public class ManifestTest extends TestCase {
   }
 
   public void testParseManifestClassificationDetection() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/classification-detection-multi-xy-V201902220937263726.manifest";
+    String path = resourcePath + "/classification-detection-multi-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);
@@ -75,7 +78,7 @@ public class ManifestTest extends TestCase {
   }
 
   public void testParseManifestDetectionSimple() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/detect-test-xy-V201902220951335133.manifest";
+    String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);
@@ -88,7 +91,7 @@ public class ManifestTest extends TestCase {
   }
 
   public void testParseManifestDetectionMultiple() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/detect-multi-xy-V201902220951335133.manifest";
+    String path = resourcePath + "/detect-multi-xy-V201902220951335133.manifest";
     Dataset dataset = null;
     try {
       dataset = parseManifest(path);

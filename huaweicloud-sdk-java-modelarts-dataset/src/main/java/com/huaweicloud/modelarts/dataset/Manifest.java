@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.huaweicloud.modelarts.dataset.Constants.*;
-import static com.huaweicloud.modelarts.dataset.FiledName.*;
+import static com.huaweicloud.modelarts.dataset.FieldName.*;
 
 /**
  * main class for parse manifest file
@@ -153,10 +153,10 @@ public class Manifest {
     JSONObject jObject = JSONObject.parseObject(line);
 
     Sample sample = new Sample(jObject.getString(SOURCE),
-        jObject.getString(FiledName.USAGE),
+        jObject.getString(FieldName.USAGE),
         getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
-        parseAnnotations(jObject.getJSONArray(FiledName.ANNOTATIONS)),
-        jObject.getString(FiledName.ID)
+        parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS)),
+        jObject.getString(FieldName.ID)
     );
     return sample;
   }
