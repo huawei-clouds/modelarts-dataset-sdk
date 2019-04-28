@@ -281,7 +281,7 @@ class DataSet(object):
       with open(path, saveMode) as f_obj:
         for sample in self.get_sample_list():
           value = self.__toJSON(sample)
-          json.dump(value, f_obj)
+          json.dump(value, f_obj, separators=(",", ":"))
           f_obj.write('\n')
     elif access_key is None:
       raise Exception("access_key is None")

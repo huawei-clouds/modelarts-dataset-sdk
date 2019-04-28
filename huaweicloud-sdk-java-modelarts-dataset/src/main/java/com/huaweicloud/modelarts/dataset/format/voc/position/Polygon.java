@@ -1,9 +1,5 @@
 package com.huaweicloud.modelarts.dataset.format.voc.position;
 
-import com.huaweicloud.modelarts.dataset.format.voc.position.Point;
-import com.huaweicloud.modelarts.dataset.format.voc.position.Position;
-import com.huaweicloud.modelarts.dataset.format.voc.position.PositionType;
-
 import java.util.ArrayList;
 import java.util.List;
 
