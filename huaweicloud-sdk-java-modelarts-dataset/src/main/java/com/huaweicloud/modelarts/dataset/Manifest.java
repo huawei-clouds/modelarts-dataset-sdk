@@ -29,6 +29,7 @@ import java.util.List;
 
 import static com.huaweicloud.modelarts.dataset.Constants.*;
 import static com.huaweicloud.modelarts.dataset.FieldName.*;
+import static com.huaweicloud.modelarts.dataset.util.OBSUtil.getBucketNameAndObjectKey;
 
 /**
  * main class for parse manifest file
@@ -177,27 +178,6 @@ public class Manifest {
   }
 
   private static final Logger LOGGER = Logger.getLogger(Manifest.class.getName());
-
-  /**
-   * get bucketname and objectkey fro path
-   *
-   * @param path manifest path
-   * @return bucketname and objectkey array
-   */
-  private static String[] getBucketNameAndObjectKey(String path) {
-    int index = 0;
-    if (path.toLowerCase().startsWith(S3A_PREFIX) || path.toLowerCase().startsWith(S3N_PREFIX)) {
-      index = 6;
-    } else {
-      index = 5;
-    }
-    String pathWithoutPrefix = path.substring(index, path.length());
-    String[] arr = pathWithoutPrefix.split(SEPARATOR);
-    String[] result = new String[2];
-    result[0] = arr[0];
-    result[1] = path.substring(index + arr[0].length() + 1, path.length());
-    return result;
-  }
 
   /**
    * parse manifest from S3, with obsClient.

@@ -8,46 +8,23 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.huaweicloud.modelarts.dataset.format.voc.ValidatePascalVocIO.validate;
+
 public class PascalVocIOTest extends TestCase {
   private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
 
   @Test
   public void testReadVocXMLFromCloud() {
     String path = resourcePath + "/VOC/000000089955_1556180702627.xml";
-
     PascalVocIO pascalVocIO = new PascalVocIO(path);
-    Assert.assertTrue("Images".equals(pascalVocIO.getFolder()));
-    Assert.assertTrue("000000089955.jpg".equals(pascalVocIO.getFileName()));
-    Assert.assertTrue("Unknown".equals(pascalVocIO.getSource().getDatabase()));
-    Assert.assertTrue("640".equals(pascalVocIO.getWidth()));
-    Assert.assertTrue("321".equals(pascalVocIO.getHeight()));
-    Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
-    Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
+    validate(pascalVocIO);
+  }
 
-    List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
-    Assert.assertTrue(2 == vocObjectList.size());
-    for (int i = 0; i < vocObjectList.size(); i++) {
-      VOCObject vocObject = vocObjectList.get(i);
-      Assert.assertTrue("trafficlight".equals(vocObject.getName()));
-      Assert.assertTrue("0".equals(vocObject.getPose()));
-      Assert.assertTrue("0".equals(vocObject.getDifficult()));
-      Assert.assertTrue(null == vocObject.getOccluded());
-      Assert.assertTrue("0".equals(vocObject.getTruncated()));
-      Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
-      BNDBox bndBox = (BNDBox) vocObject.getPosition();
-
-      if ("347".equals(((BNDBox) vocObject.getPosition()).getXMin())) {
-        Assert.assertTrue("186".equals(bndBox.getYMin()));
-        Assert.assertTrue("382".equals(bndBox.getXMax()));
-        Assert.assertTrue("249".equals(bndBox.getYMax()));
-      } else if ("544".equals(bndBox.getXMin())) {
-        Assert.assertTrue("50".equals(bndBox.getYMin()));
-        Assert.assertTrue("591".equals(bndBox.getXMax()));
-        Assert.assertTrue("149".equals(bndBox.getYMax()));
-      } else {
-        Assert.assertTrue(false);
-      }
-    }
+  @Test
+  public void testReadVocXMLFromCloudWithParse() {
+    String path = resourcePath + "/VOC/000000089955_1556180702627.xml";
+    PascalVocIO pascalVocIO = new PascalVocIO();
+    validate(pascalVocIO.parseXML(path));
   }
 
   @Test

@@ -2,17 +2,18 @@ package com.huaweicloud.modelarts.dataset.format.voc;
 
 import com.huaweicloud.modelarts.dataset.FieldName;
 import com.huaweicloud.modelarts.dataset.format.voc.position.*;
+import com.obs.services.ObsClient;
+import com.obs.services.model.ObsObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
+import static com.huaweicloud.modelarts.dataset.util.OBSUtil.getBucketNameAndObjectKey;
 
 /**
  * main class for parsing pascal VOC format
@@ -27,8 +28,28 @@ public class PascalVocIO {
   private String segmented;
   private List<VOCObject> vocObjects = new ArrayList<>();
 
+  public PascalVocIO() {
+  }
+
+  /**
+   * constructor with file path
+   *
+   * @param filePath xml file path
+   */
   public PascalVocIO(String filePath) {
     parseXML(filePath);
+  }
+
+
+  /**
+   * constructor with file path and obs client, read data from obs
+   * obs client should already configure ak sk and endpoint, which should available.
+   *
+   * @param filePath  xml file path
+   * @param obsClient obs client
+   */
+  public PascalVocIO(String filePath, ObsClient obsClient) {
+    parseXML(filePath, obsClient);
   }
 
   private static final org.apache.log4j.Logger LOGGER =
@@ -197,68 +218,101 @@ public class PascalVocIO {
   }
 
   /**
+   * parseXML Document to  PascalVocIO object
+   *
+   * @param document Document object
+   * @return PascalVocIO object
+   */
+  private PascalVocIO parseXML(Document document) {
+    NodeList nodeList = (document.getElementsByTagName(ANNOTATIONS).item(0).getChildNodes());
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      String nodeName = nodeList.item(i).getNodeName();
+      if (FieldName.FOLDER_NAME.equalsIgnoreCase(nodeName)) {
+        this.folder = nodeList.item(i).getFirstChild().getNodeValue();
+      } else if (FieldName.FILE_NAME.equalsIgnoreCase(nodeName)) {
+        this.fileName = nodeList.item(i).getFirstChild().getNodeValue();
+      } else if (FieldName.SOURCE.equalsIgnoreCase(nodeName)) {
+        NodeList sourceNodeList = nodeList.item(i).getChildNodes();
+        String database = null;
+        String annotation = null;
+        String image = null;
+        for (int j = 0; j < sourceNodeList.getLength(); j++) {
+          String sourceNodeName = sourceNodeList.item(j).getNodeName();
+          if (FieldName.DATABASE.equalsIgnoreCase(sourceNodeName)) {
+            database = sourceNodeList.item(j).getFirstChild().getNodeValue();
+          } else if (FieldName.ANNOTATIONS.equalsIgnoreCase(sourceNodeName)) {
+            annotation = sourceNodeList.item(j).getFirstChild().getNodeValue();
+          } else if (FieldName.IMAGE.equalsIgnoreCase(sourceNodeName)) {
+            image = sourceNodeList.item(j).getFirstChild().getNodeValue();
+          }
+        }
+        source = new Source(database, annotation, image);
+      } else if (FieldName.SIZE.equalsIgnoreCase(nodeName)) {
+        NodeList sizeNodeList = nodeList.item(i).getChildNodes();
+        for (int j = 0; j < sizeNodeList.getLength(); j++) {
+          String sourceNodeName = sizeNodeList.item(j).getNodeName();
+          if (FieldName.WIDTH.equalsIgnoreCase(sourceNodeName)) {
+            this.width = sizeNodeList.item(j).getFirstChild().getNodeValue();
+          } else if (FieldName.HEIGHT.equalsIgnoreCase(sourceNodeName)) {
+            this.height = sizeNodeList.item(j).getFirstChild().getNodeValue();
+          } else if (FieldName.DEPTH.equalsIgnoreCase(sourceNodeName)) {
+            this.depth = sizeNodeList.item(j).getFirstChild().getNodeValue();
+          }
+        }
+      } else if (FieldName.SEGMENTED.equalsIgnoreCase(nodeName)) {
+        this.segmented = nodeList.item(i).getFirstChild().getNodeValue();
+      } else if (FieldName.OBJECT.equalsIgnoreCase(nodeName)) {
+        vocObjects.add(getVOCObject(nodeList.item(i).getChildNodes()));
+      } else {
+        LOGGER.warn(nodeName + " is Unrecognized.");
+      }
+    }
+    return this;
+  }
+
+  /**
    * parse pascal VOC XML file by given file path
    *
    * @param filePath pascal VOC XML file path
    * @return PascalVocIO object
    * @throws RuntimeException
    */
-  public PascalVocIO parseXML(String filePath) throws RuntimeException {
+  public PascalVocIO parseXML(String filePath) {
     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder documentBuilder = null;
     try {
-      DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      documentBuilder = documentBuilderFactory.newDocumentBuilder();
       Document document = documentBuilder.parse(filePath);
-      NodeList nodeList = (document.getElementsByTagName(ANNOTATIONS).item(0).getChildNodes());
-      for (int i = 0; i < nodeList.getLength(); i++) {
-        String nodeName = nodeList.item(i).getNodeName();
-        if (FieldName.FOLDER_NAME.equalsIgnoreCase(nodeName)) {
-          this.folder = nodeList.item(i).getFirstChild().getNodeValue();
-        } else if (FieldName.FILE_NAME.equalsIgnoreCase(nodeName)) {
-          this.fileName = nodeList.item(i).getFirstChild().getNodeValue();
-        } else if (FieldName.SOURCE.equalsIgnoreCase(nodeName)) {
-          NodeList sourceNodeList = nodeList.item(i).getChildNodes();
-          String database = null;
-          String annotation = null;
-          String image = null;
-          for (int j = 0; j < sourceNodeList.getLength(); j++) {
-            String sourceNodeName = sourceNodeList.item(j).getNodeName();
-            if (FieldName.DATABASE.equalsIgnoreCase(sourceNodeName)) {
-              database = sourceNodeList.item(j).getFirstChild().getNodeValue();
-            } else if (FieldName.ANNOTATIONS.equalsIgnoreCase(sourceNodeName)) {
-              annotation = sourceNodeList.item(j).getFirstChild().getNodeValue();
-            } else if (FieldName.IMAGE.equalsIgnoreCase(sourceNodeName)) {
-              image = sourceNodeList.item(j).getFirstChild().getNodeValue();
-            }
-          }
-          source = new Source(database, annotation, image);
-        } else if (FieldName.SIZE.equalsIgnoreCase(nodeName)) {
-          NodeList sizeNodeList = nodeList.item(i).getChildNodes();
-          for (int j = 0; j < sizeNodeList.getLength(); j++) {
-            String sourceNodeName = sizeNodeList.item(j).getNodeName();
-            if (FieldName.WIDTH.equalsIgnoreCase(sourceNodeName)) {
-              this.width = sizeNodeList.item(j).getFirstChild().getNodeValue();
-            } else if (FieldName.HEIGHT.equalsIgnoreCase(sourceNodeName)) {
-              this.height = sizeNodeList.item(j).getFirstChild().getNodeValue();
-            } else if (FieldName.DEPTH.equalsIgnoreCase(sourceNodeName)) {
-              this.depth = sizeNodeList.item(j).getFirstChild().getNodeValue();
-            }
-          }
-        } else if (FieldName.SEGMENTED.equalsIgnoreCase(nodeName)) {
-          this.segmented = nodeList.item(i).getFirstChild().getNodeValue();
-        } else if (FieldName.OBJECT.equalsIgnoreCase(nodeName)) {
-          vocObjects.add(getVOCObject(nodeList.item(i).getChildNodes()));
-        } else {
-          LOGGER.warn(nodeName + " is Unrecognized.");
-        }
-      }
-    } catch (ParserConfigurationException e) {
+      return parseXML(document);
+    } catch (Exception e) {
       e.printStackTrace();
-    } catch (SAXException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
+      throw new RuntimeException("Can't parse the XML file,", e);
     }
-    return this;
+  }
+
+  /**
+   * parse pascal VOC XML file by given file path
+   *
+   * @param filePath  pascal VOC XML file path
+   * @param obsClient obs client, obs client should already configure ak sk and endpoint, which should available.
+   * @return PascalVocIO object
+   * @throws RuntimeException Can't parse the XML file
+   */
+  public PascalVocIO parseXML(String filePath, ObsClient obsClient) {
+
+    String[] result = getBucketNameAndObjectKey(filePath);
+    ObsObject obsObject = obsClient.getObject(result[0], result[1]);
+    InputStream content = obsObject.getObjectContent();
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder documentBuilder = null;
+    try {
+      documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      Document document = documentBuilder.parse(content);
+      return parseXML(document);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Can't parse the XML file,", e);
+    }
   }
 
   public String getFolder() {
