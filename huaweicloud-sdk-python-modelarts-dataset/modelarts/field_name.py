@@ -58,3 +58,7 @@ usage_train = "train"
 usage_eval = "eval"
 usage_test = "test"
 usage_inference = "inference"
+
+label_separator = '\u0001'
+property_start_index = "@modelarts:start_index"
+property_end_index = "@modelarts:end_index"

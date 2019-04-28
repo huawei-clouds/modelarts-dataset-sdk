@@ -16,7 +16,7 @@
 import json
 
 from modelarts import field_name
-from modelarts.field_name import prefix_text
+from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 
@@ -69,9 +69,14 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
           if str(type).endswith("/" + task_type):
             flag = True
             if (task_type == field_name.image_classification or task_type == field_name.audio_classification
-                    or task_type == field_name.text_classification or task_type == field_name.text_entity):
+                    or task_type == field_name.text_classification):
               label_list.append(annotation.get_name())
-            if task_type == field_name.object_detection:
+            elif task_type == field_name.text_entity:
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation_property[property_start_index])
+                                + label_separator + str(annotation_property[property_end_index]))
+            elif task_type == field_name.object_detection:
               label_list.append(annotation.get_loc())
 
         elif exactly_match_type:
@@ -81,11 +86,17 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
                     or str(task_type).endswith("/" + field_name.audio_classification) \
                     or str(task_type).endswith("/" + field_name.text_classification):
               label_list.append(annotation.get_name())
-            if str(task_type).endswith("/" + field_name.object_detection):
+            elif str(task_type).endswith("/" + field_name.text_entity):
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation_property[property_start_index])
+                                + label_separator + str(annotation_property[property_end_index]))
+            elif str(task_type).endswith("/" + field_name.object_detection):
               label_list.append(annotation.get_loc())
     else:
       continue
-    if str(task_type).endswith(field_name.text_classification):
+    if str(task_type).endswith(field_name.text_classification) \
+            or str(task_type).endswith(field_name.text_entity):
       assert str(sample_source).startswith(prefix_text)
       sample_source = str(sample_source)[len(prefix_text):]
     if flag:
