@@ -95,7 +95,7 @@ public class PascalVocIOTest extends TestCase {
         Assert.assertTrue(PositionType.POLYGON.equals(vocObject.getPosition().getType()));
         Polygon polygon = (Polygon) vocObject.getPosition();
         List<Point> pointList = polygon.getPoints();
-        List<Point> pointExpectResult = new ArrayList<>();
+        List<Point> pointExpectResult = new ArrayList<Point>();
         pointExpectResult.add(new Point("x1", "0", "y1", "292"));
         pointExpectResult.add(new Point("x2", "12", "y2", "279"));
         pointExpectResult.add(new Point("x3", "102", "y3", "280"));
@@ -118,7 +118,7 @@ public class PascalVocIOTest extends TestCase {
         pointExpectResult.add(new Point("x20", "0", "y20", "424"));
         pointExpectResult.add(new Point("x21", "1", "y21", "413"));
 
-        List<Point> pointExpectResult2 = new ArrayList<>();
+        List<Point> pointExpectResult2 = new ArrayList<Point>();
         pointExpectResult2.add(new Point("x1", "259", "y1", "340"));
         pointExpectResult2.add(new Point("x2", "258", "y2", "328"));
         pointExpectResult2.add(new Point("x3", "263", "y3", "322"));

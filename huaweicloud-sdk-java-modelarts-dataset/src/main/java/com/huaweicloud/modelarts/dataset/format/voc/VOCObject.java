@@ -40,7 +40,7 @@ public class VOCObject {
     this.occluded = occluded;
     this.difficult = difficult;
     this.position = position;
-    this.parts = new ArrayList<>();
+    this.parts = new ArrayList<VOCObject>();
   }
 
   public VOCObject(String name, String pose, String truncated, String occluded, String difficult, Position position, List<VOCObject> parts) {

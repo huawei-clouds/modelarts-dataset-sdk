@@ -26,7 +26,7 @@ public class PascalVocIO {
   private String height;
   private String depth;
   private String segmented;
-  private List<VOCObject> vocObjects = new ArrayList<>();
+  private List<VOCObject> vocObjects = new ArrayList<VOCObject>();
 
   public PascalVocIO() {
   }
@@ -72,7 +72,7 @@ public class PascalVocIO {
     String xMax = null;
     String yMax = null;
     Position position = null;
-    List<VOCObject> parts = new ArrayList<>();
+    List<VOCObject> parts = new ArrayList<VOCObject>();
     for (int j = 0; j < objectNodeList.getLength(); j++) {
       String objectNodeName = objectNodeList.item(j).getNodeName();
       if (FieldName.NAME.equalsIgnoreCase(objectNodeName)) {
@@ -103,13 +103,13 @@ public class PascalVocIO {
       } else if (FieldName.PART.equalsIgnoreCase(objectNodeName)) {
         NodeList bndBoxNodeList = objectNodeList.item(j).getChildNodes();
         if (null == parts) {
-          parts = new ArrayList<>();
+          parts = new ArrayList<VOCObject>();
         }
         parts.add(getVOCObject(bndBoxNodeList));
       } else if (PositionType.POLYGON.name().equalsIgnoreCase(objectNodeName)) {
         NodeList polygonNodeList = objectNodeList.item(j).getChildNodes();
         Polygon polygon = new Polygon();
-        Map<String, String> points = new LinkedHashMap<>();
+        Map<String, String> points = new LinkedHashMap<String, String>();
         for (int k = 0; k < polygonNodeList.getLength(); k++) {
           String polygonNodeName = polygonNodeList.item(k).getNodeName();
           if (polygonNodeName.toLowerCase().startsWith("x") || polygonNodeName.toLowerCase().startsWith("y")) {
@@ -121,7 +121,7 @@ public class PascalVocIO {
           }
         }
         Object[] keySet = points.keySet().toArray();
-        Set<String> validateKey = new HashSet<>();
+        Set<String> validateKey = new HashSet<String>();
         for (int k = 0; k < keySet.length; k++) {
           String key = String.valueOf(keySet[k]);
           if (validateKey.contains(key)) {
