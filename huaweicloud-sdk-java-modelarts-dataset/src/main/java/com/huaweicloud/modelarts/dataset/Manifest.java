@@ -42,7 +42,7 @@ public class Manifest {
    * @param path manifest path
    * @return true if path is S3 path, other return false.
    */
-  private static boolean isS3(String path) {
+  public static boolean isS3(String path) {
     if (path.toLowerCase().startsWith(S3_PREFIX) || path.toLowerCase().startsWith(S3N_PREFIX)
         || path.toLowerCase().startsWith(S3A_PREFIX)) {
       return true;

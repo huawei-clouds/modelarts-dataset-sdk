@@ -16,7 +16,8 @@
 import json
 
 from modelarts import field_name
-from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index
+from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index, \
+  property_content
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 
@@ -76,8 +77,13 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
               label_list.append(annotation.get_name()
                                 + label_separator + str(annotation_property[property_start_index])
                                 + label_separator + str(annotation_property[property_end_index]))
+            elif task_type == field_name.audio_content:
+              annotation_property = annotation.get_property()
+              label_list.append(str(annotation_property[property_content]))
             elif task_type == field_name.object_detection:
               label_list.append(annotation.get_loc())
+            else:
+              raise Exception("Don't support the task type:" + task_type)
 
         elif exactly_match_type:
           if type == task_type:
@@ -91,8 +97,15 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
               label_list.append(annotation.get_name()
                                 + label_separator + str(annotation_property[property_start_index])
                                 + label_separator + str(annotation_property[property_end_index]))
+
+            elif str(task_type).endswith("/" + field_name.audio_content):
+              annotation_property = annotation.get_property()
+              label_list.append(str(annotation_property[property_content]))
             elif str(task_type).endswith("/" + field_name.object_detection):
               label_list.append(annotation.get_loc())
+            else:
+              raise Exception("Don't support the task type:" + task_type)
+
     else:
       continue
     if str(task_type).endswith(field_name.text_classification) \
@@ -293,7 +306,7 @@ class DataSet(object):
       manifest_json = []
       for sample in self.get_sample_list():
         value = self.__toJSON(sample)
-        manifest_json.append(json.dumps(value))
+        manifest_json.append(json.dumps(value, separators=(",", ":")))
       save(manifest_json, path, access_key=access_key, secret_key=secret_key, end_point=end_point,
            saveMode=saveMode, ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
 
