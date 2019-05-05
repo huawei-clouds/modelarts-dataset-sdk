@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateClassification;
+import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOC;
 
 public class ManifestOBSTest {
 
@@ -30,8 +31,14 @@ public class ManifestOBSTest {
     String ak = args[1];
     String sk = args[2];
     String endPoint = args[3];
-    Dataset dataset = parseManifest(path, ak, sk, endPoint);
-    validateClassification(dataset);
+    Dataset dataset = null;
+    if (args.length > 4 && Boolean.parseBoolean(args[4])) {
+      dataset = parseManifest(path, ak, sk, endPoint, true);
+      validateDetectionMultipleAndVOC(dataset);
+    } else {
+      dataset = parseManifest(path, ak, sk, endPoint);
+      validateClassification(dataset);
+    }
     System.out.println("Success");
   }
 }

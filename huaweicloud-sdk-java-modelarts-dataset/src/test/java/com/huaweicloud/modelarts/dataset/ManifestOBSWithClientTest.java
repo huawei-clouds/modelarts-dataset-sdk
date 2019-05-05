@@ -21,20 +21,27 @@ import java.io.IOException;
 
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateClassification;
+import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOC;
 
 public class ManifestOBSWithClientTest {
 
   public static void main(String[] args) throws IOException {
     if (args.length < 4) {
-      throw new RuntimeException("Please input S3 path, access_key, secret_key and end_point for reading obs files! ");
+      throw new RuntimeException("Please input S3 path, access_key, secret_key, end_point, <parsePascalVOC> for reading obs files! ");
     }
     String path = args[0];
     String ak = args[1];
     String sk = args[2];
     String endPoint = args[3];
     ObsClient obsClient = new ObsClient(ak, sk, endPoint);
-    Dataset dataset = parseManifest(path, obsClient);
-    validateClassification(dataset);
+    Dataset dataset = null;
+    if (args.length > 4 && Boolean.parseBoolean(args[4])) {
+      dataset = parseManifest(path, obsClient, true);
+      validateDetectionMultipleAndVOC(dataset);
+    } else {
+      dataset = parseManifest(path, obsClient);
+      validateClassification(dataset);
+    }
     System.out.println("Success");
   }
 }

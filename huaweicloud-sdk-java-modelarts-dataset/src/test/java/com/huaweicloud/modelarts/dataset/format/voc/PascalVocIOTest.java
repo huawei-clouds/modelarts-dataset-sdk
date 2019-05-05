@@ -76,6 +76,91 @@ public class PascalVocIOTest extends TestCase {
     String path = resourcePath + "/VOC/000000115967_1556247179208.xml";
 
     PascalVocIO pascalVocIO = new PascalVocIO(path);
+
+    validateVOCMultipleObject(pascalVocIO);
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK() {
+    String path = resourcePath + "/VOC/2007_000027.xml";
+
+    PascalVocIO pascalVocIO = new PascalVocIO(path);
+    validateVOC(pascalVocIO);
+  }
+
+  public static void validateVOC(PascalVocIO pascalVocIO) {
+    Assert.assertTrue("VOC2012".equals(pascalVocIO.getFolder()));
+    Assert.assertTrue("2007_000027.jpg".equals(pascalVocIO.getFileName()));
+    Assert.assertTrue("The VOC2007 Database".equals(pascalVocIO.getSource().getDatabase()));
+    Assert.assertTrue("486".equals(pascalVocIO.getWidth()));
+    Assert.assertTrue("500".equals(pascalVocIO.getHeight()));
+    Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
+    Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
+
+    List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
+    Assert.assertTrue(1 == vocObjectList.size());
+    for (int i = 0; i < vocObjectList.size(); i++) {
+      VOCObject vocObject = vocObjectList.get(i);
+      Assert.assertTrue("person".equals(vocObject.getName()));
+      Assert.assertTrue("Unspecified".equals(vocObject.getPose()));
+      Assert.assertTrue("0".equals(vocObject.getDifficult()));
+      Assert.assertTrue(null == vocObject.getOccluded());
+      Assert.assertTrue("0".equals(vocObject.getTruncated()));
+      Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
+      BNDBox bndBox = (BNDBox) vocObject.getPosition();
+
+      if ("174".equals(((BNDBox) vocObject.getPosition()).getXMin())) {
+        Assert.assertTrue("101".equals(bndBox.getYMin()));
+        Assert.assertTrue("349".equals(bndBox.getXMax()));
+        Assert.assertTrue("351".equals(bndBox.getYMax()));
+      } else {
+        Assert.assertTrue(false);
+      }
+      List<VOCObject> parts = vocObject.getParts();
+      Assert.assertTrue(4 == parts.size());
+      for (int j = 0; j < parts.size(); j++) {
+        Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
+        VOCObject part = parts.get(j);
+
+        BNDBox partBNDBox = (BNDBox) part.getPosition();
+
+        if ("head".equals(part.getName())) {
+          if ("169".equals(partBNDBox.getXMin())) {
+            Assert.assertTrue("104".equals(partBNDBox.getYMin()));
+            Assert.assertTrue("209".equals(partBNDBox.getXMax()));
+            Assert.assertTrue("146".equals(partBNDBox.getYMax()));
+          } else {
+            Assert.assertTrue(false);
+          }
+        } else if ("hand".equals(part.getName())) {
+          if ("278".equals(partBNDBox.getXMin())) {
+            Assert.assertTrue("210".equals(partBNDBox.getYMin()));
+            Assert.assertTrue("297".equals(partBNDBox.getXMax()));
+            Assert.assertTrue("233".equals(partBNDBox.getYMax()));
+          } else {
+            Assert.assertTrue(false);
+          }
+        } else if ("foot".equals(part.getName())) {
+          if ("273".equals(partBNDBox.getXMin())) {
+            Assert.assertTrue("333".equals(partBNDBox.getYMin()));
+            Assert.assertTrue("297".equals(partBNDBox.getXMax()));
+            Assert.assertTrue("354".equals(partBNDBox.getYMax()));
+          } else if ("319".equals(partBNDBox.getXMin())) {
+            Assert.assertTrue("307".equals(partBNDBox.getYMin()));
+            Assert.assertTrue("340".equals(partBNDBox.getXMax()));
+            Assert.assertTrue("326".equals(partBNDBox.getYMax()));
+          } else {
+            Assert.assertTrue(false);
+          }
+        } else {
+          Assert.assertTrue(false);
+        }
+
+      }
+    }
+  }
+
+  public static void validateVOCMultipleObject(PascalVocIO pascalVocIO) {
     Assert.assertTrue("Images".equals(pascalVocIO.getFolder()));
     Assert.assertTrue("000000115967.jpg".equals(pascalVocIO.getFileName()));
     Assert.assertTrue("Unknown".equals(pascalVocIO.getSource().getDatabase()));
@@ -223,82 +308,6 @@ public class PascalVocIOTest extends TestCase {
         }
       } else {
         Assert.assertTrue(false);
-      }
-    }
-  }
-
-  @Test
-  public void testReadVocXMLFromVOCUK() {
-    String path = resourcePath + "/VOC/2007_000027.xml";
-
-    PascalVocIO pascalVocIO = new PascalVocIO(path);
-    Assert.assertTrue("VOC2012".equals(pascalVocIO.getFolder()));
-    Assert.assertTrue("2007_000027.jpg".equals(pascalVocIO.getFileName()));
-    Assert.assertTrue("The VOC2007 Database".equals(pascalVocIO.getSource().getDatabase()));
-    Assert.assertTrue("486".equals(pascalVocIO.getWidth()));
-    Assert.assertTrue("500".equals(pascalVocIO.getHeight()));
-    Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
-    Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
-
-    List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
-    Assert.assertTrue(1 == vocObjectList.size());
-    for (int i = 0; i < vocObjectList.size(); i++) {
-      VOCObject vocObject = vocObjectList.get(i);
-      Assert.assertTrue("person".equals(vocObject.getName()));
-      Assert.assertTrue("Unspecified".equals(vocObject.getPose()));
-      Assert.assertTrue("0".equals(vocObject.getDifficult()));
-      Assert.assertTrue(null == vocObject.getOccluded());
-      Assert.assertTrue("0".equals(vocObject.getTruncated()));
-      Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
-      BNDBox bndBox = (BNDBox) vocObject.getPosition();
-
-      if ("174".equals(((BNDBox) vocObject.getPosition()).getXMin())) {
-        Assert.assertTrue("101".equals(bndBox.getYMin()));
-        Assert.assertTrue("349".equals(bndBox.getXMax()));
-        Assert.assertTrue("351".equals(bndBox.getYMax()));
-      } else {
-        Assert.assertTrue(false);
-      }
-      List<VOCObject> parts = vocObject.getParts();
-      Assert.assertTrue(4 == parts.size());
-      for (int j = 0; j < parts.size(); j++) {
-        Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
-        VOCObject part = parts.get(j);
-
-        BNDBox partBNDBox = (BNDBox) part.getPosition();
-
-        if ("head".equals(part.getName())) {
-          if ("169".equals(partBNDBox.getXMin())) {
-            Assert.assertTrue("104".equals(partBNDBox.getYMin()));
-            Assert.assertTrue("209".equals(partBNDBox.getXMax()));
-            Assert.assertTrue("146".equals(partBNDBox.getYMax()));
-          } else {
-            Assert.assertTrue(false);
-          }
-        } else if ("hand".equals(part.getName())) {
-          if ("278".equals(partBNDBox.getXMin())) {
-            Assert.assertTrue("210".equals(partBNDBox.getYMin()));
-            Assert.assertTrue("297".equals(partBNDBox.getXMax()));
-            Assert.assertTrue("233".equals(partBNDBox.getYMax()));
-          } else {
-            Assert.assertTrue(false);
-          }
-        } else if ("foot".equals(part.getName())) {
-          if ("273".equals(partBNDBox.getXMin())) {
-            Assert.assertTrue("333".equals(partBNDBox.getYMin()));
-            Assert.assertTrue("297".equals(partBNDBox.getXMax()));
-            Assert.assertTrue("354".equals(partBNDBox.getYMax()));
-          } else if ("319".equals(partBNDBox.getXMin())) {
-            Assert.assertTrue("307".equals(partBNDBox.getYMin()));
-            Assert.assertTrue("340".equals(partBNDBox.getXMax()));
-            Assert.assertTrue("326".equals(partBNDBox.getYMax()));
-          } else {
-            Assert.assertTrue(false);
-          }
-        } else {
-          Assert.assertTrue(false);
-        }
-
       }
     }
   }

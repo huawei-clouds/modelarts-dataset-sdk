@@ -22,6 +22,9 @@ import org.junit.Assert;
 
 import java.util.List;
 
+import static com.huaweicloud.modelarts.dataset.format.voc.PascalVocIOTest.validateVOC;
+import static com.huaweicloud.modelarts.dataset.format.voc.PascalVocIOTest.validateVOCMultipleObject;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -185,4 +188,36 @@ public class Validate {
     }
   }
 
+  public static void validateDetectionMultipleAndVOC(Dataset dataset) {
+    assertEquals(dataset.getSize(), 8);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 8);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size() || 2 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
+        // TODO: validate the property with value
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+        if (annotation.getAnnotationLoc().endsWith("2007_000027.xml")) {
+          validateVOC(annotation.getPascalVoc());
+        } else if (annotation.getAnnotationLoc().endsWith("000000115967_1556247179208.xml")) {
+          validateVOCMultipleObject(annotation.getPascalVoc());
+        } else {
+          Assert.assertTrue(false);
+        }
+      }
+    }
+  }
 }

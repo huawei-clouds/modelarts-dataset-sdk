@@ -17,6 +17,8 @@ package com.huaweicloud.modelarts.dataset;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.huaweicloud.modelarts.dataset.format.voc.PascalVocIO;
+
 /**
  * Annotation, including name for classification, annotationLoc for object detection and so on.
  */
@@ -77,6 +79,11 @@ public class Annotation {
    * Optional field
    */
   private String annotationFormat;
+
+  /**
+   * pascal Voc Object
+   */
+  private PascalVocIO pascalVoc;
 
   public Annotation() {
   }
@@ -183,6 +190,14 @@ public class Annotation {
 
   public void setHard(boolean hard) {
     this.hard = hard;
+  }
+
+  public PascalVocIO getPascalVoc() {
+    return pascalVoc;
+  }
+
+  public void setPascalVoc(PascalVocIO pascalVoc) {
+    this.pascalVoc = pascalVoc;
   }
 
   @Override

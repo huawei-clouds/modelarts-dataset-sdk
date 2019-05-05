@@ -18,6 +18,7 @@ package com.huaweicloud.modelarts.dataset;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.huaweicloud.modelarts.dataset.format.voc.PascalVocIO;
 import com.obs.services.ObsClient;
 import com.obs.services.model.ObsObject;
 import org.apache.log4j.Logger;
@@ -55,11 +56,13 @@ public class Manifest {
   /**
    * read manifest data from local and return with dataset format for manifest
    *
-   * @param path manifest path
+   * @param path           manifest path
+   * @param parsePascalVOC whether parse Pascal VOC xml file,
+   *                       it will parse VOC file if set true, otherwise will not parse VOC file.
    * @return dataset object for manifest
    * @throws IOException
    */
-  private static Dataset readFromLocal(String path) throws IOException {
+  private static Dataset readFromLocal(String path, boolean parsePascalVOC) throws IOException {
     File file = new File(path);
     InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
     BufferedReader bufferedReader = new BufferedReader(reader);
@@ -67,7 +70,7 @@ public class Manifest {
     Dataset dataset = new Dataset();
     int sum = 0;
     while ((line = bufferedReader.readLine()) != null) {
-      dataset.addSample(parseSample(line));
+      dataset.addSample(parseSample(line, parsePascalVOC, null));
       sum++;
     }
     dataset.setSize(sum);
@@ -117,21 +120,30 @@ public class Manifest {
    * @param jsonArray json Array
    * @return annotation list
    */
-  private static List<Annotation> parseAnnotations(JSONArray jsonArray) {
+  private static List<Annotation> parseAnnotations(JSONArray jsonArray, boolean parsePascalVOC, ObsClient obsClient) {
     List<Annotation> annotationList = new ArrayList<Annotation>();
     if (jsonArray == null) {
       return null;
     }
     for (int i = 0; i < jsonArray.size(); i++) {
       JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-      annotationList.add(new Annotation(jsonObject.getString(NAME),
+      String annotationLoc = getString(jsonObject, ANNOTATION_LOC, ANNOTATION_LOC2);
+      Annotation annotation = new Annotation(jsonObject.getString(NAME),
           jsonObject.getString(ANNOTATION_TYPE),
-          getString(jsonObject, ANNOTATION_LOC, ANNOTATION_LOC2),
+          annotationLoc,
           getJSONObject(jsonObject, ANNOTATION_PROPERTY),
           getDouble(jsonObject, ANNOTATION_CONFIDENCE),
           getString(jsonObject, ANNOTATION_CREATION_TIME, ANNOTATION_CREATION_TIME2),
           getString(jsonObject, ANNOTATION_ANNOTATED_BY, ANNOTATION_ANNOTATED_BY2),
-          getString(jsonObject, ANNOTATION_FORMAT, ANNOTATION_FORMAT2)));
+          getString(jsonObject, ANNOTATION_FORMAT, ANNOTATION_FORMAT2));
+      if (parsePascalVOC) {
+        if (!isS3(annotationLoc)) {
+          annotation.setPascalVoc(new PascalVocIO(annotationLoc));
+        } else {
+          annotation.setPascalVoc(new PascalVocIO(annotationLoc, obsClient));
+        }
+      }
+      annotationList.add(annotation);
     }
     return annotationList;
   }
@@ -150,13 +162,13 @@ public class Manifest {
    * @param line line string in manifest
    * @return sample object
    */
-  private static Sample parseSample(String line) {
+  private static Sample parseSample(String line, boolean parsePascalVOC, ObsClient obsClient) {
     JSONObject jObject = JSONObject.parseObject(line);
 
     Sample sample = new Sample(jObject.getString(SOURCE),
         jObject.getString(FieldName.USAGE),
         getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
-        parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS)),
+        parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS), parsePascalVOC, obsClient),
         jObject.getString(FieldName.ID)
     );
     return sample;
@@ -164,16 +176,30 @@ public class Manifest {
 
   /**
    * parse manifest by manifest path
+   * default parsePascalVOC value is false.
    *
    * @param path manifest path
    * @return Dataset of manifest
    * @throws Exception
    */
   public static Dataset parseManifest(String path) throws Exception {
+    return parseManifest(path, false);
+  }
+
+  /**
+   * parse manifest by manifest path
+   *
+   * @param path           manifest path
+   * @param parsePascalVOC whether parse Pascal VOC xml file,
+   *                       it will parse VOC file if set true, otherwise will not parse VOC file.
+   * @return Dataset of manifest
+   * @throws Exception
+   */
+  public static Dataset parseManifest(String path, boolean parsePascalVOC) throws Exception {
     if (isS3(path)) {
       throw new Exception("Please input access_key, secret_key and end_point for reading obs files!");
     } else {
-      return readFromLocal(path);
+      return readFromLocal(path, parsePascalVOC);
     }
   }
 
@@ -187,7 +213,7 @@ public class Manifest {
    * @return Dataset of manifest
    * @throws IOException
    */
-  private static Dataset readFromOBS(String path, ObsClient obsClient) throws IOException {
+  private static Dataset readFromOBS(String path, ObsClient obsClient, boolean parsePascalVOC) throws IOException {
     String[] result = getBucketNameAndObjectKey(path);
     ObsObject obsObject = obsClient.getObject(result[0], result[1]);
     InputStream content = obsObject.getObjectContent();
@@ -197,7 +223,7 @@ public class Manifest {
       BufferedReader reader = new BufferedReader(new InputStreamReader(content));
       String line;
       while ((line = reader.readLine()) != null) {
-        dataset.addSample(parseSample(line));
+        dataset.addSample(parseSample(line, parsePascalVOC, obsClient));
         sum++;
       }
       reader.close();
@@ -218,12 +244,30 @@ public class Manifest {
    * @throws IOException
    */
   public static Dataset parseManifest(String path, String access_key, String secret_key, String end_point) throws IOException {
+    return parseManifest(path, access_key, secret_key, end_point, false);
+  }
+
+  /**
+   * parse manifest from S3, with access_key, secret_key and end_point.
+   * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
+   *
+   * @param path           manifest path
+   * @param access_key     access_key of OBS
+   * @param secret_key     secret_key of OBS
+   * @param end_point      end_point of OBS
+   * @param parsePascalVOC whether parse Pascal VOC xml file,
+   *                       it will parse VOC file if set true, otherwise will not parse VOC file.
+   * @return Dataset of manifest
+   * @throws IOException
+   */
+  public static Dataset parseManifest(String path, String access_key, String secret_key,
+                                      String end_point, boolean parsePascalVOC) throws IOException {
     if (!isS3(path)) {
       LOGGER.warn("Even though configure access_key, secret_key and end_point, but path is not S3 path, so it will read data from local! ");
-      return readFromLocal(path);
+      return readFromLocal(path, false);
     } else {
       ObsClient obsClient = new ObsClient(access_key, secret_key, end_point);
-      return readFromOBS(path, obsClient);
+      return readFromOBS(path, obsClient, parsePascalVOC);
     }
   }
 
@@ -237,11 +281,26 @@ public class Manifest {
    * @throws IOException
    */
   public static Dataset parseManifest(String path, ObsClient obsClient) throws IOException {
+    return parseManifest(path, obsClient, false);
+  }
+
+  /**
+   * parse manifest from S3, with obsClient.
+   * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
+   *
+   * @param path           manifest path
+   * @param obsClient      obsClient, already config ak, sk and endpoint
+   * @param parsePascalVOC whether parse Pascal VOC xml file,
+   *                       it will parse VOC file if set true, otherwise will not parse VOC file.
+   * @return Dataset of manifest
+   * @throws IOException
+   */
+  public static Dataset parseManifest(String path, ObsClient obsClient, boolean parsePascalVOC) throws IOException {
     if (!isS3(path)) {
       LOGGER.warn("Even though configure access_key, secret_key and end_point, but path is not S3 path, so it will read data from local! ");
-      return readFromLocal(path);
+      return readFromLocal(path, false);
     } else {
-      return readFromOBS(path, obsClient);
+      return readFromOBS(path, obsClient, parsePascalVOC);
     }
   }
 

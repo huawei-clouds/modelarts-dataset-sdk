@@ -102,4 +102,19 @@ public class ManifestTest extends TestCase {
     validateDetectionMultiple(dataset);
     System.out.println("testParseManifestDetectionMultiple Success");
   }
+
+  public void testParseManifestDetectionMultipleAndVOC() {
+    String path = resourcePath + "/detect-multi-local-voc.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path, true);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOC(dataset);
+    System.out.println("testParseManifestDetectionMultipleAndVOC Success");
+  }
+
 }
