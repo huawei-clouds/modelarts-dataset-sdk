@@ -149,7 +149,7 @@
         <name>greenLight</name>
         <pose>0</pose>
         <truncated>0</truncated>
-        <difficult>0</difficult>
+        <difficult>1</difficult>
         <circle>
             <cx>61</cx>
             <cy>204</cy>

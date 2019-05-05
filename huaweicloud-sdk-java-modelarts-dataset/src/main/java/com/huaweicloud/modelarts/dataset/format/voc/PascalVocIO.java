@@ -49,7 +49,11 @@ public class PascalVocIO {
    * @param obsClient obs client
    */
   public PascalVocIO(String filePath, ObsClient obsClient) {
-    parseXML(filePath, obsClient);
+    if (null == obsClient) {
+      parseXML(filePath);
+    } else {
+      parseXML(filePath, obsClient);
+    }
   }
 
   private static final org.apache.log4j.Logger LOGGER =

@@ -18,6 +18,14 @@ package com.huaweicloud.modelarts.dataset;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_HARD;
+import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_NAMES;
+import static com.huaweicloud.modelarts.dataset.FieldName.PARSE_PASCAL_VOC;
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 
@@ -107,7 +115,9 @@ public class ManifestTest extends TestCase {
     String path = resourcePath + "/detect-multi-local-voc.manifest";
     Dataset dataset = null;
     try {
-      dataset = parseManifest(path, true);
+      Map properties = new HashMap();
+      properties.put(PARSE_PASCAL_VOC, true);
+      dataset = parseManifest(path, properties);
     } catch (Exception e) {
       e.printStackTrace();
       Assert.assertTrue(false);
@@ -209,7 +219,6 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestAudioClassificationMultiple Success");
   }
 
-
   public void testParseManifestAudioContentSample() {
     String path = resourcePath + "/audio_content.manifest";
     Dataset dataset = null;
@@ -234,5 +243,108 @@ public class ManifestTest extends TestCase {
     }
     validateAudioContentMultiple(dataset);
     System.out.println("testParseManifestAudioContentMultiple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterSimple() {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      properties.put(ANNOTATION_HARD, true);
+      properties.put(PARSE_PASCAL_VOC, true);
+      dataset = parseManifest(path, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilter(dataset);
+    System.out.println("testParseManifestImageDetectionFilterSimple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterAnnotationNameSimple() {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      properties.put(ANNOTATION_HARD, true);
+      properties.put(PARSE_PASCAL_VOC, true);
+      List annotationNameLists = new ArrayList();
+      annotationNameLists.add("person");
+      properties.put(ANNOTATION_NAMES, annotationNameLists);
+      dataset = parseManifest(path, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilter2(dataset);
+    System.out.println("testParseManifestImageDetectionFilterSimple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterAnnotationNamesSimple() {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      properties.put(ANNOTATION_HARD, true);
+      properties.put(PARSE_PASCAL_VOC, true);
+      List annotationNameLists = new ArrayList();
+      annotationNameLists.add("person");
+      annotationNameLists.add("greenLight");
+      properties.put(ANNOTATION_NAMES, annotationNameLists);
+      dataset = parseManifest(path, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilter(dataset);
+    System.out.println("testParseManifestImageDetectionFilterSimple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterAnnotationName2Simple() {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      properties.put(PARSE_PASCAL_VOC, true);
+      List annotationNameLists = new ArrayList();
+      annotationNameLists.add("person");
+      properties.put(ANNOTATION_NAMES, annotationNameLists);
+      dataset = parseManifest(path, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilter3(dataset);
+    System.out.println("testParseManifestImageDetectionFilterSimple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterAnnotationName3Simple() {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      List annotationNameLists = new ArrayList();
+      annotationNameLists.add("person");
+      properties.put(ANNOTATION_NAMES, annotationNameLists);
+      dataset = parseManifest(path, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilter3(dataset);
+    System.out.println("testParseManifestImageDetectionFilterSimple Success");
+  }
+
+  public void testParseManifestImageDetectionFilterMultiple() {
+    String path = resourcePath + "/detect-multi-xy-V201902220951335133.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultiple(dataset);
+    System.out.println("testParseManifestDetectionMultiple Success");
   }
 }

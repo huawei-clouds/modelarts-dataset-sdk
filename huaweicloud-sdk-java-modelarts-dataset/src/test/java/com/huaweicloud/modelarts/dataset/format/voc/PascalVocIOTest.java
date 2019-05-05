@@ -279,7 +279,7 @@ public class PascalVocIOTest extends TestCase {
         }
       } else if ("greenLight".equals(vocObject.getName())) {
         Assert.assertTrue("0".equals(vocObject.getPose()));
-        Assert.assertTrue("0".equals(vocObject.getDifficult()));
+        Assert.assertTrue("1".equals(vocObject.getDifficult()));
         Assert.assertTrue(null == vocObject.getOccluded());
         Assert.assertTrue("0".equals(vocObject.getTruncated()));
 

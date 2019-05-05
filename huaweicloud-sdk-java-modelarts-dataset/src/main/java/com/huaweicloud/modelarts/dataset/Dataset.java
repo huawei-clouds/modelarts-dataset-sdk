@@ -84,7 +84,7 @@ public class Dataset {
    * @param key
    * @param value
    */
-  public void put(JSONObject jsonObject, String key, Object value) {
+  private void put(JSONObject jsonObject, String key, Object value) {
     if (null != value) {
       jsonObject.put(key, value);
     }
@@ -96,7 +96,7 @@ public class Dataset {
    * @param sample sample of manifest
    * @return sample json string
    */
-  public String toJSONString(Sample sample) {
+  private String toJSONString(Sample sample) {
     JSONObject jsonObject = new JSONObject(true);
     put(jsonObject, ID, sample.getId());
     put(jsonObject, SOURCE, sample.getSource());
@@ -115,7 +115,7 @@ public class Dataset {
    * @param annotations annotation list
    * @return json array of annotation list
    */
-  public JSONArray toJSONString(List<Annotation> annotations) {
+  private JSONArray toJSONString(List<Annotation> annotations) {
     JSONArray jsonArray = new JSONArray();
     for (int i = 0; i < annotations.size(); i++) {
       JSONObject jsonObject = new JSONObject(true);

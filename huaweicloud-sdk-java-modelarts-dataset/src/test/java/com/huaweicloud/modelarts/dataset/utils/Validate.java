@@ -99,7 +99,6 @@ public class Validate {
         Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()));
         assertEquals(annotation.getType(), "modelarts/image_classification");
         assertEquals(annotation.getAnnotationLoc(), null);
-        // TODO: validate the property with value
         assertNotNull(annotation.getProperty());
         assertEquals(annotation.getConfidence(), 0.8, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
@@ -154,7 +153,6 @@ public class Validate {
         Assert.assertTrue(null == annotation.getName());
         assertEquals(annotation.getType(), "modelarts/object_detection");
         Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
-        // TODO: validate the property with value
         assertEquals(annotation.getProperty(), null);
         assertEquals(annotation.getConfidence(), 0, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
@@ -180,7 +178,6 @@ public class Validate {
         Assert.assertTrue(null == annotation.getName());
         assertEquals(annotation.getType(), "modelarts/object_detection");
         Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
-        // TODO: validate the property with value
         assertEquals(annotation.getProperty(), null);
         assertEquals(annotation.getConfidence(), 0, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
@@ -200,13 +197,16 @@ public class Validate {
       assertEquals(sample.getInferenceLoc(), null);
       assertEquals(sample.getUsage(), "TRAIN");
       List<Annotation> annotationList = sample.getAnnotations();
-      Assert.assertTrue(1 == annotationList.size() || 2 == annotationList.size());
+      if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
+        Assert.assertTrue(2 == annotationList.size());
+      } else {
+        Assert.assertTrue(1 == annotationList.size());
+      }
       for (int j = 0; j < annotationList.size(); j++) {
         Annotation annotation = annotationList.get(j);
         Assert.assertTrue(null == annotation.getName());
         assertEquals(annotation.getType(), "modelarts/object_detection");
         Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
-        // TODO: validate the property with value
         assertEquals(annotation.getProperty(), null);
         assertEquals(annotation.getConfidence(), 0, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
@@ -239,7 +239,6 @@ public class Validate {
         Assert.assertTrue(null == annotation.getName());
         assertEquals(annotation.getType(), "modelarts/object_detection");
         Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
-        // TODO: validate the property with value
         assertEquals(annotation.getProperty(), null);
         assertEquals(annotation.getConfidence(), 0, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
@@ -382,7 +381,7 @@ public class Validate {
             || "program".equals(annotation.getName())
             || "1".equals(annotation.getName())
         );
-        assertEquals(annotation.getType(), "modelarts/audio_classification");
+        assertEquals(annotation.getType(), "modelarts/" + AUDIO_CLASSIFICATION);
         assertEquals(annotation.getAnnotationLoc(), null);
         assertEquals(annotation.getConfidence(), 0.0, 0);
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 11:"));
@@ -480,6 +479,118 @@ public class Validate {
       }
     }
   }
+
+  public static void validateDetectionMultipleAndVOCFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 3);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 3);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
+        Assert.assertTrue(2 == annotationList.size());
+      } else {
+        Assert.assertTrue(1 == annotationList.size());
+      }
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+        if (annotation.getAnnotationLoc().endsWith("2007_000027.xml")) {
+          validateVOC(annotation.getPascalVoc());
+        } else if (annotation.getAnnotationLoc().endsWith("000000115967_1556247179208.xml")) {
+          validateVOCMultipleObject(annotation.getPascalVoc());
+        } else {
+          Assert.assertTrue(false);
+        }
+
+        if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
+          Assert.assertTrue(annotation.isHard());
+        }
+      }
+    }
+  }
+
+  public static void validateDetectionMultipleAndVOCFilter2(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+        if (annotation.getAnnotationLoc().endsWith("2007_000027.xml")) {
+          validateVOC(annotation.getPascalVoc());
+        } else if (annotation.getAnnotationLoc().endsWith("000000115967_1556247179208.xml")) {
+          validateVOCMultipleObject(annotation.getPascalVoc());
+        } else {
+          Assert.assertTrue(false);
+        }
+        if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
+          Assert.assertTrue(annotation.isHard());
+        }
+      }
+    }
+  }
+
+  public static void validateDetectionMultipleAndVOCFilter3(Dataset dataset) {
+    assertEquals(dataset.getSize(), 7);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 7);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+        if (annotation.getAnnotationLoc().endsWith("2007_000027.xml")) {
+          validateVOC(annotation.getPascalVoc());
+        } else if (annotation.getAnnotationLoc().endsWith("000000115967_1556247179208.xml")) {
+          validateVOCMultipleObject(annotation.getPascalVoc());
+        } else {
+          Assert.assertTrue(false);
+        }
+
+        if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
+          Assert.assertTrue(annotation.isHard());
+        }
+      }
+    }
+  }
+
 
 }
 

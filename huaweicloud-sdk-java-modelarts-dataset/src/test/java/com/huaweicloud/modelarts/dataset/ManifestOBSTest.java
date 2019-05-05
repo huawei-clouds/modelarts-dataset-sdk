@@ -18,6 +18,10 @@ package com.huaweicloud.modelarts.dataset;
 import com.obs.services.ObsClient;
 import org.junit.Assert;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.huaweicloud.modelarts.dataset.FieldName.PARSE_PASCAL_VOC;
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateClassification;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOC;
@@ -29,15 +33,17 @@ public class ManifestOBSTest {
     if (args.length < 4) {
       throw new RuntimeException("Please input S3 path, access_key, secret_key, end_point, <parsePascalVOC>  for reading obs files! ");
     }
-    String path = args[0];
-    String ak = args[1];
-    String sk = args[2];
-    String endPoint = args[3];
+    String path = "s3a://carbonsouth/manifest/detect-multi-s3-voc.manifest";
+    String ak = args[0];
+    String sk = args[1];
+    String endPoint = args[2];
     Dataset dataset = null;
-    if (args.length > 4 && Boolean.parseBoolean(args[4])) {
+    if (args.length > 4 && Boolean.parseBoolean(args[3])) {
 
       // parse Pascal VOC xml file when parse manifest
-      dataset = parseManifest(path, ak, sk, endPoint, true);
+      Map properties = new HashMap();
+      properties.put(PARSE_PASCAL_VOC, true);
+      dataset = parseManifest(path, ak, sk, endPoint, properties);
       validateDetectionMultipleAndVOC(dataset);
 
       // it should throw exception when parsing obs files without obsClient.
@@ -55,6 +61,7 @@ public class ManifestOBSTest {
       ObsClient obsClient = new ObsClient(ak, sk, endPoint);
       validateDetectionMultipleAndVOCGetWithObsClient(dataset3, obsClient);
     } else {
+      path = "s3://carbonsouth/manifest/classification-xy-V201902220937263726.manifest";
       dataset = parseManifest(path, ak, sk, endPoint);
       validateClassification(dataset);
     }

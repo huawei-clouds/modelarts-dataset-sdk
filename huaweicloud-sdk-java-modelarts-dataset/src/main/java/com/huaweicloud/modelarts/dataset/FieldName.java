@@ -33,6 +33,7 @@ public class FieldName {
   public static String ANNOTATION_FORMAT = "annotation-format";
   public static String ANNOTATION_FORMAT2 = "annotation_format";
   public static String ANNOTATION_NAME = "name";
+  public static String ANNOTATION_NAMES = "annotation_names";
   public static String ANNOTATION_PROPERTY = "property";
   public static String ANNOTATION_HARD = "hard";
   public static String ANNOTATION_CONFIDENCE = "confidence";
@@ -83,5 +84,7 @@ public class FieldName {
   public static String PROPERTY_END_INDEX = "@modelarts:end_index";
 
   public static String PROPERTY_CONTENT = "@modelarts:content";
+
+  public static String PARSE_PASCAL_VOC = "parsePascalVOC";
 
 }
