@@ -243,7 +243,8 @@ public class Manifest {
    * @return Dataset of manifest
    * @throws IOException
    */
-  public static Dataset parseManifest(String path, String access_key, String secret_key, String end_point) throws IOException {
+  public static Dataset parseManifest(String path, String access_key, String secret_key, String end_point)
+      throws IOException {
     return parseManifest(path, access_key, secret_key, end_point, false);
   }
 
@@ -264,7 +265,7 @@ public class Manifest {
                                       String end_point, boolean parsePascalVOC) throws IOException {
     if (!isS3(path)) {
       LOGGER.warn("Even though configure access_key, secret_key and end_point, but path is not S3 path, so it will read data from local! ");
-      return readFromLocal(path, false);
+      return readFromLocal(path, parsePascalVOC);
     } else {
       ObsClient obsClient = new ObsClient(access_key, secret_key, end_point);
       return readFromOBS(path, obsClient, parsePascalVOC);
@@ -298,7 +299,7 @@ public class Manifest {
   public static Dataset parseManifest(String path, ObsClient obsClient, boolean parsePascalVOC) throws IOException {
     if (!isS3(path)) {
       LOGGER.warn("Even though configure access_key, secret_key and end_point, but path is not S3 path, so it will read data from local! ");
-      return readFromLocal(path, false);
+      return readFromLocal(path, parsePascalVOC);
     } else {
       return readFromOBS(path, obsClient, parsePascalVOC);
     }

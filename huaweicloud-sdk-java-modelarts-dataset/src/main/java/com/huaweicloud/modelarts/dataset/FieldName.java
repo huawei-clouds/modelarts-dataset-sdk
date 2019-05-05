@@ -78,4 +78,10 @@ public class FieldName {
   public static String Y = "y";
   public static String PART = "part";
 
+  public static String PROPERTY_COLOR = "@modelarts:color";
+  public static String PROPERTY_START_INDEX = "@modelarts:start_index";
+  public static String PROPERTY_END_INDEX = "@modelarts:end_index";
+
+  public static String PROPERTY_CONTENT = "@modelarts:content";
+
 }

@@ -24,7 +24,7 @@ def check_data(sample_list):
   for raw_data, label_list in sample_list:
     assert str(raw_data).startswith("s3://modelartscarbon/audio/dataset3/")
     for label in label_list:
-      assert "music，di da di da" in label \
+      assert "music, di da di da" in label \
              or "Hello world" in label \
              or "every word" in label \
              or "Hello manifest" in label

@@ -25,7 +25,7 @@ public class ManifestTest extends TestCase {
 
   private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
 
-  public void testParseManifestClassificationSample() {
+  public void testParseManifestImageClassificationSample() {
     String path = resourcePath + "/classification-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
@@ -38,7 +38,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestClassificationSample Success");
   }
 
-  public void testParseManifestClassificationSample2() {
+  public void testParseManifestImageClassificationSample2() {
     String path = resourcePath + "/V002.manifest";
     Dataset dataset = null;
     try {
@@ -51,7 +51,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestClassificationSample Success");
   }
 
-  public void testParseManifestClassificationMultiple() {
+  public void testParseManifestImageClassificationMultiple() {
     String path = resourcePath + "/classification-multi-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
@@ -64,7 +64,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestClassificationMultiple Success");
   }
 
-  public void testParseManifestClassificationDetection() {
+  public void testParseManifestImageClassificationDetection() {
     String path = resourcePath + "/classification-detection-multi-xy-V201902220937263726.manifest";
     Dataset dataset = null;
     try {
@@ -77,7 +77,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestClassificationDetection Success");
   }
 
-  public void testParseManifestDetectionSimple() {
+  public void testParseManifestImageDetectionSimple() {
     String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
     Dataset dataset = null;
     try {
@@ -90,7 +90,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestDetectionSimple Success");
   }
 
-  public void testParseManifestDetectionMultiple() {
+  public void testParseManifestImageDetectionMultiple() {
     String path = resourcePath + "/detect-multi-xy-V201902220951335133.manifest";
     Dataset dataset = null;
     try {
@@ -103,7 +103,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestDetectionMultiple Success");
   }
 
-  public void testParseManifestDetectionMultipleAndVOC() throws Exception {
+  public void testParseManifestImageDetectionMultipleAndVOC() {
     String path = resourcePath + "/detect-multi-local-voc.manifest";
     Dataset dataset = null;
     try {
@@ -116,7 +116,7 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestDetectionMultipleAndVOC Success");
   }
 
-  public void testParseManifestDetectionMultipleAndVOCGet() throws Exception {
+  public void testParseManifestImageDetectionMultipleAndVOCGet() {
     String path = resourcePath + "/detect-multi-local-voc.manifest";
     Dataset dataset = null;
     try {
@@ -129,4 +129,110 @@ public class ManifestTest extends TestCase {
     System.out.println("testParseManifestDetectionMultipleAndVOC Success");
   }
 
+  public void testParseManifestTextClassificationSample() {
+    String path = resourcePath + "/text_classification.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateTextClassification(dataset);
+    System.out.println("testParseManifestTextClassificationSample Success");
+  }
+
+
+  public void testParseManifestTextClassificationMultiple() {
+    String path = resourcePath + "/text_classification_multiple_label.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateTextClassificationMultiple(dataset);
+    System.out.println("testParseManifestTextClassificationMultiple Success");
+  }
+
+  public void testParseManifestTextEntitySample() {
+    String path = resourcePath + "/text_entity.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateTextEntity(dataset);
+    System.out.println("testParseManifestTextEntitySample Success");
+  }
+
+
+  public void testParseManifestTextEntityMultiple() {
+    String path = resourcePath + "/text_entity_duplicate_label.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateTextEntityMultiple(dataset);
+    System.out.println("testParseManifestTextEntityMultiple Success");
+  }
+
+  public void testParseManifestAudioClassificationSample() {
+    String path = resourcePath + "/audio_classification.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateAudioClassification(dataset);
+    System.out.println("testParseManifestAudioClassificationSample Success");
+  }
+
+  public void testParseManifestAudioClassificationMultiple() {
+    String path = resourcePath + "/audio_classification_mutiple_label.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateAudioClassificationMultiple(dataset);
+    System.out.println("testParseManifestAudioClassificationMultiple Success");
+  }
+
+
+  public void testParseManifestAudioContentSample() {
+    String path = resourcePath + "/audio_content.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateAudioContent(dataset);
+    System.out.println("testParseManifestAudioContentSample Success");
+  }
+
+  public void testParseManifestAudioContentMultiple() {
+    String path = resourcePath + "/audio_content_inference.manifest";
+    Dataset dataset = null;
+    try {
+      dataset = parseManifest(path);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateAudioContentMultiple(dataset);
+    System.out.println("testParseManifestAudioContentMultiple Success");
+  }
 }
