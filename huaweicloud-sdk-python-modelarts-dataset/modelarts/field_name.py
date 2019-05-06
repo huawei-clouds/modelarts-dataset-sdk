@@ -37,6 +37,7 @@ inference_loc2 = "inference_loc"
 
 image_classification = "image_classification"
 audio_classification = "audio_classification"
+sound_classification = "sound_classification"
 audio_content = "audio_content"
 text_classification = "text_classification"
 text_entity = "text_entity"

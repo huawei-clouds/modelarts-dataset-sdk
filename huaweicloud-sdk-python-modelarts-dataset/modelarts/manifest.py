@@ -17,7 +17,7 @@ import json
 
 from modelarts import field_name
 from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index, \
-  property_content
+  property_content, sound_classification, audio_classification
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 
@@ -48,6 +48,10 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   """
   data_set = parse_manifest(manifest_path, access_key=access_key, secret_key=secret_key, end_point=end_point,
                             ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
+  if sound_classification is task_type:
+    task_type = audio_classification
+  if str(task_type).endswith("/" + sound_classification):
+    task_type = str(task_type).replace(sound_classification, audio_classification)
   sample_list = data_set.get_sample_list()
   data_list = []
   label_type = field_name.single_lable
