@@ -33,7 +33,8 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   default task type is all.
 
   :param manifest_path:  manifest file path
-  :param task_type:  task type, like: image_classification, object_detection
+  :param task_type:  task type, like: image_classification, object_detection, audio_classification/sound_classification,
+  audio_content, text_classification, text_entity
   :param exactly_match_type: whether exactly match task type. Users can set True if users want to match exactly,
         like "modelarts/image_classification; Users can set False if users don't want to match exactly,
         like "image_classification;
