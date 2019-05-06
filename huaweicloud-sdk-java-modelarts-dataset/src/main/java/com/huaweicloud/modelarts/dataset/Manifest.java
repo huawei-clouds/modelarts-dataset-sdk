@@ -151,24 +151,35 @@ public class Manifest {
           getString(jsonObject, ANNOTATION_FORMAT, ANNOTATION_FORMAT2),
           Boolean.parseBoolean(jsonObject.getString(ANNOTATION_HARD)));
       if (null != properties && 0 != properties.size() &&
-          Boolean.parseBoolean(String.valueOf(properties.get(PARSE_PASCAL_VOC)))) {
+          Boolean.parseBoolean(String.valueOf(properties.get(PARSE_PASCAL_VOC)))
+          && null != annotationLoc) {
         if (!isS3(annotationLoc)) {
           annotation.setPascalVoc(new PascalVocIO(annotationLoc));
         } else {
           annotation.setPascalVoc(new PascalVocIO(annotationLoc, obsClient));
         }
       }
-      if (null != properties && 0 != properties.size() &&
-          Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD)))) {
-        if (isHard(annotation)) {
+
+      if (null != properties && 0 != properties.size()) {
+        if (Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD)))) {
+          if (isHard(annotation, obsClient)) {
+            if (isFilterAnnotations(annotation, properties, obsClient)) {
+              annotationList.add(annotation);
+            }
+          }
+        } else if ("false".equals(String.valueOf(properties.get(ANNOTATION_HARD)).toLowerCase())) {
+          if (isNotHard(annotation, obsClient)) {
+            if (isFilterAnnotations(annotation, properties, obsClient)) {
+              annotationList.add(annotation);
+            }
+          }
+        } else {
           if (isFilterAnnotations(annotation, properties, obsClient)) {
             annotationList.add(annotation);
           }
         }
       } else {
-        if (isFilterAnnotations(annotation, properties, obsClient)) {
-          annotationList.add(annotation);
-        }
+        annotationList.add(annotation);
       }
     }
     return annotationList;
@@ -191,17 +202,23 @@ public class Manifest {
             }
           }
         }
+        if (null != annotation.getProperty()) {
+          String propertyContent = String.valueOf(annotation.getProperty().get(PROPERTY_CONTENT));
+          if (annotationNames.contains(propertyContent)) {
+            return true;
+          }
+        }
         return false;
       }
     }
     return true;
   }
 
-  private static boolean isHard(Annotation annotation) {
+  private static boolean isHard(Annotation annotation, ObsClient obsClient) {
     if (annotation.isHard()) {
       return true;
     }
-    PascalVocIO pascalVocIO = annotation.getPascalVoc();
+    PascalVocIO pascalVocIO = annotation.getPascalVoc(obsClient);
     if (null != pascalVocIO) {
       List<VOCObject> vocObjects = pascalVocIO.getVocObjects();
       for (int i = 0; i < vocObjects.size(); i++) {
@@ -210,6 +227,26 @@ public class Manifest {
           return true;
         }
       }
+    }
+    return false;
+  }
+
+  private static boolean isNotHard(Annotation annotation, ObsClient obsClient) {
+    if (annotation.isHard()) {
+      return false;
+    }
+    PascalVocIO pascalVocIO = annotation.getPascalVoc(obsClient);
+    if (null != pascalVocIO) {
+      List<VOCObject> vocObjects = pascalVocIO.getVocObjects();
+      for (int i = 0; i < vocObjects.size(); i++) {
+        VOCObject vocObject = vocObjects.get(i);
+        if (0 == Integer.parseInt(vocObject.getDifficult())) {
+          return true;
+        }
+      }
+    }
+    if (!annotation.isHard()) {
+      return true;
     }
     return false;
   }
@@ -232,8 +269,9 @@ public class Manifest {
     JSONObject jObject = JSONObject.parseObject(line);
 
     List<Annotation> annotationList = parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS), properties, obsClient);
-    if (0 != properties.size() && (Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD))) ||
-        null != properties.get(ANNOTATION_NAMES))) {
+    if (0 != properties.size() && (Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD)))
+        || "false".equals(String.valueOf(properties.get(ANNOTATION_HARD)).toLowerCase())
+        || null != properties.get(ANNOTATION_NAMES))) {
       if (annotationList.size() > 0) {
         return new Sample(jObject.getString(SOURCE),
             jObject.getString(FieldName.USAGE),

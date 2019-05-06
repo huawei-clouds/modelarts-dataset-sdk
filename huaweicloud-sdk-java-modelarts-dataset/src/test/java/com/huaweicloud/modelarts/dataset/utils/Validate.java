@@ -108,6 +108,116 @@ public class Validate {
     }
   }
 
+  public static void validateClassificationMultipleFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 4);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 4);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("Dog".equals(annotation.getName()));
+        assertEquals(annotation.getType(), "modelarts/image_classification");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertNotNull(annotation.getProperty());
+        assertEquals(annotation.getConfidence(), 0.8, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateClassificationMultipleFilterWithoutHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 12);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 12);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("Dog".equals(annotation.getName()));
+        assertEquals(annotation.getType(), "modelarts/image_classification");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertNotNull(annotation.getProperty());
+        assertEquals(annotation.getConfidence(), 0.8, 0);
+        if ("s3://obs-ma/test/classification/datafiles/9_1550650986597.jpg".equals(sample.getSource())) {
+          Assert.assertTrue(annotation.isHard());
+        }
+        if ("s3://obs-ma/test/classification/datafiles/5_1550650985477.jpg".equals(sample.getSource())) {
+          Assert.assertTrue(!annotation.isHard());
+        }
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateClassificationMultipleFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 8);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 8);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("Dog".equals(annotation.getName()));
+        assertEquals(annotation.getType(), "modelarts/image_classification");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertNotNull(annotation.getProperty());
+        assertEquals(annotation.getConfidence(), 0.8, 0);
+        Assert.assertTrue(!annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateClassificationMultipleFilterWithHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 8);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 8);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/classification/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size() || 2 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()));
+        assertEquals(annotation.getType(), "modelarts/image_classification");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertNotNull(annotation.getProperty());
+        assertEquals(annotation.getConfidence(), 0.8, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
   public static void validateClassificationDetection(Dataset dataset) {
     assertEquals(dataset.getSize(), 5);
     List<Sample> sampleList = dataset.getSamples();
@@ -306,6 +416,84 @@ public class Validate {
     }
   }
 
+  public static void validateTextClassificationMultipleFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("content://raw data "));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("TRAIN".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("label1".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/text_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        Assert.assertTrue("#3399ff".equals(annotation.getProperty().get(PROPERTY_COLOR)));
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-17 10:39:19"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateTextClassificationMultipleFilterWithoutHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 4);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 4);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("content://raw data "));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("TRAIN".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("label1".equals(annotation.getName()) || "label2".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/text_entity".equals(annotation.getType())
+            || "modelarts/text_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        Assert.assertTrue("#3399ff".equals(annotation.getProperty().get(PROPERTY_COLOR)));
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-17 10:39:19"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateTextClassificationMultipleFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("content://raw data "));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("TRAIN".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("label1".equals(annotation.getName()) || "label2".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/text_entity".equals(annotation.getType())
+            || "modelarts/text_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        Assert.assertTrue("#3399ff".equals(annotation.getProperty().get(PROPERTY_COLOR)));
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(!annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-17 10:39:19"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
 
   public static void validateTextEntity(Dataset dataset) {
     assertEquals(dataset.getSize(), 6);
@@ -355,6 +543,70 @@ public class Validate {
             || "modelarts/text_entity".equals(annotation.getType()));
         assertEquals(annotation.getAnnotationLoc(), null);
         assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(0 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_START_INDEX).toString()));
+        Assert.assertTrue(3 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_END_INDEX).toString()));
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateTextEntityMultipleFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 4);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 4);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("content://"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      if (sample.getSource().contains("Bob is from Shenzhen, Jack is from Guangzho")) {
+        Assert.assertTrue(2 == annotationList.size());
+      } else {
+        Assert.assertTrue(1 == annotationList.size());
+      }
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("name".equals(annotation.getName()) || "location".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/text_entity".equals(annotation.getType())
+            || "modelarts/text_entity".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(0 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_START_INDEX).toString()));
+        Assert.assertTrue(3 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_END_INDEX).toString()));
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateTextEntityMultipleFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 4);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 4);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("content://"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      if (sample.getSource().contains("Bob is from Shenzhen, Jack is from Guangzho")) {
+        Assert.assertTrue(2 == annotationList.size());
+      } else {
+        Assert.assertTrue(1 == annotationList.size());
+      }
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("name".equals(annotation.getName()) || "location".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/text_entity".equals(annotation.getType())
+            || "modelarts/text_entity".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(!annotation.isHard());
         Assert.assertTrue(0 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_START_INDEX).toString()));
         Assert.assertTrue(3 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_END_INDEX).toString()));
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-"));
@@ -419,6 +671,114 @@ public class Validate {
     }
   }
 
+  public static void validateAudioClassificationMultipleFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("speech".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/Audio_entity".equals(annotation.getType())
+            || "modelarts/audio_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 11:"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioClassificationMultipleFilterMultipleNames(Dataset dataset) {
+    assertEquals(dataset.getSize(), 3);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 3);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      if ("s3://modelartscarbon/audio/dataset1/speech3_1556596464879.wav".equals(sample.getSource())) {
+        Assert.assertTrue(2 == annotationList.size());
+      } else {
+        Assert.assertTrue(1 == annotationList.size());
+      }
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("speech".equals(annotation.getName())
+            || "program".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/Audio_entity".equals(annotation.getType())
+            || "modelarts/audio_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 11:"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioClassificationMultipleFilterWithoutHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 4);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 4);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("speech".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/Audio_entity".equals(annotation.getType())
+            || "modelarts/audio_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 11:"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioClassificationMultipleFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()) || "inference".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue("speech".equals(annotation.getName()));
+        Assert.assertTrue("modelarts/Audio_entity".equals(annotation.getType())
+            || "modelarts/audio_classification".equals(annotation.getType()));
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(!annotation.isHard());
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 11:"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
   public static void validateAudioContent(Dataset dataset) {
     assertEquals(dataset.getSize(), 4);
     List<Sample> sampleList = dataset.getSamples();
@@ -440,6 +800,93 @@ public class Validate {
         Assert.assertTrue("music, di da di da".equals(propertyContent)
             || "Hello world".equals(propertyContent)
             || "every word".equals(propertyContent)
+            || "Hello manifest".equals(propertyContent)
+        );
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 12:02:30"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioContentFilter(Dataset dataset) {
+    assertEquals(dataset.getSize(), 1);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 1);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset3"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      assertEquals(annotationList.size(), 1);
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/audio_content");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(annotation.isHard());
+        String propertyContent = annotation.getProperty().get(PROPERTY_CONTENT).toString();
+        Assert.assertTrue("Hello manifest".equals(propertyContent)
+        );
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 12:02:30"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioContentFilterWithoutHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 3);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 3);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset3"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      assertEquals(annotationList.size(), 1);
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/audio_content");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        String propertyContent = annotation.getProperty().get(PROPERTY_CONTENT).toString();
+        Assert.assertTrue("music, di da di da".equals(propertyContent)
+            || "Hello world".equals(propertyContent)
+            || "Hello manifest".equals(propertyContent)
+        );
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 12:02:30"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), null);
+      }
+    }
+  }
+
+  public static void validateAudioContentFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 2);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 2);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://modelartscarbon/audio/dataset3"));
+      assertEquals(sample.getInferenceLoc(), null);
+      Assert.assertTrue("train".equals(sample.getUsage()));
+      List<Annotation> annotationList = sample.getAnnotations();
+      assertEquals(annotationList.size(), 1);
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/audio_content");
+        assertEquals(annotation.getAnnotationLoc(), null);
+        assertEquals(annotation.getConfidence(), 0.0, 0);
+        Assert.assertTrue(!annotation.isHard());
+        String propertyContent = annotation.getProperty().get(PROPERTY_CONTENT).toString();
+        Assert.assertTrue("music, di da di da".equals(propertyContent)
+            || "Hello world".equals(propertyContent)
             || "Hello manifest".equals(propertyContent)
         );
         Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-30 12:02:30"));
@@ -514,8 +961,46 @@ public class Validate {
         }
 
         if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
-          Assert.assertTrue(annotation.isHard());
+          if ("/Users/xubo/Desktop/xubo/git/dataset/resources/VOC/000000115967_1556247179208.xml".equals(annotation.getAnnotationLoc())
+              || "s3://carbonsouth/manifest/voc/000000115967_1556247179208.xml".equals(annotation.getAnnotationLoc())) {
+            Assert.assertTrue(!annotation.isHard());
+          } else {
+            Assert.assertTrue(annotation.isHard());
+          }
         }
+      }
+    }
+  }
+
+  public static void validateDetectionMultipleAndVOCFilterWithFalseHard(Dataset dataset) {
+    assertEquals(dataset.getSize(), 7);
+    List<Sample> sampleList = dataset.getSamples();
+    assertEquals(sampleList.size(), 7);
+    for (int i = 0; i < sampleList.size(); i++) {
+      Sample sample = sampleList.get(i);
+      Assert.assertTrue(sample.getSource().startsWith("s3://obs-ma/test/label-0220/datafiles"));
+      assertEquals(sample.getInferenceLoc(), null);
+      assertEquals(sample.getUsage(), "TRAIN");
+      List<Annotation> annotationList = sample.getAnnotations();
+      Assert.assertTrue(1 == annotationList.size());
+      for (int j = 0; j < annotationList.size(); j++) {
+        Annotation annotation = annotationList.get(j);
+        Assert.assertTrue(null == annotation.getName());
+        assertEquals(annotation.getType(), "modelarts/object_detection");
+        Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
+        assertEquals(annotation.getProperty(), null);
+        assertEquals(annotation.getConfidence(), 0, 0);
+        Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
+        assertEquals(annotation.getAnnotatedBy(), "human");
+        assertEquals(annotation.getAnnotationFormat(), "PASCAL VOC");
+        if (annotation.getAnnotationLoc().endsWith("2007_000027.xml")) {
+          validateVOC(annotation.getPascalVoc());
+        } else if (annotation.getAnnotationLoc().endsWith("000000115967_1556247179208.xml")) {
+          validateVOCMultipleObject(annotation.getPascalVoc());
+        } else {
+          Assert.assertTrue(false);
+        }
+        Assert.assertTrue(!annotation.isHard());
       }
     }
   }
