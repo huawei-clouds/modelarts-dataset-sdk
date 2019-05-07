@@ -31,7 +31,7 @@ import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 
 public class ManifestTest extends TestCase {
 
-  private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
+  private String resourcePath = this.getClass().getResource("/").getPath() ;
 
   public void testParseManifestImageClassificationSample() {
     String path = resourcePath + "/classification-xy-V201902220937263726.manifest";

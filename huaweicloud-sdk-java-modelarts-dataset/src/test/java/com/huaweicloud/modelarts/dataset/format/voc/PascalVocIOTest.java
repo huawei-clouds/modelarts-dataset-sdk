@@ -11,7 +11,7 @@ import java.util.List;
 import static com.huaweicloud.modelarts.dataset.format.voc.ValidatePascalVocIO.validate;
 
 public class PascalVocIOTest extends TestCase {
-  private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
+  private String resourcePath = this.getClass().getResource("/").getPath();
 
   @Test
   public void testReadVocXMLFromCloud() {

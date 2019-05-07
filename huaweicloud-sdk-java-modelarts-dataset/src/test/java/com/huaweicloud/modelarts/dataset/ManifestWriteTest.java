@@ -25,7 +25,7 @@ import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 
 public class ManifestWriteTest extends TestCase {
-  private String resourcePath = this.getClass().getResource("/").getPath() + "../../../resources/";
+  private String resourcePath = this.getClass().getResource("/").getPath();
   private String outputPath = this.getClass().getResource("/").getPath();
 
   public void testWriteManifest() {
