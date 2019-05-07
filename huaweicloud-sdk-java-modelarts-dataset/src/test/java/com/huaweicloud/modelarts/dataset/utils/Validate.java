@@ -961,8 +961,7 @@ public class Validate {
         }
 
         if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource())) {
-          if ("/Users/xubo/Desktop/xubo/git/dataset/resources/VOC/000000115967_1556247179208.xml".equals(annotation.getAnnotationLoc())
-              || "s3://carbonsouth/manifest/voc/000000115967_1556247179208.xml".equals(annotation.getAnnotationLoc())) {
+          if ((annotation.getAnnotationLoc()).contains("000000115967_1556247179208.xml")) {
             Assert.assertTrue(!annotation.isHard());
           } else {
             Assert.assertTrue(annotation.isHard());

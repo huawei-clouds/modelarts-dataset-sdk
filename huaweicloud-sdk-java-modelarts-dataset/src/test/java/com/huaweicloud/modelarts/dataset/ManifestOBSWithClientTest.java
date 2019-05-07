@@ -30,6 +30,7 @@ import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultiple;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOCFilter3;
+import static com.huaweicloud.modelarts.dataset.utils.constants.S3_TEST_PREFIX;
 
 public class ManifestOBSWithClientTest {
 
@@ -38,9 +39,9 @@ public class ManifestOBSWithClientTest {
     if (args.length < 3) {
       throw new RuntimeException("Please input access_key, secret_key, end_point, <parsePascalVOC> for reading obs files! ");
     }
-    String path1 = "s3a://carbonsouth/manifest/detect-multi-s3-voc.manifest";
-    String path2 = "s3a://carbonsouth/manifest/detect-multi-s3-voc-filter.manifest";
-    String path3 = "s3a://carbonsouth/manifest/detect-multi-xy-V201902220951335133.manifest";
+    String path1 = S3_TEST_PREFIX + "/manifest/detect-multi-s3-voc.manifest";
+    String path2 = S3_TEST_PREFIX + "/manifest/detect-multi-s3-voc-filter.manifest";
+    String path3 = S3_TEST_PREFIX + "/manifest/detect-multi-xy-V201902220951335133.manifest";
 
     String ak = args[0];
     String sk = args[1];
@@ -76,7 +77,8 @@ public class ManifestOBSWithClientTest {
     test.testParseManifestImageDetectionFilterAnnotationName2Simple(path2, obsClient);
     test.testParseManifestImageDetectionFilterAnnotationName3Simple(path2, obsClient);
     test.testParseManifestImageDetectionFilterMultiple(path3, obsClient);
-    String pathPrefix = "s3a://carbonsouth/manifest";
+
+    String pathPrefix = S3_TEST_PREFIX + "/manifest";
     test.testParseManifestImageClassificationFilterAnnotationNames(pathPrefix, obsClient);
     test.testParseManifestImageClassificationFilterAnnotationNamesLowerCase(pathPrefix, obsClient);
     test.testParseManifestImageClassificationFilterAnnotationNamesWithoutHard(pathPrefix, obsClient);
@@ -97,6 +99,7 @@ public class ManifestOBSWithClientTest {
     test.testParseManifestAudioContentSampleFilterWithoutHard(pathPrefix, obsClient);
     test.testParseManifestAudioContentSampleFilterWithFalseHard(pathPrefix, obsClient);
     test.testParseManifestImageDetectionFilterWithFalseHard(pathPrefix, obsClient);
+    test.testParseManifestImageDetectionFilterWithRelativePath(pathPrefix, obsClient);
 
     System.out.println("Success");
   }
@@ -564,6 +567,22 @@ public class ManifestOBSWithClientTest {
 
   public void testParseManifestImageDetectionFilterWithFalseHard(String resourcePath, ObsClient obsClient) {
     String path = resourcePath + "/detect-multi-s3-voc-filter.manifest";
+    Dataset dataset = null;
+    try {
+      Map properties = new HashMap();
+      properties.put(ANNOTATION_HARD, false);
+      dataset = parseManifest(path, obsClient, properties);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
+    validateDetectionMultipleAndVOCFilterWithFalseHard(dataset);
+    System.out.println("testParseManifestImageDetectionFilterWithFalseHard Success");
+  }
+
+
+  public void testParseManifestImageDetectionFilterWithRelativePath(String resourcePath, ObsClient obsClient) {
+    String path = resourcePath + "/detect-multi-local-voc-filter.manifest";
     Dataset dataset = null;
     try {
       Map properties = new HashMap();

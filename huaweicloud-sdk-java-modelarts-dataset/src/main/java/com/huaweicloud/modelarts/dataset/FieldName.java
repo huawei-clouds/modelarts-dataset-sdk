@@ -88,4 +88,7 @@ public class FieldName {
 
   public static String PARSE_PASCAL_VOC = "parsePascalVOC";
 
+  public static String RELATIVE_PATH = "RelativePath";
+  public static String RELATIVE_PATH_PREFIX = "./";
+
 }

@@ -26,14 +26,15 @@ import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateClassification;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOC;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.validateDetectionMultipleAndVOCGetWithObsClient;
+import static com.huaweicloud.modelarts.dataset.utils.constants.S3_TEST_PREFIX;
 
 public class ManifestOBSTest {
 
   public static void main(String[] args) throws Exception {
     if (args.length < 4) {
-      throw new RuntimeException("Please input S3 path, access_key, secret_key, end_point, <parsePascalVOC>  for reading obs files! ");
+      throw new RuntimeException("Please input access_key, secret_key, end_point, <parsePascalVOC>  for reading obs files! ");
     }
-    String path = "s3a://carbonsouth/manifest/detect-multi-s3-voc.manifest";
+    String path = S3_TEST_PREFIX + "/manifest/detect-multi-s3-voc.manifest";
     String ak = args[0];
     String sk = args[1];
     String endPoint = args[2];

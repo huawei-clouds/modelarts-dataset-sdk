@@ -79,6 +79,7 @@ public class Manifest {
     String line;
     Dataset dataset = new Dataset();
     int sum = 0;
+    properties = addRelativePath(properties, path);
     while ((line = bufferedReader.readLine()) != null) {
       Sample sample = parseSample(line, properties, null);
       if (null != sample) {
@@ -88,6 +89,14 @@ public class Manifest {
     }
     dataset.setSize(sum);
     return dataset;
+  }
+
+  private static Map addRelativePath(Map properties, String relativePath) {
+    if (null == properties) {
+      properties = new HashMap();
+    }
+    properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf('/')));
+    return properties;
   }
 
   /**
@@ -141,6 +150,10 @@ public class Manifest {
     for (int i = 0; i < jsonArray.size(); i++) {
       JSONObject jsonObject = (JSONObject) jsonArray.get(i);
       String annotationLoc = getString(jsonObject, ANNOTATION_LOC, ANNOTATION_LOC2);
+      if (null != annotationLoc && null != properties && annotationLoc.startsWith(RELATIVE_PATH_PREFIX)) {
+        annotationLoc = properties.get(RELATIVE_PATH) + annotationLoc.substring(1, annotationLoc.length());
+      }
+
       Annotation annotation = new Annotation(jsonObject.getString(NAME),
           jsonObject.getString(ANNOTATION_TYPE),
           annotationLoc,
@@ -353,6 +366,7 @@ public class Manifest {
     InputStream content = obsObject.getObjectContent();
     Dataset dataset = new Dataset();
     int sum = 0;
+    properties = addRelativePath(properties, path);
     if (content != null) {
       BufferedReader reader = new BufferedReader(new InputStreamReader(content));
       String line;
