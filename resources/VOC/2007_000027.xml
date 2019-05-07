@@ -17,6 +17,7 @@
         <pose>Unspecified</pose>
         <truncated>0</truncated>
         <difficult>0</difficult>
+        <confidence>0.8</confidence>
         <bndbox>
             <xmin>174</xmin>
             <ymin>101</ymin>
@@ -25,6 +26,7 @@
         </bndbox>
         <part>
             <name>head</name>
+            <confidence>0.8</confidence>
             <bndbox>
                 <xmin>169</xmin>
                 <ymin>104</ymin>

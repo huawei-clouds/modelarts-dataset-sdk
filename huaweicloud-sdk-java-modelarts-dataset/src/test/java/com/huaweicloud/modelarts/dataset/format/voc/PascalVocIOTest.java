@@ -104,6 +104,7 @@ public class PascalVocIOTest extends TestCase {
       Assert.assertTrue("person".equals(vocObject.getName()));
       Assert.assertTrue("Unspecified".equals(vocObject.getPose()));
       Assert.assertTrue("0".equals(vocObject.getDifficult()));
+      Assert.assertTrue("0.8".equals(vocObject.getConfidence()));
       Assert.assertTrue(null == vocObject.getOccluded());
       Assert.assertTrue("0".equals(vocObject.getTruncated()));
       Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));
@@ -125,6 +126,7 @@ public class PascalVocIOTest extends TestCase {
         BNDBox partBNDBox = (BNDBox) part.getPosition();
 
         if ("head".equals(part.getName())) {
+          Assert.assertTrue("0.8".equals(part.getConfidence()));
           if ("169".equals(partBNDBox.getXMin())) {
             Assert.assertTrue("104".equals(partBNDBox.getYMin()));
             Assert.assertTrue("209".equals(partBNDBox.getXMax()));
@@ -133,6 +135,7 @@ public class PascalVocIOTest extends TestCase {
             Assert.assertTrue(false);
           }
         } else if ("hand".equals(part.getName())) {
+          Assert.assertTrue(null == (part.getConfidence()));
           if ("278".equals(partBNDBox.getXMin())) {
             Assert.assertTrue("210".equals(partBNDBox.getYMin()));
             Assert.assertTrue("297".equals(partBNDBox.getXMax()));
@@ -177,6 +180,7 @@ public class PascalVocIOTest extends TestCase {
         Assert.assertTrue("0".equals(vocObject.getTruncated()));
         Assert.assertTrue(null == vocObject.getOccluded());
         Assert.assertTrue("0".equals(vocObject.getDifficult()));
+        Assert.assertTrue("0.8".equals(vocObject.getConfidence()));
         Assert.assertTrue(PositionType.POLYGON.equals(vocObject.getPosition().getType()));
         Polygon polygon = (Polygon) vocObject.getPosition();
         List<Point> pointList = polygon.getPoints();

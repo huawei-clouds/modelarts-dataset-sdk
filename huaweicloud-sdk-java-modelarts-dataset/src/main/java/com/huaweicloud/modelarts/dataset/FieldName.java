@@ -63,6 +63,7 @@ public class FieldName {
   public static String TRUNCATED = "truncated";
   public static String OCCLUDED = "occluded";
   public static String DIFFICULT = "difficult";
+  public static String CONFIDENCE = "confidence";
   public static String XMIN = "xmin";
   public static String YMIN = "ymin";
   public static String XMAX = "xmax";

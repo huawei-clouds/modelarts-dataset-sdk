@@ -16,6 +16,7 @@
         <pose>0</pose>
         <truncated>0</truncated>
         <difficult>0</difficult>
+        <confidence>0.8</confidence>
         <polygon>
             <x1>0</x1>
             <y1>292</y1>
@@ -66,6 +67,7 @@
         <pose>0</pose>
         <truncated>0</truncated>
         <difficult>0</difficult>
+        <confidence>0.8</confidence>
         <polygon>
             <x1>259</x1>
             <y1>340</y1>

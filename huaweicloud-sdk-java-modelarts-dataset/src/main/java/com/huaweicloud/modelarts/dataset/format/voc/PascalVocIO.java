@@ -71,6 +71,7 @@ public class PascalVocIO {
     String truncated = null;
     String occluded = null;
     String difficult = null;
+    String confidence = null;
     String xMin = null;
     String yMin = null;
     String xMax = null;
@@ -89,6 +90,8 @@ public class PascalVocIO {
         occluded = objectNodeList.item(j).getFirstChild().getNodeValue();
       } else if (FieldName.DIFFICULT.equalsIgnoreCase(objectNodeName)) {
         difficult = objectNodeList.item(j).getFirstChild().getNodeValue();
+      } else if (FieldName.CONFIDENCE.equalsIgnoreCase(objectNodeName)) {
+        confidence = objectNodeList.item(j).getFirstChild().getNodeValue();
       } else if (PositionType.BNDBOX.name().equalsIgnoreCase(objectNodeName)) {
         NodeList bndBoxNodeList = objectNodeList.item(j).getChildNodes();
         for (int k = 0; k < bndBoxNodeList.getLength(); k++) {
@@ -218,7 +221,7 @@ public class PascalVocIO {
         position = new Point(x, y);
       }
     }
-    return new VOCObject(name, pose, truncated, occluded, difficult, position, parts);
+    return new VOCObject(name, pose, truncated, occluded, difficult, confidence, position, parts);
   }
 
   /**
