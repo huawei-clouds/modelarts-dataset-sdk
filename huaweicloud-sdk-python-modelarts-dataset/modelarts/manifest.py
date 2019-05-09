@@ -16,6 +16,8 @@
 import json
 
 from modelarts import field_name
+from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index, \
+  property_content, sound_classification, audio_classification
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 
@@ -31,7 +33,8 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   default task type is all.
 
   :param manifest_path:  manifest file path
-  :param task_type:  task type, like: image_classification, object_detection
+  :param task_type:  task type, like: image_classification, object_detection, audio_classification/sound_classification,
+  audio_content, text_classification, text_entity
   :param exactly_match_type: whether exactly match task type. Users can set True if users want to match exactly,
         like "modelarts/image_classification; Users can set False if users don't want to match exactly,
         like "image_classification;
@@ -46,15 +49,23 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   """
   data_set = parse_manifest(manifest_path, access_key=access_key, secret_key=secret_key, end_point=end_point,
                             ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
+  if sound_classification is task_type:
+    task_type = audio_classification
+  if str(task_type).endswith("/" + sound_classification):
+    task_type = str(task_type).replace(sound_classification, audio_classification)
   sample_list = data_set.get_sample_list()
   data_list = []
   label_type = field_name.single_lable
   for sample in sample_list:
+    flag = False
     annotations = sample.get_annotations()
     sample_usage = sample.get_usage()
+    sample_source = sample.get_source()
     if str(sample_usage).lower().__eq__(str(usage).lower()) or str(usage).lower().__eq__(field_name.default_usage):
       label_list = []
       i = 0
+      if str(usage).lower().__eq__(field_name.usage_inference):
+        flag = True
       for annotation in annotations:
         if i > 0:
           label_type = field_name.multi_lable
@@ -62,23 +73,52 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
         type = annotation.get_type()
         if not exactly_match_type:
           if str(type).endswith("/" + task_type):
+            flag = True
             if (task_type == field_name.image_classification or task_type == field_name.audio_classification
                     or task_type == field_name.text_classification):
               label_list.append(annotation.get_name())
-            if task_type == field_name.object_detection:
+            elif task_type == field_name.text_entity:
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation_property[property_start_index])
+                                + label_separator + str(annotation_property[property_end_index]))
+            elif task_type == field_name.audio_content:
+              annotation_property = annotation.get_property()
+              label_list.append(str(annotation_property[property_content]))
+            elif task_type == field_name.object_detection:
               label_list.append(annotation.get_loc())
+            else:
+              raise Exception("Don't support the task type:" + task_type)
 
         elif exactly_match_type:
           if type == task_type:
+            flag = True
             if str(task_type).endswith("/" + field_name.image_classification) \
                     or str(task_type).endswith("/" + field_name.audio_classification) \
                     or str(task_type).endswith("/" + field_name.text_classification):
               label_list.append(annotation.get_name())
-            if str(task_type).endswith("/" + field_name.object_detection):
+            elif str(task_type).endswith("/" + field_name.text_entity):
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation_property[property_start_index])
+                                + label_separator + str(annotation_property[property_end_index]))
+
+            elif str(task_type).endswith("/" + field_name.audio_content):
+              annotation_property = annotation.get_property()
+              label_list.append(str(annotation_property[property_content]))
+            elif str(task_type).endswith("/" + field_name.object_detection):
               label_list.append(annotation.get_loc())
+            else:
+              raise Exception("Don't support the task type:" + task_type)
+
     else:
       continue
-    data_list.append([sample.get_source(), label_list])
+    if str(task_type).endswith(field_name.text_classification) \
+            or str(task_type).endswith(field_name.text_entity):
+      assert str(sample_source).startswith(prefix_text)
+      sample_source = str(sample_source)[len(prefix_text):]
+    if flag:
+      data_list.append([sample_source, label_list])
   return data_list, label_type
 
 
@@ -259,7 +299,7 @@ class DataSet(object):
       with open(path, saveMode) as f_obj:
         for sample in self.get_sample_list():
           value = self.__toJSON(sample)
-          json.dump(value, f_obj)
+          json.dump(value, f_obj, separators=(",", ":"))
           f_obj.write('\n')
     elif access_key is None:
       raise Exception("access_key is None")
@@ -271,7 +311,7 @@ class DataSet(object):
       manifest_json = []
       for sample in self.get_sample_list():
         value = self.__toJSON(sample)
-        manifest_json.append(json.dumps(value))
+        manifest_json.append(json.dumps(value, separators=(",", ":")))
       save(manifest_json, path, access_key=access_key, secret_key=secret_key, end_point=end_point,
            saveMode=saveMode, ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
 

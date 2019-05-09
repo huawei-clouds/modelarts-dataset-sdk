@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<annotation>
+    <folder>Images</folder>
+    <filename>000000089955.jpg</filename>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>640</width>
+        <height>321</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>trafficlight</name>
+        <pose>0</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>347</xmin>
+            <ymin>186</ymin>
+            <xmax>382</xmax>
+            <ymax>249</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>trafficlight</name>
+        <pose>0</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>544</xmin>
+            <ymin>50</ymin>
+            <xmax>591</xmax>
+            <ymax>149</ymax>
+        </bndbox>
+    </object>
+</annotation>

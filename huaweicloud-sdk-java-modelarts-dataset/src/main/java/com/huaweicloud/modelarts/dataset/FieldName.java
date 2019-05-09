@@ -18,7 +18,7 @@ package com.huaweicloud.modelarts.dataset;
 /**
  * Constants for annotation/sample/dataset
  */
-public class FiledName {
+public class FieldName {
   public static String SOURCE = "source";
   public static String USAGE = "usage";
   public static String INFERENCE_LOC = "inference-loc";
@@ -33,6 +33,7 @@ public class FiledName {
   public static String ANNOTATION_FORMAT = "annotation-format";
   public static String ANNOTATION_FORMAT2 = "annotation_format";
   public static String ANNOTATION_NAME = "name";
+  public static String ANNOTATION_NAMES = "annotation_names";
   public static String ANNOTATION_PROPERTY = "property";
   public static String ANNOTATION_HARD = "hard";
   public static String ANNOTATION_CONFIDENCE = "confidence";
@@ -47,5 +48,47 @@ public class FiledName {
   public static String AUDIO_CLASSIFICATION = "audio_classification";
   public static String TEXT_CLASSIFICATION = "text_classification";
   public static String OBJECT_DETECTION = "object_detection";
+
+  // PASCAL VOC FORMAT
+  public static String FOLDER_NAME = "folder";
+  public static String FILE_NAME = "filename";
+  public static String DATABASE = "database";
+  public static String IMAGE = "image";
+  public static String WIDTH = "width";
+  public static String HEIGHT = "height";
+  public static String DEPTH = "depth";
+  public static String SEGMENTED = "segmented";
+  public static String OBJECT = "object";
+  public static String POSE = "pose";
+  public static String TRUNCATED = "truncated";
+  public static String OCCLUDED = "occluded";
+  public static String DIFFICULT = "difficult";
+  public static String CONFIDENCE = "confidence";
+  public static String XMIN = "xmin";
+  public static String YMIN = "ymin";
+  public static String XMAX = "xmax";
+  public static String YMAX = "ymax";
+  public static String X1 = "x1";
+  public static String Y1 = "y1";
+  public static String X2 = "x2";
+  public static String Y2 = "y2";
+  public static String CX = "cx";
+  public static String CY = "cy";
+  public static String R = "r";
+
+  public static String X = "x";
+  public static String Y = "y";
+  public static String PART = "part";
+
+  public static String PROPERTY_COLOR = "@modelarts:color";
+  public static String PROPERTY_START_INDEX = "@modelarts:start_index";
+  public static String PROPERTY_END_INDEX = "@modelarts:end_index";
+
+  public static String PROPERTY_CONTENT = "@modelarts:content";
+
+  public static String PARSE_PASCAL_VOC = "parsePascalVOC";
+
+  public static String RELATIVE_PATH = "RelativePath";
+  public static String RELATIVE_PATH_PREFIX = "./";
 
 }

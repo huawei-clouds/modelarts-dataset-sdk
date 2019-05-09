@@ -17,6 +17,11 @@ package com.huaweicloud.modelarts.dataset;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.huaweicloud.modelarts.dataset.format.voc.PascalVocIO;
+import com.obs.services.ObsClient;
+
+import static com.huaweicloud.modelarts.dataset.Manifest.isS3;
+
 /**
  * Annotation, including name for classification, annotationLoc for object detection and so on.
  */
@@ -77,6 +82,11 @@ public class Annotation {
    * Optional field
    */
   private String annotationFormat;
+
+  /**
+   * pascal Voc Object
+   */
+  private PascalVocIO pascalVoc;
 
   public Annotation() {
   }
@@ -183,6 +193,48 @@ public class Annotation {
 
   public void setHard(boolean hard) {
     this.hard = hard;
+  }
+
+  /**
+   * get Pascal Voc by using obs client
+   * it will read and parse pascal voc xml file from local if pascalVoc is null and  annotation Location is not S3 path
+   * it will throw exception if annotation Location is S3 path.
+   *
+   * @return Pascal VOC object.
+   * @throws RuntimeException
+   */
+  public PascalVocIO getPascalVoc() throws RuntimeException {
+    if (null == pascalVoc && null != annotationLoc) {
+      if (isS3(annotationLoc)) {
+        throw new RuntimeException("Please use getPascalVoc(ObsClient obsClient) " +
+            "because reading S3 file need obeClient.)");
+      }
+      pascalVoc = new PascalVocIO(annotationLoc);
+    }
+    return pascalVoc;
+  }
+
+  /**
+   * get Pascal Voc by using obs client
+   * it will read and parse pascal voc xml file from obs if pascalVoc is null and  annotation Location is S3 path
+   * it will read and parse pascal voc xml file from local if annotation Location is not S3 path.
+   *
+   * @param obsClient obs client with ak, sk, endpoint
+   * @return Pascal VOC object.
+   */
+  public PascalVocIO getPascalVoc(ObsClient obsClient) {
+    if (null == pascalVoc && null != annotationLoc) {
+      if (!isS3(annotationLoc)) {
+        pascalVoc = new PascalVocIO(annotationLoc);
+      } else {
+        pascalVoc = new PascalVocIO(annotationLoc, obsClient);
+      }
+    }
+    return pascalVoc;
+  }
+
+  public void setPascalVoc(PascalVocIO pascalVoc) {
+    this.pascalVoc = pascalVoc;
   }
 
   @Override

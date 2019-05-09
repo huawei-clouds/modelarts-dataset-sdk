@@ -19,7 +19,7 @@ from modelarts import manifest, field_name
 
 
 def check_data(sample_list):
-  assert len(sample_list) == 5
+  assert len(sample_list) == 2
   for raw_data, label_list in sample_list:
     assert str(raw_data).startswith("s3://obs-ma/test/classification/datafiles")
     assert len(label_list) == 1 or len(label_list) == 0
@@ -40,7 +40,7 @@ def check_data_usage(sample_list):
 
 
 def check_data_without_label(sample_list):
-  assert len(sample_list) == 5
+  assert len(sample_list) == 2
   for raw_data, label_list in sample_list:
     assert str(raw_data).startswith("s3://obs-ma/test/classification/datafiles")
     assert len(label_list) == 0 or len(label_list) == 1

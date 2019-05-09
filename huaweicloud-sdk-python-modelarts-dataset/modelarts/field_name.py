@@ -37,8 +37,12 @@ inference_loc2 = "inference_loc"
 
 image_classification = "image_classification"
 audio_classification = "audio_classification"
+sound_classification = "sound_classification"
+audio_content = "audio_content"
 text_classification = "text_classification"
+text_entity = "text_entity"
 object_detection = "object_detection"
+prefix_text = "content://"
 
 single_lable = "single"
 multi_lable = "multi"
@@ -56,3 +60,9 @@ usage_train = "train"
 usage_eval = "eval"
 usage_test = "test"
 usage_inference = "inference"
+
+label_separator = '\u0001'
+property_start_index = "@modelarts:start_index"
+property_end_index = "@modelarts:end_index"
+
+property_content = "@modelarts:content"

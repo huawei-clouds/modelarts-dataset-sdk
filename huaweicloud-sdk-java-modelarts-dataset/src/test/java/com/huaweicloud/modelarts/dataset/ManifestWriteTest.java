@@ -25,6 +25,8 @@ import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 
 public class ManifestWriteTest extends TestCase {
+  private String resourcePath = this.getClass().getResource("/").getPath();
+  private String outputPath = this.getClass().getResource("/").getPath();
 
   public void testWriteManifest() {
     LinkedHashMap map = new LinkedHashMap();
@@ -57,8 +59,8 @@ public class ManifestWriteTest extends TestCase {
   }
 
   public void testWriteManifestClassificationSample() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/classification-xy-V201902220937263726.manifest";
-    String path2 = this.getClass().getResource("/").getPath() + "../../../resources/classification-xy-V201902220937263726_2.manifest";
+    String path = resourcePath + "/classification-xy-V201902220937263726.manifest";
+    String path2 = outputPath + "/classification-xy-V201902220937263726_2.manifest";
     Dataset dataset = null;
     Dataset dataset2 = null;
 
@@ -82,8 +84,8 @@ public class ManifestWriteTest extends TestCase {
   }
 
   public void testParseManifestDetectionSample() {
-    String path = this.getClass().getResource("/").getPath() + "../../../resources/detect-test-xy-V201902220951335133.manifest";
-    String path2 = this.getClass().getResource("/").getPath() + "../../../resources/detect-test-xy-V201902220951335133_6.manifest";
+    String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
+    String path2 = outputPath + "/detect-test-xy-V201902220951335133_6.manifest";
     Dataset dataset = null;
     Dataset dataset2 = null;
     try {

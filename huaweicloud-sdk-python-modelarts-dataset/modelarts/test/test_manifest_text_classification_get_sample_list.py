@@ -16,59 +16,84 @@ import os
 import sys
 
 from modelarts import manifest, field_name
+from modelarts.field_name import text_classification
 
 
 def check_data(sample_list):
-  assert len(sample_list) == 19
+  assert len(sample_list) == 6 or len(sample_list) == 5
   for raw_data, label_list in sample_list:
-    assert str(raw_data).startswith("s3://obs-ma/test/classification/datafiles")
-    assert len(label_list) > 0
+    assert str(raw_data).startswith("raw data")
+    for label in label_list:
+      assert "label" in label
+    assert len(label_list) >= 0
 
 
 def check_data_without_label(sample_list):
-  assert len(sample_list) == 19
+  assert len(sample_list) == 0
   for raw_data, label_list in sample_list:
-    assert str(raw_data).startswith("s3://obs-ma/test/classification/datafiles")
+    assert str(raw_data).startswith("content://raw data")
     assert len(label_list) == 0
 
 
 def test_single_default(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "image_classification", False, *args)
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, *args)
   assert (label_type == field_name.single_lable)
   check_data(sample_list)
   print("Success: test_single_default")
 
 
 def test_single_default_usage(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "image_classification", False, usage="train", *args)
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, usage="train", *args)
   assert (label_type == field_name.single_lable)
   check_data(sample_list)
   print("Success: test_single_default")
 
 
+def test_single_default_usage_inference(path, *args):
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, usage="inference", *args)
+  assert (label_type == field_name.single_lable)
+  assert len(sample_list) == 0
+  for raw_data, label_list in sample_list:
+    assert str(raw_data).startswith("raw data")
+    for label in label_list:
+      assert "label" in label
+    assert len(label_list) >= 0
+  print("Success: test_single_default_usage_inference")
+
+
 def test_multi_default(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "image_classification", False, *args)
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, *args)
   assert (label_type == field_name.multi_lable)
   check_data(sample_list)
   print("Success: test_multi_default")
 
 
 def test_multi_default_usage(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "image_classification", False, usage="train", *args)
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, usage="train", *args)
   assert (label_type == field_name.multi_lable)
   check_data(sample_list)
   print("Success: test_multi_default")
 
+def test_multi_default_usage_inference(path, *args):
+  sample_list, label_type = manifest.get_sample_list(path, text_classification, False, usage="inference", *args)
+  assert (label_type == field_name.single_lable)
+  assert len(sample_list) == 1
+  for raw_data, label_list in sample_list:
+    assert str(raw_data).startswith("raw data")
+    for label in label_list:
+      assert "label" in label
+    assert len(label_list) == 0
+  print("Success: test_multi_default")
 
 def test_single_exactly_match_type(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "modelarts/image_classification", True, *args)
+  sample_list, label_type = manifest.get_sample_list(path, "modelarts/" + text_classification, True, *args)
   assert (label_type == field_name.single_lable)
   check_data(sample_list)
   print("Success: test_single_exactly_match_type")
 
 
 def test_multi_exactly_match_type(path, *args):
-  sample_list, label_type = manifest.get_sample_list(path, "modelarts/image_classification", True, *args)
+  sample_list, label_type = manifest.get_sample_list(path, "modelarts/" + text_classification, True, *args)
   assert (label_type == field_name.multi_lable)
   check_data(sample_list)
   print("Success: test_multi_exactly_match_type")
@@ -83,20 +108,24 @@ def test_multi_exactly_match_type_error(path, *args):
 
 def main(argv):
   if len(argv) < 2:
-    path1 = os.path.abspath("../../../") + "/resources/classification-xy-V201902220937263726.manifest"
-    path2 = os.path.abspath("../../../") + "/resources/classification-multi-xy-V201902220937263726.manifest"
+    path1 = os.path.abspath("../../../") + "/resources/text_classification.manifest"
+    path2 = os.path.abspath("../../../") + "/resources/text_classification_multiple_label.manifest"
     test_single_default(path1)
     test_multi_default(path2)
     test_single_exactly_match_type(path1)
     test_multi_exactly_match_type(path2)
 
     test_single_default_usage(path1)
+    test_single_default_usage_inference(path1)
     test_multi_default_usage(path2)
+    test_multi_default_usage_inference(path2)
+    test_multi_exactly_match_type_error(path2)
+
 
     print("test local Success")
   else:
-    path1 = "s3://carbonsouth/manifest/classification-xy-V201902220937263726.manifest"
-    path2 = "S3://carbonsouth/manifest/classification-multi-xy-V201902220937263726.manifest"
+    path1 = "s3://carbonsouth/manifest/text_classification.manifest"
+    path2 = "S3://carbonsouth/manifest/text_classification_multiple_label.manifest"
 
     ak = argv[1]
     sk = argv[2]

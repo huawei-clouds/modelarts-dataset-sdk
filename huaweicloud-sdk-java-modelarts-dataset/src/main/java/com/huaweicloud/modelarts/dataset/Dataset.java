@@ -22,8 +22,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.huaweicloud.modelarts.dataset.FiledName.*;
-import static com.huaweicloud.modelarts.dataset.FiledName.ANNOTATIONS;
+import static com.huaweicloud.modelarts.dataset.FieldName.*;
+import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
 
 /**
  * Dataset class for manifest
@@ -84,7 +84,7 @@ public class Dataset {
    * @param key
    * @param value
    */
-  public void put(JSONObject jsonObject, String key, Object value) {
+  private void put(JSONObject jsonObject, String key, Object value) {
     if (null != value) {
       jsonObject.put(key, value);
     }
@@ -96,7 +96,7 @@ public class Dataset {
    * @param sample sample of manifest
    * @return sample json string
    */
-  public String toJSONString(Sample sample) {
+  private String toJSONString(Sample sample) {
     JSONObject jsonObject = new JSONObject(true);
     put(jsonObject, ID, sample.getId());
     put(jsonObject, SOURCE, sample.getSource());
@@ -115,20 +115,20 @@ public class Dataset {
    * @param annotations annotation list
    * @return json array of annotation list
    */
-  public JSONArray toJSONString(List<Annotation> annotations) {
+  private JSONArray toJSONString(List<Annotation> annotations) {
     JSONArray jsonArray = new JSONArray();
     for (int i = 0; i < annotations.size(); i++) {
       JSONObject jsonObject = new JSONObject(true);
       Annotation annotation = annotations.get(i);
-      put(jsonObject, FiledName.ANNOTATION_NAME, annotation.getName());
-      put(jsonObject, FiledName.ANNOTATION_LOC, annotation.getAnnotationLoc());
-      put(jsonObject, FiledName.ANNOTATION_TYPE, annotation.getType());
-      put(jsonObject, FiledName.ANNOTATION_CONFIDENCE, annotation.getConfidence());
-      put(jsonObject, FiledName.ANNOTATION_PROPERTY, annotation.getProperty());
-      put(jsonObject, FiledName.ANNOTATION_HARD, annotation.isHard());
-      put(jsonObject, FiledName.ANNOTATION_ANNOTATED_BY, annotation.getAnnotatedBy());
-      put(jsonObject, FiledName.ANNOTATION_CREATION_TIME, annotation.getCreationTime());
-      put(jsonObject, FiledName.ANNOTATION_FORMAT, annotation.getAnnotationFormat());
+      put(jsonObject, FieldName.ANNOTATION_NAME, annotation.getName());
+      put(jsonObject, FieldName.ANNOTATION_LOC, annotation.getAnnotationLoc());
+      put(jsonObject, FieldName.ANNOTATION_TYPE, annotation.getType());
+      put(jsonObject, FieldName.ANNOTATION_CONFIDENCE, annotation.getConfidence());
+      put(jsonObject, FieldName.ANNOTATION_PROPERTY, annotation.getProperty());
+      put(jsonObject, FieldName.ANNOTATION_HARD, annotation.isHard());
+      put(jsonObject, FieldName.ANNOTATION_ANNOTATED_BY, annotation.getAnnotatedBy());
+      put(jsonObject, FieldName.ANNOTATION_CREATION_TIME, annotation.getCreationTime());
+      put(jsonObject, FieldName.ANNOTATION_FORMAT, annotation.getAnnotationFormat());
       jsonArray.add(jsonObject);
     }
     return jsonArray;

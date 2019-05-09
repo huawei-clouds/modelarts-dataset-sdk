@@ -15,30 +15,29 @@
 import os
 import sys
 
-from modelarts.test import test_manifest_classification
+from modelarts import manifest, field_name
+from modelarts.field_name import prefix_text, text_entity, property_start_index, property_end_index, label_separator
 from modelarts.manifest import Annotation, Sample, DataSet
 
 
 def create_manifest():
   size = 0
   sample_list = []
-  for i in range(10):
+  for i in range(19):
     size = size + 1
-    source = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".jpg"
+    source = prefix_text + "raw data" + str(i)
     usage = "TRAIN"
-    inference_loc = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".txt"
-    id = "XGDVGS" + str(i)
     annotations_list = []
 
     for j in range(1):
-      annotation_type = "modelarts/image_classification"
+      annotation_type = "modelarts/" + text_entity
       if 0 == i % 2:
-        annotation_name = "Cat"
+        annotation_name = "name"
       else:
-        annotation_name = "Dog"
-      annotation_creation_time = "2019-02-20 08:23:06"
+        annotation_name = "location"
+      annotation_creation_time = "2019-04-28 08:23:06"
       annotation_format = "manifest"
-      annotation_property = {"color": "black"}
+      annotation_property = {property_start_index: 0, property_end_index: 5}
       annotation_confidence = 0.8
       annotated_by = "human"
       annotations_list.append(
@@ -47,28 +46,30 @@ def create_manifest():
                    creation_time=annotation_creation_time,
                    annotated_by=annotated_by, annotation_format=annotation_format, property=annotation_property))
     sample_list.append(
-      Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id))
-
-  for i in range(9):
-    id = "XGDVGS" + str(i)
-    size = size + 1
-    source = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".jpg"
-    usage = "TRAIN"
-    annotations_list = []
-    inference_loc = "s3://obs-ma/test/classification/datafiles/1_1550650984970_" + str(i) + ".txt"
-    sample_list.append(
-      Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id))
+      Sample(source=source, usage=usage, annotations=annotations_list))
   return DataSet(sample=sample_list, size=size)
 
 
 def main(argv):
-  path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726_3.manifest"
+  path = os.path.abspath('../../../') + "/resources/text_entity_write_1.manifest"
   dataset = create_manifest()
   if len(argv) < 2:
     dataset.save(path)
     para = []
     para.append(path)
-    test_manifest_classification.main(para)
+    sample_list, label_type = manifest.get_sample_list(path, text_entity)
+    assert (label_type == field_name.single_lable)
+    assert len(sample_list) == 19
+    for raw_data, label_list in sample_list:
+      assert "raw data" in str(raw_data)
+      for label in label_list:
+        label, start_index, end_index = str.split(label, label_separator)
+        if "name" == label or "location" == label:
+          assert start_index in "0"
+          assert 5 == int(end_index)
+        else:
+          assert False
+      assert len(label_list) == 1
   else:
     path2 = argv[1]
     ak = argv[2]

@@ -15,12 +15,12 @@
 import os
 import sys
 
-from modelarts.test import test_manifest_classification
+from modelarts.test import test_manifest_image_classification
 from modelarts.manifest import Annotation, Sample, DataSet
 
 
 def create_manifest():
-  size = 0;
+  size = 0
   sample_list = []
   for i in range(19):
     size = size + 1
@@ -54,16 +54,16 @@ def main(argv):
   path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726_2.manifest"
   dataset = create_manifest()
   if len(argv) < 2:
-    dataset.save(path, saveMode="a")
+    dataset.save(path)
     para = []
     para.append(path)
-    test_manifest_classification.main(para)
+    test_manifest_image_classification.main(para)
   else:
     path2 = argv[1]
     ak = argv[2]
     sk = argv[3]
     endpoint = argv[4]
-    dataset.save(path2, ak, sk, endpoint, saveMode="a")
+    dataset.save(path2, ak, sk, endpoint)
     para = []
     para.append(path2)
     para.append(path2)
@@ -71,7 +71,7 @@ def main(argv):
     para.append(sk)
     para.append(endpoint)
     para.append(endpoint)
-    test_manifest_classification.main(para)
+    test_manifest_image_classification.main(para)
 
 
 if __name__ == '__main__':
