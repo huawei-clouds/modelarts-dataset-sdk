@@ -16,8 +16,17 @@
 package com.huaweicloud.modelarts.dataset;
 
 import junit.framework.TestCase;
+import org.apache.carbondata.common.exceptions.sql.InvalidLoadOptionException;
+import org.apache.carbondata.core.metadata.datatype.DataTypes;
+import org.apache.carbondata.sdk.file.CarbonReader;
+import org.apache.carbondata.sdk.file.CarbonWriter;
+import org.apache.carbondata.sdk.file.Field;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +37,12 @@ import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_NAMES;
 import static com.huaweicloud.modelarts.dataset.FieldName.PARSE_PASCAL_VOC;
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
+import static org.apache.carbondata.core.util.path.CarbonTablePath.CARBON_DATA_EXT;
+import static org.apache.carbondata.sdk.file.utils.SDKUtil.listFiles;
 
 public class ManifestTest extends TestCase {
 
-  private String resourcePath = this.getClass().getResource("/").getPath() ;
+  private String resourcePath = this.getClass().getResource("/").getPath();
 
   public void testParseManifestImageClassificationSample() {
     String path = resourcePath + "/classification-xy-V201902220937263726.manifest";
@@ -710,6 +721,109 @@ public class ManifestTest extends TestCase {
     }
     validateAudioContentFilterWithFalseHard(dataset);
     System.out.println(this.getName() + " Success");
+  }
+
+
+  String imagePath = resourcePath + "./image/carbondatalogo.jpg";
+  String carbonPath = "./target/binary";
+  String manifestPath = "./target/binary" + System.currentTimeMillis() + ".manifest";
+
+  @BeforeClass
+  public void setUp() throws IOException, InvalidLoadOptionException {
+    int num = 3;
+    int rows = 10;
+    try {
+      FileUtils.deleteDirectory(new File(carbonPath));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    Field[] fields = new Field[5];
+    fields[0] = new Field("name", DataTypes.STRING);
+    fields[1] = new Field("age", DataTypes.INT);
+    fields[2] = new Field("image1", DataTypes.BINARY);
+    fields[3] = new Field("image2", DataTypes.BINARY);
+    fields[4] = new Field("image3", DataTypes.BINARY);
+
+    byte[] originBinary = null;
+
+    // read and write image data
+    for (int j = 0; j < num; j++) {
+      CarbonWriter writer = CarbonWriter
+          .builder()
+          .outputPath(carbonPath)
+          .withCsvInput(new org.apache.carbondata.sdk.file.Schema(fields))
+          .writtenBy("SDKS3Example")
+          .withPageSizeInMb(1)
+          .build();
+
+      for (int i = 0; i < rows; i++) {
+        // read image and encode to Hex
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(imagePath));
+        originBinary = new byte[bis.available()];
+        while ((bis.read(originBinary)) != -1) {
+        }
+        // write data
+        writer.write(new Object[]{"robot" + (i % 10), i, originBinary, originBinary, originBinary});
+        bis.close();
+      }
+      writer.close();
+    }
+  }
+
+  @Test
+  public void testWriteWithByteArrayDataType() throws IOException, InterruptedException {
+
+    CarbonReader reader = CarbonReader
+        .builder(carbonPath, "_temp")
+        .build();
+
+    System.out.println("\nData:");
+    int i = 0;
+    while (i < 3 && reader.hasNext()) {
+      Object[] row = (Object[]) reader.readNextRow();
+
+      byte[] outputBinary = (byte[]) row[1];
+      byte[] outputBinary2 = (byte[]) row[2];
+      byte[] outputBinary3 = (byte[]) row[3];
+      System.out.println(row[0] + " " + row[1] + " image1 size:" + outputBinary.length
+          + " image2 size:" + outputBinary2.length + " image3 size:" + outputBinary3.length);
+
+      for (int k = 0; k < 3; k++) {
+
+        byte[] originBinaryTemp = (byte[]) row[1 + k];
+        // validate output binary data and origin binary data
+        assert (originBinaryTemp.length == outputBinary.length);
+        for (int j = 0; j < originBinaryTemp.length; j++) {
+          assert (originBinaryTemp[j] == outputBinary[j]);
+        }
+
+        // save image, user can compare the save image and original image
+        String destString = "./target/binary/image" + k + "_" + i + ".jpg";
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(destString));
+        bos.write(originBinaryTemp);
+        bos.close();
+      }
+      i++;
+    }
+    System.out.println("\nFinished");
+    reader.close();
+  }
+
+  @Test
+  public void testWriteManifestForCarbon() throws Exception {
+    ArrayList carbonList = listFiles(carbonPath, CARBON_DATA_EXT);
+    Dataset dataset = new Dataset();
+    for (int i = 0; i < carbonList.size(); i++) {
+      List<Schema> schema = new ArrayList<Schema>();
+      schema.add(new Schema("name", "string"));
+      schema.add(new Schema("age", "int"));
+      schema.add(new Schema("image1", DataTypes.BINARY.toString()));
+      schema.add(new Schema("image2", DataTypes.BINARY.toString()));
+      schema.add(new Schema("image3", DataTypes.BINARY.toString()));
+      Sample sample = new Sample(carbonList.get(i).toString(), "carbon", "TRAIN", schema);
+      dataset.addSample(sample);
+      dataset.save(manifestPath);
+    }
   }
 
 }

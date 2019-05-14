@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.huaweicloud.modelarts.dataset.FieldName.*;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
@@ -100,7 +101,23 @@ public class Dataset {
     JSONObject jsonObject = new JSONObject(true);
     put(jsonObject, ID, sample.getId());
     put(jsonObject, SOURCE, sample.getSource());
+    put(jsonObject, SOURCE_TYPE, sample.getSourceType());
     put(jsonObject, USAGE, sample.getUsage());
+    List<Schema> schema = sample.getSchema();
+    Map property = sample.getProperty();
+    if (null != schema) {
+      if (null == property) {
+        property = new JSONObject();
+      }
+      JSONObject jsonObject1 = new JSONObject(true);
+      for (int i = 0; i < schema.size(); i++) {
+        jsonObject1.put(schema.get(i).getName(), schema.get(i).getType());
+      }
+      property.put(SCHEMA, jsonObject1);
+    }
+
+    put(jsonObject, SOURCE_PROPERTY, property);
+
     put(jsonObject, INFERENCE_LOC, sample.getInferenceLoc());
 
     if (null != sample.getAnnotations()) {

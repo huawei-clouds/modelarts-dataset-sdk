@@ -63,7 +63,7 @@ def main(argv):
       assert len(label_list) == 1
     print("Local")
   else:
-    path1 = "s3://carbonsouth/manifest/audio_content_write_1.manifest"
+    path1 = "s3a://carbonsouth/manifest/audio_content_write_1.manifest"
     ak = argv[1]
     sk = argv[2]
     endpoint = argv[3]

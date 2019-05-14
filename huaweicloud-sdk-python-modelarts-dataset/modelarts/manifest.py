@@ -20,6 +20,7 @@ from modelarts.field_name import prefix_text, label_separator, property_start_in
   property_content, sound_classification, audio_classification
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
+from obs import ObsClient
 
 
 def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_key=None,
@@ -122,7 +123,75 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
   return data_list, label_type
 
 
-def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=None, ssl_verify=False, max_retry_count=3,
+def getSources(manifest_path, source_type, obs_client=None):
+  sources = []
+  data_set = parse_manifest(manifest_path, obs_client=obs_client)
+  sample_list = data_set.get_sample_list()
+  for sample in sample_list:
+    if source_type == sample.get_source_type():
+      sources.append(sample.get_source())
+  return sources
+
+
+def __getDataSet(lines):
+  sample_list = []
+  size = 0
+  for line in lines:
+    if line != '':
+      size = size + 1
+      text = json.loads(line)
+      source = text.get(field_name.source)
+      assert source is not None
+      usage = text.get(field_name.usage)
+      source_type = text.get(field_name.source_type)
+      source_property = text.get(field_name.source_property)
+      id = text.get(field_name.id)
+      annotations = text.get(field_name.annotation)
+      inference_loc = text.get(field_name.inference_loc) or text.get(field_name.inference_loc2)
+      annotations_list = []
+      if annotations is not None:
+        for annotation in annotations:
+          annotation_type = annotation.get(field_name.annotation_type)
+          annotation_name = annotation.get(field_name.annotation_name)
+          annotation_loc = annotation.get(field_name.annotation_loc) or annotation.get(field_name.annotation_loc2)
+          annotation_creation_time = annotation.get(field_name.annotation_creation_time) or annotation.get(
+            field_name.annotation_creation_time2)
+          annotation_property = annotation.get(field_name.annotation_property)
+          annotation_format = annotation.get(field_name.annotation_format) or annotation.get(
+            field_name.annotation_format2)
+          annotation_confidence = annotation.get(field_name.annotation_confidence)
+          annotated_by = annotation.get(field_name.annotation_annotated_by) or annotation.get(
+            field_name.annotation_annotated_by2)
+          annotations_list.append(
+            Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
+                       property=annotation_property,
+                       confidence=annotation_confidence,
+                       creation_time=annotation_creation_time,
+                       annotated_by=annotated_by, annotation_format=annotation_format))
+      sample_list.append(
+        Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id,
+               source_type=source_type, source_property=source_property))
+  return DataSet(sample=sample_list, size=size)
+
+
+def parse_manifest(manifest_path, obs_client):
+  local = __is_local(manifest_path)
+
+  if local:
+    with open(manifest_path) as f_obj:
+      lines = f_obj.readlines()
+      return __getDataSet(lines)
+  else:
+    if obs_client is None:
+      raise ValueError("Please input obs_client.")
+
+    data = __read(manifest_path, obs_client)
+    result = __getDataSet(data.decode().split("\n"))
+    return result
+
+
+def parse_manifest(manifest_path, obs_client=None, access_key=None, secret_key=None, end_point=None, ssl_verify=False,
+                   max_retry_count=3,
                    timeout=60):
   """
   user give the path of manifest file, it will return the dataset,
@@ -137,44 +206,6 @@ def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=No
   :param timeout: timeout [10,60], default is 60
   :return: data set of manifest
   """
-
-  def __getDataSet(lines):
-    sample_list = []
-    size = 0
-    for line in lines:
-      if line != '':
-        size = size + 1
-        text = json.loads(line)
-        source = text.get(field_name.source)
-        assert source is not None
-        usage = text.get(field_name.usage)
-        id = text.get(field_name.id)
-        annotations = text.get(field_name.annotation)
-        inference_loc = text.get(field_name.inference_loc) or text.get(field_name.inference_loc2)
-        annotations_list = []
-        if annotations is not None:
-          for annotation in annotations:
-            annotation_type = annotation.get(field_name.annotation_type)
-            annotation_name = annotation.get(field_name.annotation_name)
-            annotation_loc = annotation.get(field_name.annotation_loc) or annotation.get(field_name.annotation_loc2)
-            annotation_creation_time = annotation.get(field_name.annotation_creation_time) or annotation.get(
-              field_name.annotation_creation_time2)
-            annotation_property = annotation.get(field_name.annotation_property)
-            annotation_format = annotation.get(field_name.annotation_format) or annotation.get(
-              field_name.annotation_format2)
-            annotation_confidence = annotation.get(field_name.annotation_confidence)
-            annotated_by = annotation.get(field_name.annotation_annotated_by) or annotation.get(
-              field_name.annotation_annotated_by2)
-            annotations_list.append(
-              Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
-                         property=annotation_property,
-                         confidence=annotation_confidence,
-                         creation_time=annotation_creation_time,
-                         annotated_by=annotated_by, annotation_format=annotation_format))
-        sample_list.append(
-          Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id))
-    return DataSet(sample=sample_list, size=size)
-
   local = __is_local(manifest_path)
 
   if local:
@@ -182,10 +213,21 @@ def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=No
       lines = f_obj.readlines()
       return __getDataSet(lines)
   else:
-    if access_key is None or secret_key is None or end_point is None:
-      raise ValueError("Please input ak, sk and endpoint")
-    data = __read(manifest_path, access_key=access_key, secret_key=secret_key, end_point=end_point,
-                  ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
+    if (access_key is None or secret_key is None or end_point is None) and obs_client is None:
+      raise ValueError("Please input ak, sk and endpoint or obs_client")
+    if obs_client is not None:
+      obs_client=obs_client
+    else:
+      obs_client = ObsClient(
+        access_key_id=access_key,
+        secret_access_key=secret_key,
+        server=end_point,
+        long_conn_mode=True,
+        ssl_verify=ssl_verify,
+        max_retry_count=max_retry_count,
+        timeout=timeout
+      )
+    data = __read(manifest_path, obs_client)
     result = __getDataSet(data.decode().split("\n"))
     return result
 
@@ -317,8 +359,11 @@ class DataSet(object):
 
 
 class Sample(object):
-  def __init__(self, source, annotations=None, usage=None, inference_loc=None, id=None):
+  def __init__(self, source, annotations=None, usage=None, inference_loc=None, id=None, source_type=None,
+               source_property=None):
     self._source = source
+    self._source_type = source_type
+    self._source_property = source_property
     self._usage = usage
     self._annotation = annotations
     self._inference_loc = inference_loc
@@ -330,6 +375,13 @@ class Sample(object):
     Mandatory field
     """
     return self._source
+
+  def get_source_type(self):
+    """
+    :return "source_type" attribute
+    Optional field
+    """
+    return self._source_type
 
   def get_id(self):
     """

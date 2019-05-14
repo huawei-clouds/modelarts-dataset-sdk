@@ -29,6 +29,8 @@ annotation_annotated_by = "annotated-by"
 annotation_annotated_by2 = "annotated_by"
 
 source = "source"
+source_type = "source-type"
+source_property = "property"
 size = "size"
 usage = "usage"
 id = "id"
@@ -51,6 +53,10 @@ s3 = "s3:"
 prefix_s3 = "s3://"
 prefix_s3_upper = "S3://"
 
+s3a = "s3a:"
+prefix_s3a = "s3a://"
+prefix_s3a_upper = "S3a://"
+
 separator = "/"
 newline_character = "\n"
 
@@ -66,3 +72,5 @@ property_start_index = "@modelarts:start_index"
 property_end_index = "@modelarts:end_index"
 
 property_content = "@modelarts:content"
+
+CARBON = "carbon"

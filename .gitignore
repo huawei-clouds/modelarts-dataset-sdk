@@ -8,3 +8,6 @@ huaweicloud-sdk-python-modelarts-dataset/modelarts/__pycache__/
 huaweicloud-sdk-python-modelarts-dataset/modelarts/test/__pycache__
 huaweicloud-sdk-java-modelarts-dataset/huaweicloud-sdk-java-modelarts-dataset.iml
 huaweicloud-sdk-modelarts-dataset.iml
+huaweicloud-sdk-python-modelarts-dataset/build/
+huaweicloud-sdk-python-modelarts-dataset/dist/
+huaweicloud-sdk-python-modelarts-dataset/huaweicloud_sdk_python_modelarts_dataset.egg-info/

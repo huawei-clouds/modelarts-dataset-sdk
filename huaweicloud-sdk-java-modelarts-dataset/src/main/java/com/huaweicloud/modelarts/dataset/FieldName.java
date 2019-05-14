@@ -20,10 +20,13 @@ package com.huaweicloud.modelarts.dataset;
  */
 public class FieldName {
   public static String SOURCE = "source";
+  public static String SOURCE_TYPE = "source-type";
   public static String USAGE = "usage";
   public static String INFERENCE_LOC = "inference-loc";
   public static String INFERENCE_LOC2 = "inference_loc";
   public static String ID = "id";
+  public static String SOURCE_PROPERTY = "property";
+  public static String SCHEMA = "schema";
   public static String ANNOTATIONS = "annotation";
   public static String NAME = "name";
 
