@@ -15,7 +15,10 @@
 
 package com.huaweicloud.modelarts.dataset;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * sample of manifest
@@ -26,6 +29,12 @@ public class Sample {
    * Mandatory field
    */
   private String source;
+
+  /**
+   * source type of raw data
+   * Optional field
+   */
+  private String sourceType;
 
   /**
    * usage of this sample, like "TRAIN", "EVAL", "TEST", "inference"
@@ -44,6 +53,14 @@ public class Sample {
    * Optional field
    */
   private List<Annotation> annotations;
+
+  /**
+   * Source property, like the schema of data
+   * Optional field
+   */
+  private Map<String, Object> property;
+
+  private List<Schema> schema;
 
   /**
    * sample id
@@ -66,6 +83,13 @@ public class Sample {
     this.id = id;
   }
 
+  public Sample(String source, String sourceType, String usage, List<Schema> schema) {
+    this.source = source;
+    this.sourceType = sourceType;
+    this.usage = usage;
+    this.schema = schema;
+  }
+
   public String getSource() {
     return source;
   }
@@ -74,8 +98,32 @@ public class Sample {
     this.source = source;
   }
 
+  public String getSourceType() {
+    return sourceType;
+  }
+
+  public void setSourceType(String sourceType) {
+    this.sourceType = sourceType;
+  }
+
   public String getUsage() {
     return usage;
+  }
+
+  public Map<String, Object> getProperty() {
+    return property;
+  }
+
+  public void setProperty(JSONObject property) {
+    this.property = property;
+  }
+
+  public List<Schema> getSchema() {
+    return schema;
+  }
+
+  public void setSchema(List<Schema> schema) {
+    this.schema = schema;
   }
 
   public void setUsage(String usage) {

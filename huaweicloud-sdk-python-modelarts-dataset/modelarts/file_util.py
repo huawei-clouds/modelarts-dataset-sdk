@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from modelarts.field_name import prefix_s3, prefix_s3_upper, s3, separator, newline_character
+from modelarts.field_name import prefix_s3, s3, separator, newline_character, s3a, prefix_s3a
 from obs import *
 
 
@@ -36,14 +36,19 @@ def __parser_path(path):
   :param path: the file path
   :return: bucket_name and file_name
   """
-  base_url = str(path)[len(prefix_s3):] or str(path)[len(prefix_s3_upper):]
+  if str(path).startswith(s3):
+    base_url = str(path)[len(prefix_s3):]
+  elif str(path).startswith(s3a):
+    base_url = str(path)[len(prefix_s3a):]
+  else:
+    raise Exception("Only support s3 and s3a! Don't support " + path)
   split_array = base_url.split(separator)
   bucket_name = split_array[0]
   file_name = separator.join(split_array[1:])
   return bucket_name, file_name
 
 
-def __read(path, access_key, secret_key, end_point, ssl_verify=False, max_retry_count=3, timeout=60):
+def __read(path, obs_client):
   """
   read data from OBS and return the binary of file
   :param path: the file path
@@ -55,16 +60,7 @@ def __read(path, access_key, secret_key, end_point, ssl_verify=False, max_retry_
   :param timeout: timeout [10,60], default is 60
   :return: result buffer
   """
-  if str(path).lower().startswith(s3):
-    obs_client = ObsClient(
-      access_key_id=access_key,
-      secret_access_key=secret_key,
-      server=end_point,
-      long_conn_mode=True,
-      ssl_verify=ssl_verify,
-      max_retry_count=max_retry_count,
-      timeout=timeout
-    )
+  if str(path).lower().startswith(s3) or str(path).lower().startswith(s3a):
     bucket_name, file = __parser_path(path)
 
     resp = obs_client.getObject(bucket_name, file, loadStreamInMemory=True)
@@ -93,7 +89,7 @@ def save(manifest_json, path, access_key, secret_key, end_point, saveMode="w", s
   :param timeout: timeout [10,60], default is 60
   :return:
   """
-  if str(path).lower().startswith(s3):
+  if str(path).lower().startswith(s3) or str(path).lower().startswith(s3a):
     obs_client = ObsClient(
       access_key_id=access_key,
       secret_access_key=secret_key,
