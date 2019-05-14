@@ -26,7 +26,6 @@ public class FieldName {
   public static String INFERENCE_LOC2 = "inference_loc";
   public static String ID = "id";
   public static String SOURCE_PROPERTY = "property";
-  public static String SCHEMA = "schema";
   public static String ANNOTATIONS = "annotation";
   public static String NAME = "name";
 
@@ -88,6 +87,8 @@ public class FieldName {
   public static String PROPERTY_END_INDEX = "@modelarts:end_index";
 
   public static String PROPERTY_CONTENT = "@modelarts:content";
+
+  public static String PROPERTY_SCHEMA = "@modelarts:schema";
 
   public static String PARSE_PASCAL_VOC = "parsePascalVOC";
 

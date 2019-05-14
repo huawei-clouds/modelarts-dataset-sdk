@@ -113,7 +113,7 @@ public class Dataset {
       for (int i = 0; i < schema.size(); i++) {
         jsonObject1.put(schema.get(i).getName(), schema.get(i).getType());
       }
-      property.put(SCHEMA, jsonObject1);
+      property.put(PROPERTY_SCHEMA, jsonObject1);
     }
 
     put(jsonObject, SOURCE_PROPERTY, property);
