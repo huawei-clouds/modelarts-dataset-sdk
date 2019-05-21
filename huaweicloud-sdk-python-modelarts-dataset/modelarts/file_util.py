@@ -36,9 +36,9 @@ def __parser_path(path):
   :param path: the file path
   :return: bucket_name and file_name
   """
-  if str(path).startswith(s3):
+  if str(path).lower().startswith(s3):
     base_url = str(path)[len(prefix_s3):]
-  elif str(path).startswith(s3a):
+  elif str(path).lower().startswith(s3a):
     base_url = str(path)[len(prefix_s3a):]
   else:
     raise Exception("Only support s3 and s3a! Don't support " + path)
