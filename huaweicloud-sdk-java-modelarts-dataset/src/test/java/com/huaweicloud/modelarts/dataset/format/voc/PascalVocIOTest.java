@@ -88,6 +88,128 @@ public class PascalVocIOTest extends TestCase {
     validateVOC(pascalVocIO);
   }
 
+  @Test
+  public void testReadVocXMLFromVOCUK_WithoutFolder() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_folder_error.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("folder can't be empty in VOC file!; The file is"));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_WithoutFileName() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_filename_error.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("filename can't be empty in VOC file!; The file is"));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_emptyAnnotation() {
+    String path = resourcePath + "/VOC/errorFiles/emptyAnnotation.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.assertTrue(true);
+    } catch (Exception e) {
+      Assert.fail();
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_empty() {
+    String path = resourcePath + "/VOC/errorFiles/empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, org.xml.sax.SAXParseException; Premature end of file.; The file "));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_emptySource() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_source_database_empty.xml";
+    try {
+      PascalVocIO pascalVocIO = new PascalVocIO(path);
+      Assert.assertTrue(null == pascalVocIO.getSource().getDatabase());
+    } catch (Exception e) {
+      Assert.fail();
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_width_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_width_empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: width can't be empty in VOC file!; The file is "));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_segmented_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_segmented_empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: segmented can't be empty in VOC file!; The file is "));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_object_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_object_empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: object can't be empty in VOC file!; The file is "));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_object_name_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_object_name_empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: object name can't be empty in VOC file!; The file is "));
+    }
+  }
+
+
+  @Test
+  public void testReadVocXMLFromVOCUK_object_bndbox_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_bndbox_error.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: object bndbox can't be empty in VOC file!; The file is "));
+    }
+  }
+
+  @Test
+  public void testReadVocXMLFromVOCUK_object_different_empty() {
+    String path = resourcePath + "/VOC/errorFiles/2007_000027_difficult_empty.xml";
+    try {
+      new PascalVocIO(path);
+      Assert.fail();
+    } catch (Exception e) {
+      Assert.assertTrue(e.getMessage().contains("Can't parse the XML file, java.lang.IllegalArgumentException: object difficult can't be empty in VOC file!; The file is "));
+    }
+  }
+
   public static void validateVOC(PascalVocIO pascalVocIO) {
     Assert.assertTrue("VOC2012".equals(pascalVocIO.getFolder()));
     Assert.assertTrue("2007_000027.jpg".equals(pascalVocIO.getFileName()));

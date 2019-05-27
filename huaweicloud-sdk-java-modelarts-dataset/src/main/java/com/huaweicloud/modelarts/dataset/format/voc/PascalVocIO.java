@@ -66,6 +66,9 @@ public class PascalVocIO {
    * @return VOCObject
    */
   public VOCObject getVOCObject(NodeList objectNodeList) {
+    if (null == objectNodeList || 1 == objectNodeList.getLength()) {
+      throw new IllegalArgumentException(FieldName.OBJECT + " can't be empty in VOC file!");
+    }
     String name = null;
     String pose = null;
     String truncated = null;
@@ -81,19 +84,22 @@ public class PascalVocIO {
     for (int j = 0; j < objectNodeList.getLength(); j++) {
       String objectNodeName = objectNodeList.item(j).getNodeName();
       if (FieldName.NAME.equalsIgnoreCase(objectNodeName)) {
-        name = objectNodeList.item(j).getFirstChild().getNodeValue();
+        name = getMandatoryNodeValue(objectNodeList, j, FieldName.OBJECT + " " + FieldName.NAME + " can't be empty in VOC file!");
       } else if (FieldName.POSE.equalsIgnoreCase(objectNodeName)) {
-        pose = objectNodeList.item(j).getFirstChild().getNodeValue();
+        pose = getMandatoryNodeValue(objectNodeList, j, FieldName.OBJECT + " " + FieldName.POSE + " can't be empty in VOC file!");
       } else if (FieldName.TRUNCATED.equalsIgnoreCase(objectNodeName)) {
-        truncated = objectNodeList.item(j).getFirstChild().getNodeValue();
+        truncated = getMandatoryNodeValue(objectNodeList, j, FieldName.OBJECT + " " + FieldName.TRUNCATED + " can't be empty in VOC file!");
       } else if (FieldName.OCCLUDED.equalsIgnoreCase(objectNodeName)) {
-        occluded = objectNodeList.item(j).getFirstChild().getNodeValue();
+        occluded = getMandatoryNodeValue(objectNodeList, j, FieldName.OBJECT + " " + FieldName.OCCLUDED + " can't be empty in VOC file!");
       } else if (FieldName.DIFFICULT.equalsIgnoreCase(objectNodeName)) {
-        difficult = objectNodeList.item(j).getFirstChild().getNodeValue();
+        difficult = getMandatoryNodeValue(objectNodeList, j, FieldName.OBJECT + " " + FieldName.DIFFICULT + " can't be empty in VOC file!");
       } else if (FieldName.CONFIDENCE.equalsIgnoreCase(objectNodeName)) {
         confidence = objectNodeList.item(j).getFirstChild().getNodeValue();
       } else if (PositionType.BNDBOX.name().equalsIgnoreCase(objectNodeName)) {
         NodeList bndBoxNodeList = objectNodeList.item(j).getChildNodes();
+        if (null == bndBoxNodeList || 1 == bndBoxNodeList.getLength()) {
+          throw new IllegalArgumentException(FieldName.OBJECT + " " + PositionType.BNDBOX.name().toLowerCase() + " can't be empty in VOC file!");
+        }
         for (int k = 0; k < bndBoxNodeList.getLength(); k++) {
           String bndBoxNodeName = bndBoxNodeList.item(k).getNodeName();
           if (FieldName.XMAX.equalsIgnoreCase(bndBoxNodeName)) {
@@ -224,6 +230,23 @@ public class PascalVocIO {
     return new VOCObject(name, pose, truncated, occluded, difficult, confidence, position, parts);
   }
 
+  private String getMandatoryNodeValue(NodeList nodeList, int i, String errorMsg) {
+    if (null == nodeList.item(i).getFirstChild()) {
+      throw new IllegalArgumentException(errorMsg);
+    } else {
+      return nodeList.item(i).getFirstChild().getNodeValue();
+    }
+  }
+
+  private String getOptionalNodeValue(NodeList nodeList, int i, String msg) {
+    if (null == nodeList.item(i).getFirstChild()) {
+      LOGGER.info(msg);
+      return null;
+    } else {
+      return nodeList.item(i).getFirstChild().getNodeValue();
+    }
+  }
+
   /**
    * parseXML Document to  PascalVocIO object
    *
@@ -235,9 +258,9 @@ public class PascalVocIO {
     for (int i = 0; i < nodeList.getLength(); i++) {
       String nodeName = nodeList.item(i).getNodeName();
       if (FieldName.FOLDER_NAME.equalsIgnoreCase(nodeName)) {
-        this.folder = nodeList.item(i).getFirstChild().getNodeValue();
+        this.folder = getMandatoryNodeValue(nodeList, i, FieldName.FOLDER_NAME + " can't be empty in VOC file!");
       } else if (FieldName.FILE_NAME.equalsIgnoreCase(nodeName)) {
-        this.fileName = nodeList.item(i).getFirstChild().getNodeValue();
+        this.fileName = getMandatoryNodeValue(nodeList, i, FieldName.FILE_NAME + " can't be empty in VOC file!");
       } else if (FieldName.SOURCE.equalsIgnoreCase(nodeName)) {
         NodeList sourceNodeList = nodeList.item(i).getChildNodes();
         String database = null;
@@ -246,11 +269,11 @@ public class PascalVocIO {
         for (int j = 0; j < sourceNodeList.getLength(); j++) {
           String sourceNodeName = sourceNodeList.item(j).getNodeName();
           if (FieldName.DATABASE.equalsIgnoreCase(sourceNodeName)) {
-            database = sourceNodeList.item(j).getFirstChild().getNodeValue();
+            database = getOptionalNodeValue(sourceNodeList, j, FieldName.DATABASE + " is empty in VOC file!");
           } else if (FieldName.ANNOTATIONS.equalsIgnoreCase(sourceNodeName)) {
-            annotation = sourceNodeList.item(j).getFirstChild().getNodeValue();
+            annotation = getOptionalNodeValue(sourceNodeList, j, FieldName.ANNOTATIONS + " is empty in VOC file!");
           } else if (FieldName.IMAGE.equalsIgnoreCase(sourceNodeName)) {
-            image = sourceNodeList.item(j).getFirstChild().getNodeValue();
+            image = getOptionalNodeValue(sourceNodeList, j, FieldName.IMAGE + " is empty in VOC file!");
           }
         }
         source = new Source(database, annotation, image);
@@ -259,15 +282,15 @@ public class PascalVocIO {
         for (int j = 0; j < sizeNodeList.getLength(); j++) {
           String sourceNodeName = sizeNodeList.item(j).getNodeName();
           if (FieldName.WIDTH.equalsIgnoreCase(sourceNodeName)) {
-            this.width = sizeNodeList.item(j).getFirstChild().getNodeValue();
+            this.width = getMandatoryNodeValue(sizeNodeList, j, FieldName.WIDTH + " can't be empty in VOC file!");
           } else if (FieldName.HEIGHT.equalsIgnoreCase(sourceNodeName)) {
-            this.height = sizeNodeList.item(j).getFirstChild().getNodeValue();
+            this.height = getMandatoryNodeValue(sizeNodeList, j, FieldName.HEIGHT + " can't be empty in VOC file!");
           } else if (FieldName.DEPTH.equalsIgnoreCase(sourceNodeName)) {
-            this.depth = sizeNodeList.item(j).getFirstChild().getNodeValue();
+            this.depth = getMandatoryNodeValue(sizeNodeList, j, FieldName.DEPTH + " can't be empty in VOC file!");
           }
         }
       } else if (FieldName.SEGMENTED.equalsIgnoreCase(nodeName)) {
-        this.segmented = nodeList.item(i).getFirstChild().getNodeValue();
+        this.segmented = getMandatoryNodeValue(nodeList, i, FieldName.SEGMENTED + " can't be empty in VOC file!");
       } else if (FieldName.OBJECT.equalsIgnoreCase(nodeName)) {
         vocObjects.add(getVOCObject(nodeList.item(i).getChildNodes()));
       } else {
@@ -293,7 +316,9 @@ public class PascalVocIO {
       return parseXML(document);
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException("Can't parse the XML file,", e);
+      String msg = String.format("Can't parse the XML file, %s; The file is %s", e, filePath);
+      LOGGER.error(msg);
+      throw new RuntimeException(msg);
     }
   }
 
