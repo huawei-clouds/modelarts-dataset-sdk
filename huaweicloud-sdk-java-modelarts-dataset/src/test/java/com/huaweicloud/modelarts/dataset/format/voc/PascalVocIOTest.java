@@ -15,21 +15,21 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromCloud() {
-    String path = resourcePath + "/VOC/000000089955_1556180702627.xml";
+    String path = resourcePath + "/voc/000000089955_1556180702627.xml";
     PascalVocIO pascalVocIO = new PascalVocIO(path);
     validate(pascalVocIO);
   }
 
   @Test
   public void testReadVocXMLFromCloudWithParse() {
-    String path = resourcePath + "/VOC/000000089955_1556180702627.xml";
+    String path = resourcePath + "/voc/000000089955_1556180702627.xml";
     PascalVocIO pascalVocIO = new PascalVocIO();
     validate(pascalVocIO.parseXML(path));
   }
 
   @Test
   public void testReadVocXMLFromPython() {
-    String path = resourcePath + "/VOC/test.xml";
+    String path = resourcePath + "/voc/test.xml";
 
     PascalVocIO pascalVocIO = new PascalVocIO(path);
     Assert.assertTrue("tests".equals(pascalVocIO.getFolder()));
@@ -73,7 +73,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLForAllType() {
-    String path = resourcePath + "/VOC/000000115967_1556247179208.xml";
+    String path = resourcePath + "/voc/000000115967_1556247179208.xml";
 
     PascalVocIO pascalVocIO = new PascalVocIO(path);
 
@@ -82,7 +82,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK() {
-    String path = resourcePath + "/VOC/2007_000027.xml";
+    String path = resourcePath + "/voc/2007_000027.xml";
 
     PascalVocIO pascalVocIO = new PascalVocIO(path);
     validateVOC(pascalVocIO);
@@ -90,7 +90,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_WithoutFolder() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_folder_error.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_folder_error.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -101,7 +101,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_WithoutFileName() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_filename_error.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_filename_error.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -112,7 +112,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_emptyAnnotation() {
-    String path = resourcePath + "/VOC/errorFiles/emptyAnnotation.xml";
+    String path = resourcePath + "/voc/errorFiles/emptyAnnotation.xml";
     try {
       new PascalVocIO(path);
       Assert.assertTrue(true);
@@ -123,7 +123,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_empty() {
-    String path = resourcePath + "/VOC/errorFiles/empty.xml";
+    String path = resourcePath + "/voc/errorFiles/empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -134,7 +134,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_emptySource() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_source_database_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_source_database_empty.xml";
     try {
       PascalVocIO pascalVocIO = new PascalVocIO(path);
       Assert.assertTrue(null == pascalVocIO.getSource().getDatabase());
@@ -145,7 +145,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_width_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_width_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_width_empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -156,7 +156,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_segmented_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_segmented_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_segmented_empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -167,7 +167,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_object_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_object_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_object_empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -178,7 +178,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_object_name_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_object_name_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_object_name_empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -190,7 +190,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_object_bndbox_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_bndbox_error.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_bndbox_error.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
@@ -201,7 +201,7 @@ public class PascalVocIOTest extends TestCase {
 
   @Test
   public void testReadVocXMLFromVOCUK_object_different_empty() {
-    String path = resourcePath + "/VOC/errorFiles/2007_000027_difficult_empty.xml";
+    String path = resourcePath + "/voc/errorFiles/2007_000027_difficult_empty.xml";
     try {
       new PascalVocIO(path);
       Assert.fail();
