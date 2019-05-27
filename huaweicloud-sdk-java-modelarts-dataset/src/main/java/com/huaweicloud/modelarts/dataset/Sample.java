@@ -23,145 +23,167 @@ import java.util.Map;
 /**
  * sample of manifest
  */
-public class Sample {
-  /**
-   * source path of raw data
-   * Mandatory field
-   */
-  private String source;
-
-  /**
-   * source type of raw data
-   * Optional field
-   */
-  private String sourceType;
-
-  /**
-   * usage of this sample, like "TRAIN", "EVAL", "TEST", "inference"
-   * Optional field
-   */
-  private String usage;
-
-  /**
-   * inference location
-   * Optional field
-   */
-  private String inferenceLoc;
-
-  /**
-   * annotation list
-   * Optional field
-   */
-  private List<Annotation> annotations;
-
-  /**
-   * Source property, like the schema of data
-   * Optional field
-   */
-  private Map<String, Object> property;
-
-  private List<Schema> schema;
-
-  /**
-   * sample id
-   * Optional field
-   */
-  private String id;
-
-  public Sample() {
-  }
-
-  public Sample(String source) {
-    this.source = source;
-  }
-
-  public Sample(String source, String usage, String inferenceLoc, List<Annotation> annotations, String id) {
-    this.source = source;
-    this.usage = usage;
-    this.inferenceLoc = inferenceLoc;
-    this.annotations = annotations;
-    this.id = id;
-  }
-
-  public Sample(String source, String sourceType, String usage, List<Schema> schema) {
-    this.source = source;
-    this.sourceType = sourceType;
-    this.usage = usage;
-    this.schema = schema;
-  }
-
-  public String getSource() {
-    return source;
-  }
-
-  public void setSource(String source) {
-    this.source = source;
-  }
-
-  public String getSourceType() {
-    return sourceType;
-  }
-
-  public void setSourceType(String sourceType) {
-    this.sourceType = sourceType;
-  }
-
-  public String getUsage() {
-    return usage;
-  }
-
-  public Map<String, Object> getProperty() {
-    return property;
-  }
-
-  public void setProperty(JSONObject property) {
-    this.property = property;
-  }
-
-  public List<Schema> getSchema() {
-    return schema;
-  }
-
-  public void setSchema(List<Schema> schema) {
-    this.schema = schema;
-  }
-
-  public void setUsage(String usage) {
-    this.usage = usage;
-  }
-
-  public String getInferenceLoc() {
-    return inferenceLoc;
-  }
-
-  public void setInferenceLoc(String inferenceLoc) {
-    this.inferenceLoc = inferenceLoc;
-  }
-
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-
-  public void setAnnotations(List<Annotation> annotations) {
-    this.annotations = annotations;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public String toString() {
-    return "Sample{" +
-        "source='" + source + '\'' +
-        ", usage='" + usage + '\'' +
-        ", inferenceLoc='" + inferenceLoc + '\'' +
-        ", annotations=" + annotations +
-        ", id='" + id + '\'' +
-        '}';
-  }
+public class Sample
+{
+    /**
+     * source path of raw data
+     * Mandatory field
+     */
+    private String source;
+    
+    /**
+     * source type of raw data
+     * Optional field
+     */
+    private String sourceType;
+    
+    /**
+     * usage of this sample, like "TRAIN", "EVAL", "TEST", "inference"
+     * Optional field
+     */
+    private String usage;
+    
+    /**
+     * inference location
+     * Optional field
+     */
+    private String inferenceLoc;
+    
+    /**
+     * annotation list
+     * Optional field
+     */
+    private List<Annotation> annotations;
+    
+    /**
+     * Source property, like the schema of data
+     * Optional field
+     */
+    private Map<String, Object> property;
+    
+    private List<Schema> schema;
+    
+    /**
+     * sample id
+     * Optional field
+     */
+    private String id;
+    
+    public Sample()
+    {
+    }
+    
+    public Sample(String source)
+    {
+        this.source = source;
+    }
+    
+    public Sample(String source, String usage, String inferenceLoc, List<Annotation> annotations, String id)
+    {
+        this.source = source;
+        this.usage = usage;
+        this.inferenceLoc = inferenceLoc;
+        this.annotations = annotations;
+        this.id = id;
+    }
+    
+    public Sample(String source, String sourceType, String usage, List<Schema> schema)
+    {
+        this.source = source;
+        this.sourceType = sourceType;
+        this.usage = usage;
+        this.schema = schema;
+    }
+    
+    public String getSource()
+    {
+        return source;
+    }
+    
+    public void setSource(String source)
+    {
+        this.source = source;
+    }
+    
+    public String getSourceType()
+    {
+        return sourceType;
+    }
+    
+    public void setSourceType(String sourceType)
+    {
+        this.sourceType = sourceType;
+    }
+    
+    public String getUsage()
+    {
+        return usage;
+    }
+    
+    public Map<String, Object> getProperty()
+    {
+        return property;
+    }
+    
+    public void setProperty(JSONObject property)
+    {
+        this.property = property;
+    }
+    
+    public List<Schema> getSchema()
+    {
+        return schema;
+    }
+    
+    public void setSchema(List<Schema> schema)
+    {
+        this.schema = schema;
+    }
+    
+    public void setUsage(String usage)
+    {
+        this.usage = usage;
+    }
+    
+    public String getInferenceLoc()
+    {
+        return inferenceLoc;
+    }
+    
+    public void setInferenceLoc(String inferenceLoc)
+    {
+        this.inferenceLoc = inferenceLoc;
+    }
+    
+    public List<Annotation> getAnnotations()
+    {
+        return annotations;
+    }
+    
+    public void setAnnotations(List<Annotation> annotations)
+    {
+        this.annotations = annotations;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Sample{" +
+            "source='" + source + '\'' +
+            ", usage='" + usage + '\'' +
+            ", inferenceLoc='" + inferenceLoc + '\'' +
+            ", annotations=" + annotations +
+            ", id='" + id + '\'' +
+            '}';
+    }
 }
