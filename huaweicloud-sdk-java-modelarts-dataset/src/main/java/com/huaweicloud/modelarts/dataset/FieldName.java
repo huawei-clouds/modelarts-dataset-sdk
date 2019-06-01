@@ -95,6 +95,8 @@ public class FieldName
     
     public static String OBJECT = "object";
     
+    public static String VOC_PROPERTIES = "properties";
+    
     public static String POSE = "pose";
     
     public static String TRUNCATED = "truncated";

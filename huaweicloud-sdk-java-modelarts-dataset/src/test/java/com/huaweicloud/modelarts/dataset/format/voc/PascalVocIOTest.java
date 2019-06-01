@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.huaweicloud.modelarts.dataset.format.voc.ValidatePascalVocIO.validate;
 
@@ -98,6 +99,54 @@ public class PascalVocIOTest extends TestCase
         
         PascalVocIO pascalVocIO = new PascalVocIO(path);
         validateVOC(pascalVocIO);
+    }
+    
+    @Test
+    public void testReadVocXMLFromVOCLabelProperties()
+    {
+        String path = resourcePath + "/voc/labelProperties.xml";
+        PascalVocIO pascalVocIO = new PascalVocIO(path);
+        validateVOCLabelProperties(pascalVocIO);
+    }
+    
+    @Test
+    public void testReadVocXMLFromVOCLabelPropertiesEmpty()
+    {
+        String path = resourcePath + "/voc/errorFiles/labelPropertiesEmpty.xml";
+        PascalVocIO pascalVocIO = new PascalVocIO(path);
+        validateVOCLabelPropertiesEmpty(pascalVocIO);
+    }
+    
+    @Test
+    public void testReadVocXMLFromVOCLabelPropertiesEmpty2()
+    {
+        String path = resourcePath + "/voc/errorFiles/labelPropertiesEmpty2.xml";
+        try
+        {
+            new PascalVocIO(path);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "Can't parse the XML file, java.lang.IllegalArgumentException: object properties 颜色 can't be empty in VOC file!"));
+        }
+    }
+    
+    @Test
+    public void testReadVocXMLFromVOCLabelPropertiesEmpty3()
+    {
+        String path = resourcePath + "/voc/errorFiles/labelPropertiesEmpty3.xml";
+        try
+        {
+            new PascalVocIO(path);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "Can't parse the XML file, java.lang.IllegalArgumentException: object properties color can't be empty in VOC file!"));
+        }
     }
     
     @Test
@@ -374,6 +423,184 @@ public class PascalVocIOTest extends TestCase
                 }
                 
             }
+        }
+    }
+    
+    public static void validateVOCLabelProperties(PascalVocIO pascalVocIO)
+    {
+        Assert.assertTrue("Images".equals(pascalVocIO.getFolder()));
+        Assert.assertTrue("000000484951.jpg".equals(pascalVocIO.getFileName()));
+        Assert.assertTrue("Unknown".equals(pascalVocIO.getSource().getDatabase()));
+        Assert.assertTrue("640".equals(pascalVocIO.getWidth()));
+        Assert.assertTrue("426".equals(pascalVocIO.getHeight()));
+        Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
+        Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
+        
+        List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
+        Assert.assertTrue(5 == vocObjectList.size());
+        for (int i = 0; i < vocObjectList.size(); i++)
+        {
+            VOCObject vocObject = vocObjectList.get(i);
+            if ("labelProperties".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(2 == properties.size());
+                Assert.assertTrue("green".equals(properties.get("color")));
+                Assert.assertTrue("绿色".equals(properties.get("属性")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("199".equals(bndBox.getXMin()));
+                Assert.assertTrue("356".equals(bndBox.getYMin()));
+                Assert.assertTrue("230".equals(bndBox.getXMax()));
+                Assert.assertTrue("385".equals(bndBox.getYMax()));
+            }
+            else if ("big".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("248".equals(bndBox.getXMin()));
+                Assert.assertTrue("59".equals(bndBox.getYMin()));
+                Assert.assertTrue("638".equals(bndBox.getXMax()));
+                Assert.assertTrue("292".equals(bndBox.getYMax()));
+            }
+            else if ("labelProperties3".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("红色".equals(properties.get("颜色")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else if ("labelProperties2".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("yellow".equals(properties.get("color")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+            }
+            else if ("small".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else
+            {
+                Assert.fail();
+            }
+            
+        }
+    }
+    
+    public static void validateVOCLabelPropertiesEmpty(PascalVocIO pascalVocIO)
+    {
+        Assert.assertTrue("Images".equals(pascalVocIO.getFolder()));
+        Assert.assertTrue("000000484951.jpg".equals(pascalVocIO.getFileName()));
+        Assert.assertTrue("Unknown".equals(pascalVocIO.getSource().getDatabase()));
+        Assert.assertTrue("640".equals(pascalVocIO.getWidth()));
+        Assert.assertTrue("426".equals(pascalVocIO.getHeight()));
+        Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
+        Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
+        
+        List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
+        Assert.assertTrue(5 == vocObjectList.size());
+        for (int i = 0; i < vocObjectList.size(); i++)
+        {
+            VOCObject vocObject = vocObjectList.get(i);
+            if ("labelProperties".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("199".equals(bndBox.getXMin()));
+                Assert.assertTrue("356".equals(bndBox.getYMin()));
+                Assert.assertTrue("230".equals(bndBox.getXMax()));
+                Assert.assertTrue("385".equals(bndBox.getYMax()));
+            }
+            else if ("big".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("248".equals(bndBox.getXMin()));
+                Assert.assertTrue("59".equals(bndBox.getYMin()));
+                Assert.assertTrue("638".equals(bndBox.getXMax()));
+                Assert.assertTrue("292".equals(bndBox.getYMax()));
+            }
+            else if ("labelProperties3".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("红色".equals(properties.get("颜色")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else if ("labelProperties2".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("yellow".equals(properties.get("color")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+            }
+            else if ("small".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else
+            {
+                Assert.fail();
+            }
+            
         }
     }
     

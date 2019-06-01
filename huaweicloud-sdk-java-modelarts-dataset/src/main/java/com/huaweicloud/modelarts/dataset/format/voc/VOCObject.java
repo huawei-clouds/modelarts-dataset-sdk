@@ -4,6 +4,7 @@ import com.huaweicloud.modelarts.dataset.format.voc.position.Position;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * object of VOC, positive can be point, line or others.
@@ -11,6 +12,8 @@ import java.util.List;
 public class VOCObject
 {
     private String name;
+    
+    private Map properties;
     
     private String pose;
     
@@ -83,10 +86,11 @@ public class VOCObject
      * @param position   positive can be point, line or others.
      * @param parts
      */
-    public VOCObject(String name, String pose, String truncated, String occluded, String difficult, String confidence,
+    public VOCObject(String name,Map properties, String pose, String truncated, String occluded, String difficult, String confidence,
         Position position, List<VOCObject> parts)
     {
         this.name = name;
+        this.properties = properties;
         this.pose = pose;
         this.truncated = truncated;
         this.occluded = occluded;
@@ -109,6 +113,11 @@ public class VOCObject
     public String getName()
     {
         return name;
+    }
+    
+    public Map getProperties()
+    {
+        return properties;
     }
     
     public String getPose()

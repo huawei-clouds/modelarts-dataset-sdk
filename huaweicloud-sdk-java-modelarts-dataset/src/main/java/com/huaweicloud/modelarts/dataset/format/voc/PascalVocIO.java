@@ -85,6 +85,7 @@ public class PascalVocIO
             throw new IllegalArgumentException(FieldName.OBJECT + " can't be empty in VOC file!");
         }
         String name = null;
+        Map properties = new LinkedHashMap();
         String pose = null;
         String truncated = null;
         String occluded = null;
@@ -104,6 +105,23 @@ public class PascalVocIO
                 name = getMandatoryNodeValue(objectNodeList,
                     j,
                     FieldName.OBJECT + " " + FieldName.NAME + " can't be empty in VOC file!");
+            }
+            else if (FieldName.VOC_PROPERTIES.equalsIgnoreCase(objectNodeName))
+            {
+                NodeList propertiesNodeList = objectNodeList.item(j).getChildNodes();
+    
+                for (int i = 0; i < propertiesNodeList.getLength(); i++)
+                {
+                    String propertiesName = propertiesNodeList.item(i).getNodeName();
+                    if ("#text" != propertiesName)
+                    {
+                        String propertiesValue = getMandatoryNodeValue(propertiesNodeList,
+                            i,
+                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                + " " + propertiesName + " can't be empty in VOC file!");
+                        properties.put(propertiesName, propertiesValue);
+                    }
+                }
             }
             else if (FieldName.POSE.equalsIgnoreCase(objectNodeName))
             {
@@ -329,7 +347,7 @@ public class PascalVocIO
                 position = new Point(x, y);
             }
         }
-        return new VOCObject(name, pose, truncated, occluded, difficult, confidence, position, parts);
+        return new VOCObject(name, properties, pose, truncated, occluded, difficult, confidence, position, parts);
     }
     
     private String getMandatoryNodeValue(NodeList nodeList, int i, String errorMsg)
