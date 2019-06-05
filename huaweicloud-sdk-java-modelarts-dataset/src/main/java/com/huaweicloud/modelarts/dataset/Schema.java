@@ -15,34 +15,41 @@
 
 package com.huaweicloud.modelarts.dataset;
 
-public class Schema {
-  /**
-   * column name
-   */
-  private String name;
-  /**
-   * column data type
-   */
-  private String type;
-
-  public Schema(String name, String type) {
-    this.name = name;
-    this.type = type;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
+public class Schema
+{
+    /**
+     * column name
+     */
+    private String name;
+    
+    /**
+     * column data type
+     */
+    private String type;
+    
+    public Schema(String name, String type)
+    {
+        this.name = name;
+        this.type = type;
+    }
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getType()
+    {
+        return type;
+    }
+    
+    public void setType(String type)
+    {
+        this.type = type;
+    }
 }

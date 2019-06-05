@@ -15,13 +15,18 @@
 
 package com.huaweicloud.modelarts.dataset;
 
-public class Constants {
-  public static String S3_PREFIX = "s3";
-  public static String S3N_PREFIX = "s3n";
-  public static String S3A_PREFIX = "s3a";
-  public static String HDFS_PREFIX = "hdfs";
-
-  public static String CONNECTOR = "://";
-  public static String SEPARATOR = "/";
-
+public class Constants
+{
+    public static String S3_PREFIX = "s3";
+    
+    public static String S3N_PREFIX = "s3n";
+    
+    public static String S3A_PREFIX = "s3a";
+    
+    public static String HDFS_PREFIX = "hdfs";
+    
+    public static String CONNECTOR = "://";
+    
+    public static String SEPARATOR = "/";
+    
 }

@@ -29,7 +29,7 @@ with io.open('modelarts/__init__.py', 'rt', encoding='utf8') as f:
         raise ImportError('Could not find __version__ in modelarts/__init__.py')
 
 REQUIRED_PACKAGES = [
-    # 'obs>=3.0.5'
+    'esdk-obs-python>=3.0.5'
 ]
 
 EXTRA_REQUIRE = {
@@ -87,5 +87,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
