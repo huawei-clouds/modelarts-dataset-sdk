@@ -97,6 +97,10 @@ public class FieldName
     
     public static String VOC_PROPERTIES = "properties";
     
+    public static String VOC_PROPERTY_KEY = "key";
+    
+    public static String VOC_PROPERTY_VALUE = "value";
+    
     public static String POSE = "pose";
     
     public static String TRUNCATED = "truncated";

@@ -437,15 +437,20 @@ public class PascalVocIOTest extends TestCase
         Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
         
         List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
-        Assert.assertTrue(5 == vocObjectList.size());
+        Assert.assertTrue(6 == vocObjectList.size());
         for (int i = 0; i < vocObjectList.size(); i++)
         {
             VOCObject vocObject = vocObjectList.get(i);
             if ("labelProperties".equals(vocObject.getName()))
             {
                 Map properties = vocObject.getProperties();
-                Assert.assertTrue(2 == properties.size());
+                Assert.assertTrue(5 == properties.size());
                 Assert.assertTrue("green".equals(properties.get("color")));
+                Assert.assertTrue("绿色".equals(properties.get("属性")));
+                Assert.assertTrue("blue".equals(properties.get("color2")));
+                Assert.assertTrue("蓝色".equals(properties.get("颜色2")));
+    
+                Assert.assertTrue("value".equals(properties.get("property")));
                 Assert.assertTrue("绿色".equals(properties.get("属性")));
                 Assert.assertTrue("0".equals(vocObject.getPose()));
                 Assert.assertTrue("0".equals(vocObject.getTruncated()));
@@ -480,6 +485,17 @@ public class PascalVocIOTest extends TestCase
                 Map properties = vocObject.getProperties();
                 Assert.assertTrue(1 == properties.size());
                 Assert.assertTrue("红色".equals(properties.get("颜色")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else if ("labelProperties4".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("blue".equals(properties.get("color2")));
                 Assert.assertTrue("0".equals(vocObject.getPose()));
                 Assert.assertTrue("0".equals(vocObject.getTruncated()));
                 Assert.assertTrue(null == vocObject.getOccluded());

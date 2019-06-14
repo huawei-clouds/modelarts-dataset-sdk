@@ -16,6 +16,15 @@
         <properties>
             <color>green</color>
             <属性>绿色</属性>
+            <property>value</property>
+            <property>
+                <key>color2</key>
+                <value>blue</value>
+            </property>
+            <property>
+                <key>颜色2</key>
+                <value>蓝色</value>
+            </property>
         </properties>
         <pose>0</pose>
         <truncated>0</truncated>
@@ -68,6 +77,24 @@
         <name>labelProperties2</name>
         <properties>
             <color>yellow</color>
+        </properties>
+        <pose>0</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>197</xmin>
+            <ymin>324</ymin>
+            <xmax>227</xmax>
+            <ymax>348</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>labelProperties4</name>
+        <properties>
+            <property>
+                <key>color2</key>
+                <value>blue</value>
+            </property>
         </properties>
         <pose>0</pose>
         <truncated>0</truncated>

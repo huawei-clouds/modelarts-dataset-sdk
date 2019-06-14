@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
+import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_KEY;
+import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_VALUE;
 import static com.huaweicloud.modelarts.dataset.util.OBSUtil.getBucketNameAndObjectKey;
 
 /**
@@ -115,11 +117,45 @@ public class PascalVocIO
                     String propertiesName = propertiesNodeList.item(i).getNodeName();
                     if ("#text" != propertiesName)
                     {
-                        String propertiesValue = getMandatoryNodeValue(propertiesNodeList,
-                            i,
-                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
-                                + " " + propertiesName + " can't be empty in VOC file!");
-                        properties.put(propertiesName, propertiesValue);
+        
+                        NodeList propertyNodeList = propertiesNodeList.item(i).getChildNodes();
+                        if (propertyNodeList.getLength() > 1)
+                        {
+                            String propertyKey = null;
+                            String propertyValue = null;
+            
+                            for (int k = 0; k < propertyNodeList.getLength(); k++)
+                            {
+                                String propertyName = propertyNodeList.item(k).getNodeName();
+                                if ("#text" != propertyName)
+                                {
+                                    if (VOC_PROPERTY_KEY == propertyName.toLowerCase())
+                                    {
+                                        propertyKey = getMandatoryNodeValue(propertyNodeList,
+                                            k,
+                                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                                + " " + propertyName + " can't be empty in VOC file!");
+                                    }
+                                    if (VOC_PROPERTY_VALUE == propertyName.toLowerCase())
+                                    {
+                                        propertyValue = getMandatoryNodeValue(propertyNodeList,
+                                            k,
+                                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                                + " " + propertyName + " can't be empty in VOC file!");
+                                    }
+                                }
+                            }
+                            assert (null != propertyKey);
+                            properties.put(propertyKey, propertyValue);
+                        }
+                        else
+                        {
+                            String propertiesValue = getMandatoryNodeValue(propertiesNodeList,
+                                i,
+                                FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                    + " " + propertiesName + " can't be empty in VOC file!");
+                            properties.put(propertiesName, propertiesValue);
+                        }
                     }
                 }
             }
