@@ -74,3 +74,4 @@ property_end_index = "@modelarts:end_index"
 property_content = "@modelarts:content"
 
 CARBON = "carbon"
+CARBONDATA = "carbondata"
