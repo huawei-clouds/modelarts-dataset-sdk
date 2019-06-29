@@ -128,7 +128,7 @@ def getSources(manifest_path, source_type, obs_client=None):
   data_set = parse_manifest(manifest_path, obs_client=obs_client)
   sample_list = data_set.get_sample_list()
   for sample in sample_list:
-    if source_type == sample.get_source_type():
+    if str(source_type).lower() == str(sample.get_source_type()).lower():
       sources.append(sample.get_source())
   return sources
 

@@ -16,15 +16,15 @@ import os
 import sys
 
 from modelarts import manifest
-from modelarts.field_name import CARBON
+from modelarts.field_name import CARBONDATA
 from obs import ObsClient
 
 
 def test_single_default(path, obsClient):
   if obsClient is None:
-    sources = manifest.getSources(path, CARBON)
+    sources = manifest.getSources(path, CARBONDATA)
   else:
-    sources = manifest.getSources(path, CARBON, obsClient)
+    sources = manifest.getSources(path, CARBONDATA, obsClient)
   assert 3 == len(sources)
   for source in sources:
     print(source)
@@ -34,7 +34,7 @@ def test_single_default(path, obsClient):
 def main(argv):
   if len(argv) < 2:
     path1 = os.path.abspath("../../../") + "/resources/binary1557487619292.manifest"
-    test_single_default(path1)
+    test_single_default(path1, None)
 
     print("test local Success")
   else:
