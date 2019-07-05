@@ -2,6 +2,7 @@ package com.huaweicloud.modelarts.dataset.format.voc;
 
 import com.huaweicloud.modelarts.dataset.FieldName;
 import com.huaweicloud.modelarts.dataset.format.voc.position.*;
+import com.huaweicloud.modelarts.dataset.util.XmlSecurity;
 import com.obs.services.ObsClient;
 import com.obs.services.model.ObsObject;
 import org.w3c.dom.Document;
@@ -127,16 +128,16 @@ public class PascalVocIO
                             for (int k = 0; k < propertyNodeList.getLength(); k++)
                             {
                                 String propertyName = propertyNodeList.item(k).getNodeName();
-                                if ("#text" != propertyName)
+                                if (!"#text".equals(propertyName))
                                 {
-                                    if (VOC_PROPERTY_KEY == propertyName.toLowerCase())
+                                    if (VOC_PROPERTY_KEY.equals(propertyName.toLowerCase()))
                                     {
                                         propertyKey = getMandatoryNodeValue(propertyNodeList,
                                             k,
                                             FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
                                                 + " " + propertyName + " can't be empty in VOC file!");
                                     }
-                                    if (VOC_PROPERTY_VALUE == propertyName.toLowerCase())
+                                    if (VOC_PROPERTY_VALUE.equals(propertyName.toLowerCase()))
                                     {
                                         propertyValue = getMandatoryNodeValue(propertyNodeList,
                                             k,
@@ -512,6 +513,7 @@ public class PascalVocIO
         DocumentBuilder documentBuilder = null;
         try
         {
+            XmlSecurity.setupSecurity(documentBuilderFactory);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(filePath);
             return parseXML(document);
@@ -543,6 +545,7 @@ public class PascalVocIO
         DocumentBuilder documentBuilder = null;
         try
         {
+            XmlSecurity.setupSecurity(documentBuilderFactory);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(content);
             return parseXML(document);

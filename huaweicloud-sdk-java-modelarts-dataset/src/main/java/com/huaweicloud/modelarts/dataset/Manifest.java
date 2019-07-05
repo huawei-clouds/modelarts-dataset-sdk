@@ -98,6 +98,7 @@ public class Manifest
             }
         }
         dataset.setSize(sum);
+        bufferedReader.close();
         return dataset;
     }
 
