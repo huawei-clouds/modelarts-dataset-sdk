@@ -73,7 +73,7 @@ def main(argv):
     ak = argv[2]
     sk = argv[3]
     endpoint = argv[4]
-    data_set = manifest.parse_manifest(path, ak, sk, endpoint)
+    data_set = manifest.parse_manifest(manifest_path=path, access_key=ak, secret_key=sk, end_point=endpoint)
     validate(data_set)
 
 

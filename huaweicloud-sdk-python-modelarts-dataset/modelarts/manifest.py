@@ -199,9 +199,8 @@ def parse_manifest(manifest_path, obs_client):
     return result
 
 
-def parse_manifest(manifest_path, obs_client=None, access_key=None, secret_key=None, end_point=None, ssl_verify=False,
-                   max_retry_count=3,
-                   timeout=60):
+def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=None, obs_client=None, ssl_verify=False,
+                   max_retry_count=3, timeout=60):
   """
   user give the path of manifest file, it will return the dataset,
   including data object list, annotation list and so on after the manifest was parsed.
