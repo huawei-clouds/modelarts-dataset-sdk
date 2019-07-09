@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 Deep Learning Service of Huawei Cloud. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huaweicloud.modelarts.dataset.format.voc;
 
 import com.huaweicloud.modelarts.dataset.FieldName;
@@ -112,19 +127,19 @@ public class PascalVocIO
             else if (FieldName.VOC_PROPERTIES.equalsIgnoreCase(objectNodeName))
             {
                 NodeList propertiesNodeList = objectNodeList.item(j).getChildNodes();
-    
+                
                 for (int i = 0; i < propertiesNodeList.getLength(); i++)
                 {
                     String propertiesName = propertiesNodeList.item(i).getNodeName();
                     if ("#text" != propertiesName)
                     {
-        
+                        
                         NodeList propertyNodeList = propertiesNodeList.item(i).getChildNodes();
                         if (propertyNodeList.getLength() > 1)
                         {
                             String propertyKey = null;
                             String propertyValue = null;
-            
+                            
                             for (int k = 0; k < propertyNodeList.getLength(); k++)
                             {
                                 String propertyName = propertyNodeList.item(k).getNodeName();
@@ -281,6 +296,61 @@ public class PascalVocIO
                     points.remove(key);
                 }
                 position = polygon;
+            }
+            else if (PositionType.POLYLINE.name().equalsIgnoreCase(objectNodeName))
+            {
+                NodeList polylineNodeList = objectNodeList.item(j).getChildNodes();
+                Polyline polyline = new Polyline();
+                Map<String, String> points = new LinkedHashMap<String, String>();
+                for (int k = 0; k < polylineNodeList.getLength(); k++)
+                {
+                    String polylineNodeName = polylineNodeList.item(k).getNodeName();
+                    if (polylineNodeName.toLowerCase().startsWith("x") ||
+                        polylineNodeName.toLowerCase().startsWith("y"))
+                    {
+                        points.put(polylineNodeName,
+                            polylineNodeList.item(k).getFirstChild().getNodeValue());
+                    }
+                    else if (polylineNodeName.toLowerCase().startsWith("#text"))
+                    {
+                    }
+                    else
+                    {
+                        LOGGER.warn(polylineNodeName + " is Unrecognized in polyline.");
+                    }
+                }
+                Object[] keySet = points.keySet().toArray();
+                Set<String> validateKey = new HashSet<String>();
+                for (int k = 0; k < keySet.length; k++)
+                {
+                    String key = String.valueOf(keySet[k]);
+                    if (validateKey.contains(key))
+                    {
+                        continue;
+                    }
+                    if (key.toLowerCase().startsWith("x"))
+                    {
+                        String yName = "y" + key.substring(1, key.length());
+                        polyline.addPoint(new Point(key, points.get(key), yName, points.get(yName)));
+                        validateKey.add(key);
+                        validateKey.add(yName);
+                        points.remove(yName);
+                    }
+                    else if (key.toLowerCase().startsWith("y"))
+                    {
+                        String xName = "x" + key.substring(1, key.length());
+                        polyline.addPoint(new Point(key, points.get(key), xName, points.get(xName)));
+                        validateKey.add(key);
+                        validateKey.add(xName);
+                        points.remove(xName);
+                    }
+                    else
+                    {
+                        throw new RuntimeException("polyline should start with x or y");
+                    }
+                    points.remove(key);
+                }
+                position = polyline;
             }
             else if (PositionType.DASHED.name().equalsIgnoreCase(objectNodeName))
             {

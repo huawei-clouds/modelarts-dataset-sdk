@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 Deep Learning Service of Huawei Cloud. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huaweicloud.modelarts.dataset.format.voc;
 
 import com.huaweicloud.modelarts.dataset.format.voc.position.*;
@@ -107,6 +122,14 @@ public class PascalVocIOTest extends TestCase
         String path = resourcePath + "/voc/labelProperties.xml";
         PascalVocIO pascalVocIO = new PascalVocIO(path);
         validateVOCLabelProperties(pascalVocIO);
+    }
+    
+    @Test
+    public void testReadVocXMLFromVOCPolyline()
+    {
+        String path = resourcePath + "/voc/polyline.xml";
+        PascalVocIO pascalVocIO = new PascalVocIO(path);
+        validateVOCPolyline(pascalVocIO);
     }
     
     @Test
@@ -449,7 +472,7 @@ public class PascalVocIOTest extends TestCase
                 Assert.assertTrue("绿色".equals(properties.get("属性")));
                 Assert.assertTrue("blue".equals(properties.get("color2")));
                 Assert.assertTrue("蓝色".equals(properties.get("颜色2")));
-    
+                
                 Assert.assertTrue("value".equals(properties.get("property")));
                 Assert.assertTrue("绿色".equals(properties.get("属性")));
                 Assert.assertTrue("0".equals(vocObject.getPose()));
@@ -490,6 +513,132 @@ public class PascalVocIOTest extends TestCase
                 Assert.assertTrue(null == vocObject.getOccluded());
                 Assert.assertTrue("0".equals(vocObject.getDifficult()));
                 Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else if ("labelProperties4".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("blue".equals(properties.get("color2")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else if ("labelProperties2".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("yellow".equals(properties.get("color")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+            }
+            else if ("small".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+            }
+            else
+            {
+                Assert.fail();
+            }
+            
+        }
+    }
+    
+    public static void validateVOCPolyline(PascalVocIO pascalVocIO)
+    {
+        Assert.assertTrue("Images".equals(pascalVocIO.getFolder()));
+        Assert.assertTrue("000000484951.jpg".equals(pascalVocIO.getFileName()));
+        Assert.assertTrue("Unknown".equals(pascalVocIO.getSource().getDatabase()));
+        Assert.assertTrue("640".equals(pascalVocIO.getWidth()));
+        Assert.assertTrue("426".equals(pascalVocIO.getHeight()));
+        Assert.assertTrue("3".equals(pascalVocIO.getDepth()));
+        Assert.assertTrue("0".equals(pascalVocIO.getSegmented()));
+        
+        List<VOCObject> vocObjectList = pascalVocIO.getVocObjects();
+        Assert.assertTrue(6 == vocObjectList.size());
+        for (int i = 0; i < vocObjectList.size(); i++)
+        {
+            VOCObject vocObject = vocObjectList.get(i);
+            if ("labelProperties".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(5 == properties.size());
+                Assert.assertTrue("green".equals(properties.get("color")));
+                Assert.assertTrue("绿色".equals(properties.get("属性")));
+                Assert.assertTrue("blue".equals(properties.get("color2")));
+                Assert.assertTrue("蓝色".equals(properties.get("颜色2")));
+                
+                Assert.assertTrue("value".equals(properties.get("property")));
+                Assert.assertTrue("绿色".equals(properties.get("属性")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("199".equals(bndBox.getXMin()));
+                Assert.assertTrue("356".equals(bndBox.getYMin()));
+                Assert.assertTrue("230".equals(bndBox.getXMax()));
+                Assert.assertTrue("385".equals(bndBox.getYMax()));
+            }
+            else if ("big".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(0 == properties.size());
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                
+                BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                Assert.assertTrue("248".equals(bndBox.getXMin()));
+                Assert.assertTrue("59".equals(bndBox.getYMin()));
+                Assert.assertTrue("638".equals(bndBox.getXMax()));
+                Assert.assertTrue("292".equals(bndBox.getYMax()));
+            }
+            else if ("labelProperties3".equals(vocObject.getName()))
+            {
+                Map properties = vocObject.getProperties();
+                Assert.assertTrue(1 == properties.size());
+                Assert.assertTrue("红色".equals(properties.get("颜色")));
+                Assert.assertTrue("0".equals(vocObject.getPose()));
+                Assert.assertTrue("0".equals(vocObject.getTruncated()));
+                Assert.assertTrue(null == vocObject.getOccluded());
+                Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == (vocObject.getConfidence()));
+                Assert.assertTrue(vocObject.getPosition() instanceof Polyline);
+                Assert.assertTrue(PositionType.POLYLINE.equals(vocObject.getPosition().getType()));
+                Polyline polyline = (Polyline)vocObject.getPosition();
+                List<Point> pointList = polyline.getPoints();
+                List<Point> pointExpectResult = new ArrayList<Point>();
+                pointExpectResult.add(new Point("x1", "202", "y1", "293"));
+                pointExpectResult.add(new Point("x2", "199", "y2", "308"));
+                pointExpectResult.add(new Point("x3", "211", "y3", "319"));
+                pointExpectResult.add(new Point("x4", "230", "y4", "311"));
+                pointExpectResult.add(new Point("x5", "226", "y5", "293"));
+                pointExpectResult.add(new Point("x6", "210", "y6", "287"));
+                pointExpectResult.add(new Point("x7", "202", "y7", "293"));
+                
+                if (pointExpectResult.contains(pointList.get(0)))
+                {
+                    for (int j = 0; j < pointList.size(); j++)
+                    {
+                        Assert.assertTrue(pointExpectResult.contains(pointList.get(j)));
+                    }
+                }
             }
             else if ("labelProperties4".equals(vocObject.getName()))
             {

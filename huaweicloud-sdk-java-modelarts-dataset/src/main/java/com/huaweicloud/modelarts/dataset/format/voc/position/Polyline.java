@@ -15,46 +15,38 @@
 
 package com.huaweicloud.modelarts.dataset.format.voc.position;
 
-public class Circle implements Position
+import java.util.ArrayList;
+import java.util.List;
+
+public class Polyline implements Position
 {
-    private String cx;
+    private List<Point> pointList;
     
-    private String cy;
-    
-    private String r;
-    
-    /**
-     * circle for object
-     *
-     * @param cx x value of center point of a circle
-     * @param cy y value of center point of a circle
-     * @param r  radius of a circle
-     */
-    public Circle(String cx, String cy, String r)
+    public List<Point> addPoint(Point point)
     {
-        this.cx = cx;
-        this.cy = cy;
-        this.r = r;
+        if (null == pointList)
+        {
+            pointList = new ArrayList<Point>();
+        }
+        pointList.add(point);
+        return pointList;
     }
     
-    public String getCx()
+    public List<Point> getPoints()
     {
-        return cx;
-    }
-    
-    public String getCy()
-    {
-        return cy;
-    }
-    
-    public String getR()
-    {
-        return r;
+        return pointList;
     }
     
     @Override
     public PositionType getType()
     {
-        return PositionType.CIRCLE;
+        return PositionType.POLYLINE;
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
     }
 }
+

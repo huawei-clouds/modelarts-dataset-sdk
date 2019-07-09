@@ -59,7 +59,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassification2(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 10);
@@ -89,7 +89,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 19);
@@ -117,7 +117,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationMultipleFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -147,7 +147,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationMultipleFilterWithoutHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 12);
@@ -183,7 +183,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationMultipleFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -212,7 +212,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationMultipleFilterWithHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -241,7 +241,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateClassificationDetection(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 5);
@@ -277,7 +277,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionSimple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -305,7 +305,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -333,7 +333,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOC(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -380,7 +380,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOCGetWithObsClient(Dataset dataset, ObsClient obsClient)
     {
         assertEquals(dataset.getSize(), 8);
@@ -420,7 +420,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextClassification(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 6);
@@ -448,7 +448,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextClassificationMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 6);
@@ -477,7 +477,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextClassificationMultipleFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -506,7 +506,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextClassificationMultipleFilterWithoutHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -535,7 +535,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextClassificationMultipleFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -565,7 +565,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextEntity(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 6);
@@ -594,7 +594,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextEntityMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 8);
@@ -631,7 +631,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextEntityMultipleFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -669,7 +669,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateTextEntityMultipleFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -707,7 +707,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassification(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 7);
@@ -737,7 +737,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassificationMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 7);
@@ -768,7 +768,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassificationMultipleFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -797,7 +797,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassificationMultipleFilterMultipleNames(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 3);
@@ -834,7 +834,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassificationMultipleFilterWithoutHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -862,7 +862,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioClassificationMultipleFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -891,7 +891,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioContent(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -924,7 +924,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioContentFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 1);
@@ -955,7 +955,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioContentFilterWithoutHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 3);
@@ -987,7 +987,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioContentFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -1020,7 +1020,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateAudioContentMultiple(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 4);
@@ -1054,7 +1054,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOCFilter(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 3);
@@ -1098,7 +1098,7 @@ public class Validate
                 {
                     Assert.assertTrue(false);
                 }
-
+                
                 if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource()))
                 {
                     if ((annotation.getAnnotationLoc()).contains("000000115967_1556247179208.xml"))
@@ -1113,7 +1113,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOCFilterWithFalseHard(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 7);
@@ -1154,7 +1154,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOCFilter2(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 2);
@@ -1198,7 +1198,7 @@ public class Validate
             }
         }
     }
-
+    
     public static void validateDetectionMultipleAndVOCFilter3(Dataset dataset)
     {
         assertEquals(dataset.getSize(), 7);
@@ -1235,7 +1235,7 @@ public class Validate
                 {
                     Assert.assertTrue(false);
                 }
-
+                
                 if ("s3://obs-ma/test/label-0220/datafiles/1 (5)_15506326179922.jpg".equals(sample.getSource()))
                 {
                     Assert.assertTrue(annotation.isHard());
@@ -1243,6 +1243,6 @@ public class Validate
             }
         }
     }
-
+    
 }
 
