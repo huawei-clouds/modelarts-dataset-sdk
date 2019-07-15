@@ -98,6 +98,78 @@ public class PascalVocIOTest extends TestCase
     }
     
     @Test
+    public void testReadMoreThanOneBndBoxInVoc()
+    {
+        String path = resourcePath + "/voc/errorFiles/twoBndBox.xml";
+        
+        try
+        {
+            new PascalVocIO(path);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "Can't parse the XML file, java.lang.IllegalArgumentException: The number of object bndbox can't more than one in one object, except part.; The fi"));
+        }
+    }
+    
+    @Test
+    public void testReadMoreThanOnePositionInVoc()
+    {
+        String path = resourcePath + "/voc/errorFiles/twoPosition.xml";
+        
+        try
+        {
+            new PascalVocIO(path);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "The number of object position type can't more than one in one object, except part. There are bndbox and polygon in the object"));
+        }
+    }
+    
+    @Test
+    public void testReadMoreThanOneBndBoxInVocPart()
+    {
+        String path = resourcePath + "/voc/errorFiles/twoBndBox_2007_000027.xml";
+        
+        try
+        {
+            new PascalVocIO(path);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "Can't parse the XML file, java.lang.IllegalArgumentException: The number of object bndbox can't more than one in one object, except part."));
+        }
+    }
+    
+    @Test
+    public void testReadMoreThanOnePositionInVocPart()
+    {
+        String path = resourcePath + "/voc/errorFiles/twoPosition_2007_000027.xml";
+        
+        try
+        {
+            new PascalVocIO(path);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage()
+                .contains(
+                    "The number of object position type can't more than one in one object, except part. There are bndbox and circle in the object"));
+        }
+    }
+    
+    @Test
     public void testReadVocXMLForAllType()
     {
         String path = resourcePath + "/voc/000000115967_1556247179208.xml";

@@ -90,6 +90,26 @@ public class PascalVocIO
     private static final org.apache.log4j.Logger LOGGER =
         org.apache.log4j.Logger.getLogger(PascalVocIO.class.getName());
     
+    private void checkPosition(boolean positionFlag, PositionType positionType, String objectNodeName)
+    {
+        if (positionFlag)
+        {
+            if (positionType.name().equalsIgnoreCase(objectNodeName))
+            {
+                throw new IllegalArgumentException(
+                    "The number of " + FieldName.OBJECT + " " + positionType.name().toLowerCase() +
+                        " can't more than one in one object, except part.");
+            }
+            else
+            {
+                throw new IllegalArgumentException(
+                    "The number of " + FieldName.OBJECT + " position type " +
+                        "can't more than one in one object, except part. There are "
+                        + positionType.name().toLowerCase() + " and " + objectNodeName + " in the " + FieldName.OBJECT);
+            }
+        }
+    }
+    
     /**
      * get voc object
      *
@@ -115,6 +135,8 @@ public class PascalVocIO
         String yMax = null;
         Position position = null;
         List<VOCObject> parts = new ArrayList<VOCObject>();
+        boolean positionFlag = false;
+        PositionType positionType = null;
         for (int j = 0; j < objectNodeList.getLength(); j++)
         {
             String objectNodeName = objectNodeList.item(j).getNodeName();
@@ -205,6 +227,9 @@ public class PascalVocIO
             }
             else if (PositionType.BNDBOX.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.BNDBOX;
                 NodeList bndBoxNodeList = objectNodeList.item(j).getChildNodes();
                 if (null == bndBoxNodeList || 1 == bndBoxNodeList.getLength())
                 {
@@ -245,6 +270,9 @@ public class PascalVocIO
             }
             else if (PositionType.POLYGON.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POLYGON;
                 NodeList polygonNodeList = objectNodeList.item(j).getChildNodes();
                 Polygon polygon = new Polygon();
                 Map<String, String> points = new LinkedHashMap<String, String>();
@@ -299,6 +327,9 @@ public class PascalVocIO
             }
             else if (PositionType.POLYLINE.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POLYLINE;
                 NodeList polylineNodeList = objectNodeList.item(j).getChildNodes();
                 Polyline polyline = new Polyline();
                 Map<String, String> points = new LinkedHashMap<String, String>();
@@ -354,6 +385,9 @@ public class PascalVocIO
             }
             else if (PositionType.DASHED.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.DASHED;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x1 = null;
                 String y1 = null;
@@ -383,6 +417,9 @@ public class PascalVocIO
             }
             else if (PositionType.LINE.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.LINE;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x1 = null;
                 String y1 = null;
@@ -412,6 +449,9 @@ public class PascalVocIO
             }
             else if (PositionType.CIRCLE.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.CIRCLE;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String cx = null;
                 String cy = null;
@@ -436,6 +476,9 @@ public class PascalVocIO
             }
             else if (PositionType.POINT.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POINT;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x = null;
                 String y = null;
