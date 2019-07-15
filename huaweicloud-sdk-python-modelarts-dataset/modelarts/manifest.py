@@ -128,10 +128,39 @@ def getSources(manifest_path, source_type, obs_client=None):
   data_set = parse_manifest(manifest_path, obs_client=obs_client)
   sample_list = data_set.get_sample_list()
   for sample in sample_list:
-    if source_type == sample.get_source_type():
+    if str(source_type).lower() == str(sample.get_source_type()).lower():
       sources.append(sample.get_source())
   return sources
 
+
+def getAnnotations(value):
+  text = json.loads(value)
+  return __getAnnotationsInternal(text)
+
+
+def __getAnnotationsInternal(text):
+  annotations = text.get(field_name.annotation)
+  annotations_list = []
+  if annotations is not None:
+    for annotation in annotations:
+      annotation_type = annotation.get(field_name.annotation_type)
+      annotation_name = annotation.get(field_name.annotation_name)
+      annotation_loc = annotation.get(field_name.annotation_loc) or annotation.get(field_name.annotation_loc2)
+      annotation_creation_time = annotation.get(field_name.annotation_creation_time) or annotation.get(
+        field_name.annotation_creation_time2)
+      annotation_property = annotation.get(field_name.annotation_property)
+      annotation_format = annotation.get(field_name.annotation_format) or annotation.get(
+        field_name.annotation_format2)
+      annotation_confidence = annotation.get(field_name.annotation_confidence)
+      annotated_by = annotation.get(field_name.annotation_annotated_by) or annotation.get(
+        field_name.annotation_annotated_by2)
+      annotations_list.append(
+        Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
+                   property=annotation_property,
+                   confidence=annotation_confidence,
+                   creation_time=annotation_creation_time,
+                   annotated_by=annotated_by, annotation_format=annotation_format))
+  return annotations_list
 
 def __getDataSet(lines):
   sample_list = []
@@ -146,28 +175,8 @@ def __getDataSet(lines):
       source_type = text.get(field_name.source_type)
       source_property = text.get(field_name.source_property)
       id = text.get(field_name.id)
-      annotations = text.get(field_name.annotation)
       inference_loc = text.get(field_name.inference_loc) or text.get(field_name.inference_loc2)
-      annotations_list = []
-      if annotations is not None:
-        for annotation in annotations:
-          annotation_type = annotation.get(field_name.annotation_type)
-          annotation_name = annotation.get(field_name.annotation_name)
-          annotation_loc = annotation.get(field_name.annotation_loc) or annotation.get(field_name.annotation_loc2)
-          annotation_creation_time = annotation.get(field_name.annotation_creation_time) or annotation.get(
-            field_name.annotation_creation_time2)
-          annotation_property = annotation.get(field_name.annotation_property)
-          annotation_format = annotation.get(field_name.annotation_format) or annotation.get(
-            field_name.annotation_format2)
-          annotation_confidence = annotation.get(field_name.annotation_confidence)
-          annotated_by = annotation.get(field_name.annotation_annotated_by) or annotation.get(
-            field_name.annotation_annotated_by2)
-          annotations_list.append(
-            Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
-                       property=annotation_property,
-                       confidence=annotation_confidence,
-                       creation_time=annotation_creation_time,
-                       annotated_by=annotated_by, annotation_format=annotation_format))
+      annotations_list = __getAnnotationsInternal(text)
       sample_list.append(
         Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc, id=id,
                source_type=source_type, source_property=source_property))
@@ -190,9 +199,8 @@ def parse_manifest(manifest_path, obs_client):
     return result
 
 
-def parse_manifest(manifest_path, obs_client=None, access_key=None, secret_key=None, end_point=None, ssl_verify=False,
-                   max_retry_count=3,
-                   timeout=60):
+def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=None, obs_client=None, ssl_verify=False,
+                   max_retry_count=3, timeout=60):
   """
   user give the path of manifest file, it will return the dataset,
   including data object list, annotation list and so on after the manifest was parsed.

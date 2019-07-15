@@ -1,7 +1,23 @@
+/*
+ * Copyright 2018 Deep Learning Service of Huawei Cloud. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huaweicloud.modelarts.dataset.format.voc;
 
 import com.huaweicloud.modelarts.dataset.FieldName;
 import com.huaweicloud.modelarts.dataset.format.voc.position.*;
+import com.huaweicloud.modelarts.dataset.util.XmlSecurity;
 import com.obs.services.ObsClient;
 import com.obs.services.model.ObsObject;
 import org.w3c.dom.Document;
@@ -13,6 +29,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
+import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_KEY;
+import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_VALUE;
 import static com.huaweicloud.modelarts.dataset.util.OBSUtil.getBucketNameAndObjectKey;
 
 /**
@@ -72,6 +90,26 @@ public class PascalVocIO
     private static final org.apache.log4j.Logger LOGGER =
         org.apache.log4j.Logger.getLogger(PascalVocIO.class.getName());
     
+    private void checkPosition(boolean positionFlag, PositionType positionType, String objectNodeName)
+    {
+        if (positionFlag)
+        {
+            if (positionType.name().equalsIgnoreCase(objectNodeName))
+            {
+                throw new IllegalArgumentException(
+                    "The number of " + FieldName.OBJECT + " " + positionType.name().toLowerCase() +
+                        " can't more than one in one object, except part.");
+            }
+            else
+            {
+                throw new IllegalArgumentException(
+                    "The number of " + FieldName.OBJECT + " position type " +
+                        "can't more than one in one object, except part. There are "
+                        + positionType.name().toLowerCase() + " and " + objectNodeName + " in the " + FieldName.OBJECT);
+            }
+        }
+    }
+    
     /**
      * get voc object
      *
@@ -97,6 +135,8 @@ public class PascalVocIO
         String yMax = null;
         Position position = null;
         List<VOCObject> parts = new ArrayList<VOCObject>();
+        boolean positionFlag = false;
+        PositionType positionType = null;
         for (int j = 0; j < objectNodeList.getLength(); j++)
         {
             String objectNodeName = objectNodeList.item(j).getNodeName();
@@ -109,17 +149,51 @@ public class PascalVocIO
             else if (FieldName.VOC_PROPERTIES.equalsIgnoreCase(objectNodeName))
             {
                 NodeList propertiesNodeList = objectNodeList.item(j).getChildNodes();
-    
+                
                 for (int i = 0; i < propertiesNodeList.getLength(); i++)
                 {
                     String propertiesName = propertiesNodeList.item(i).getNodeName();
                     if ("#text" != propertiesName)
                     {
-                        String propertiesValue = getMandatoryNodeValue(propertiesNodeList,
-                            i,
-                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
-                                + " " + propertiesName + " can't be empty in VOC file!");
-                        properties.put(propertiesName, propertiesValue);
+                        
+                        NodeList propertyNodeList = propertiesNodeList.item(i).getChildNodes();
+                        if (propertyNodeList.getLength() > 1)
+                        {
+                            String propertyKey = null;
+                            String propertyValue = null;
+                            
+                            for (int k = 0; k < propertyNodeList.getLength(); k++)
+                            {
+                                String propertyName = propertyNodeList.item(k).getNodeName();
+                                if (!"#text".equals(propertyName))
+                                {
+                                    if (VOC_PROPERTY_KEY.equals(propertyName.toLowerCase()))
+                                    {
+                                        propertyKey = getMandatoryNodeValue(propertyNodeList,
+                                            k,
+                                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                                + " " + propertyName + " can't be empty in VOC file!");
+                                    }
+                                    if (VOC_PROPERTY_VALUE.equals(propertyName.toLowerCase()))
+                                    {
+                                        propertyValue = getMandatoryNodeValue(propertyNodeList,
+                                            k,
+                                            FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                                + " " + propertyName + " can't be empty in VOC file!");
+                                    }
+                                }
+                            }
+                            assert (null != propertyKey);
+                            properties.put(propertyKey, propertyValue);
+                        }
+                        else
+                        {
+                            String propertiesValue = getMandatoryNodeValue(propertiesNodeList,
+                                i,
+                                FieldName.OBJECT + " " + FieldName.VOC_PROPERTIES
+                                    + " " + propertiesName + " can't be empty in VOC file!");
+                            properties.put(propertiesName, propertiesValue);
+                        }
                     }
                 }
             }
@@ -153,6 +227,9 @@ public class PascalVocIO
             }
             else if (PositionType.BNDBOX.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.BNDBOX;
                 NodeList bndBoxNodeList = objectNodeList.item(j).getChildNodes();
                 if (null == bndBoxNodeList || 1 == bndBoxNodeList.getLength())
                 {
@@ -193,6 +270,9 @@ public class PascalVocIO
             }
             else if (PositionType.POLYGON.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POLYGON;
                 NodeList polygonNodeList = objectNodeList.item(j).getChildNodes();
                 Polygon polygon = new Polygon();
                 Map<String, String> points = new LinkedHashMap<String, String>();
@@ -245,8 +325,69 @@ public class PascalVocIO
                 }
                 position = polygon;
             }
+            else if (PositionType.POLYLINE.name().equalsIgnoreCase(objectNodeName))
+            {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POLYLINE;
+                NodeList polylineNodeList = objectNodeList.item(j).getChildNodes();
+                Polyline polyline = new Polyline();
+                Map<String, String> points = new LinkedHashMap<String, String>();
+                for (int k = 0; k < polylineNodeList.getLength(); k++)
+                {
+                    String polylineNodeName = polylineNodeList.item(k).getNodeName();
+                    if (polylineNodeName.toLowerCase().startsWith("x") ||
+                        polylineNodeName.toLowerCase().startsWith("y"))
+                    {
+                        points.put(polylineNodeName,
+                            polylineNodeList.item(k).getFirstChild().getNodeValue());
+                    }
+                    else if (polylineNodeName.toLowerCase().startsWith("#text"))
+                    {
+                    }
+                    else
+                    {
+                        LOGGER.warn(polylineNodeName + " is Unrecognized in polyline.");
+                    }
+                }
+                Object[] keySet = points.keySet().toArray();
+                Set<String> validateKey = new HashSet<String>();
+                for (int k = 0; k < keySet.length; k++)
+                {
+                    String key = String.valueOf(keySet[k]);
+                    if (validateKey.contains(key))
+                    {
+                        continue;
+                    }
+                    if (key.toLowerCase().startsWith("x"))
+                    {
+                        String yName = "y" + key.substring(1, key.length());
+                        polyline.addPoint(new Point(key, points.get(key), yName, points.get(yName)));
+                        validateKey.add(key);
+                        validateKey.add(yName);
+                        points.remove(yName);
+                    }
+                    else if (key.toLowerCase().startsWith("y"))
+                    {
+                        String xName = "x" + key.substring(1, key.length());
+                        polyline.addPoint(new Point(key, points.get(key), xName, points.get(xName)));
+                        validateKey.add(key);
+                        validateKey.add(xName);
+                        points.remove(xName);
+                    }
+                    else
+                    {
+                        throw new RuntimeException("polyline should start with x or y");
+                    }
+                    points.remove(key);
+                }
+                position = polyline;
+            }
             else if (PositionType.DASHED.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.DASHED;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x1 = null;
                 String y1 = null;
@@ -276,6 +417,9 @@ public class PascalVocIO
             }
             else if (PositionType.LINE.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.LINE;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x1 = null;
                 String y1 = null;
@@ -305,6 +449,9 @@ public class PascalVocIO
             }
             else if (PositionType.CIRCLE.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.CIRCLE;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String cx = null;
                 String cy = null;
@@ -329,6 +476,9 @@ public class PascalVocIO
             }
             else if (PositionType.POINT.name().equalsIgnoreCase(objectNodeName))
             {
+                checkPosition(positionFlag, positionType, objectNodeName);
+                positionFlag = true;
+                positionType = PositionType.POINT;
                 NodeList dashedNodeList = objectNodeList.item(j).getChildNodes();
                 String x = null;
                 String y = null;
@@ -476,6 +626,7 @@ public class PascalVocIO
         DocumentBuilder documentBuilder = null;
         try
         {
+            XmlSecurity.setupSecurity(documentBuilderFactory);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(filePath);
             return parseXML(document);
@@ -507,6 +658,7 @@ public class PascalVocIO
         DocumentBuilder documentBuilder = null;
         try
         {
+            XmlSecurity.setupSecurity(documentBuilderFactory);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(content);
             return parseXML(document);

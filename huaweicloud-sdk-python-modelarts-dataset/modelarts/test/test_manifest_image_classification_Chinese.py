@@ -62,9 +62,15 @@ def main(argv):
     if str(argv[0]).endswith(".manifest"):
       path = argv[0]
     else:
-      path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726.manifest"
+      path = os.path.abspath('../../../') + "/resources/V010.manifest"
     data_set = manifest.parse_manifest(path)
-    validate(data_set)
+    chinese = False
+    for sample in data_set.get_sample_list():
+      for annotation in sample.get_annotations():
+        print(annotation.get_name())
+        if ("向日葵" == annotation.get_name()):
+          chinese = True
+    assert chinese;
   elif len(argv) < 3:
     data_set = manifest.parse_manifest(argv[1])
     validate(data_set)
@@ -74,7 +80,13 @@ def main(argv):
     sk = argv[3]
     endpoint = argv[4]
     data_set = manifest.parse_manifest(manifest_path=path, access_key=ak, secret_key=sk, end_point=endpoint)
-    validate(data_set)
+    chinese = False
+    for sample in data_set.get_sample_list():
+      for annotation in sample.get_annotations():
+        print(annotation.get_name())
+        if ("向日葵" == annotation.get_name()):
+          chinese = True
+    assert chinese;
 
 
 if __name__ == '__main__':

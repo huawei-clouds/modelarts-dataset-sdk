@@ -61,7 +61,7 @@ public class Manifest
             return false;
         }
     }
-
+    
     /**
      * read manifest data from local and return with dataset format for manifest
      *
@@ -98,9 +98,10 @@ public class Manifest
             }
         }
         dataset.setSize(sum);
+        bufferedReader.close();
         return dataset;
     }
-
+    
     private static Map addRelativePath(Map properties, String relativePath)
     {
         if (null == properties)
@@ -110,7 +111,7 @@ public class Manifest
         properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf('/')));
         return properties;
     }
-
+    
     /**
      * get double from json object by key
      *
@@ -130,7 +131,7 @@ public class Manifest
             return jsonObject.getDouble(key);
         }
     }
-
+    
     /**
      * get json object by key
      * For compatible the property
@@ -158,7 +159,7 @@ public class Manifest
             }
         }
     }
-
+    
     /**
      * parse annotation by json Array
      *
@@ -180,7 +181,7 @@ public class Manifest
             {
                 annotationLoc = properties.get(RELATIVE_PATH) + annotationLoc.substring(1, annotationLoc.length());
             }
-
+            
             Annotation annotation = new Annotation(jsonObject.getString(NAME),
                 jsonObject.getString(ANNOTATION_TYPE),
                 annotationLoc,
@@ -203,7 +204,7 @@ public class Manifest
                     annotation.setPascalVoc(new PascalVocIO(annotationLoc, obsClient));
                 }
             }
-
+            
             if (null != properties && 0 != properties.size())
             {
                 if (Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD))))
@@ -241,7 +242,7 @@ public class Manifest
         }
         return annotationList;
     }
-
+    
     public static boolean isFilterAnnotations(Annotation annotation, Map properties, ObsClient obsClient)
     {
         if (null != properties && 0 != properties.size() &&
@@ -280,7 +281,7 @@ public class Manifest
         }
         return true;
     }
-
+    
     private static boolean isHard(Annotation annotation, ObsClient obsClient)
     {
         if (annotation.isHard())
@@ -302,7 +303,7 @@ public class Manifest
         }
         return false;
     }
-
+    
     private static boolean isNotHard(Annotation annotation, ObsClient obsClient)
     {
         if (annotation.isHard())
@@ -328,7 +329,7 @@ public class Manifest
         }
         return false;
     }
-
+    
     private static String getString(JSONObject jObject, String key1, String key2)
     {
         String value = jObject.getString(key1);
@@ -338,7 +339,7 @@ public class Manifest
         }
         return value;
     }
-
+    
     /**
      * parse sample by line string of manifest
      *
@@ -348,7 +349,7 @@ public class Manifest
     private static Sample parseSample(String line, Map properties, ObsClient obsClient)
     {
         JSONObject jObject = JSONObject.parseObject(line);
-
+        
         List<Annotation> annotationList =
             parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS), properties, obsClient);
         if (0 != properties.size() && (Boolean.parseBoolean(String.valueOf(properties.get(ANNOTATION_HARD)))
@@ -379,7 +380,7 @@ public class Manifest
             );
         }
     }
-
+    
     /**
      * parse manifest by manifest path
      * default properties value is false.
@@ -393,7 +394,7 @@ public class Manifest
     {
         return parseManifest(path, new HashMap());
     }
-
+    
     /**
      * parse manifest by manifest path
      *
@@ -422,9 +423,9 @@ public class Manifest
             return readFromLocal(path, properties);
         }
     }
-
+    
     private static final Logger LOGGER = Logger.getLogger(Manifest.class.getName());
-
+    
     /**
      * parse manifest from S3, with obsClient.
      *
@@ -469,7 +470,7 @@ public class Manifest
         dataset.setSize(sum);
         return dataset;
     }
-
+    
     /**
      * parse manifest from S3, with access_key, secret_key and end_point.
      * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
@@ -486,7 +487,7 @@ public class Manifest
     {
         return parseManifest(path, access_key, secret_key, end_point, new HashMap());
     }
-
+    
     /**
      * parse manifest from S3, with access_key, secret_key and end_point.
      * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
@@ -523,7 +524,7 @@ public class Manifest
             return readFromOBS(path, obsClient, properties);
         }
     }
-
+    
     /**
      * parse manifest from S3, with obsClient.
      * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
@@ -538,7 +539,7 @@ public class Manifest
     {
         return parseManifest(path, obsClient, new HashMap());
     }
-
+    
     /**
      * parse manifest from S3, with obsClient.
      * It will parse manifest from local if the path is local, even though configure access_key, secret_key and end_point.
@@ -571,5 +572,5 @@ public class Manifest
             return readFromOBS(path, obsClient, properties);
         }
     }
-
+    
 }
