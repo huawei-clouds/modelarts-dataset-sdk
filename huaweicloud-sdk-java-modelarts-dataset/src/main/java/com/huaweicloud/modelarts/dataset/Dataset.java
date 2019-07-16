@@ -179,12 +179,22 @@ public class Dataset
         throws IOException
     {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
-        for (int i = 0; i < samples.size(); i++)
+        try
         {
-            String jsonStr = toJSONString(samples.get(i));
-            bufferedWriter.write(jsonStr + "\n");
+            for (int i = 0; i < samples.size(); i++)
+            {
+                String jsonStr = toJSONString(samples.get(i));
+                bufferedWriter.write(jsonStr + "\n");
+            }
         }
-        bufferedWriter.close();
+        catch (IOException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            bufferedWriter.close();
+        }
     }
     
     // TODO: support OBS
@@ -199,12 +209,22 @@ public class Dataset
         throws IOException
     {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
-        for (int i = 0; i < samples.size(); i++)
+        try
         {
-            String jsonStr = toJSONString(samples.get(i));
-            bufferedWriter.write(jsonStr + "\n");
+            for (int i = 0; i < samples.size(); i++)
+            {
+                String jsonStr = toJSONString(samples.get(i));
+                bufferedWriter.write(jsonStr + "\n");
+            }
         }
-        bufferedWriter.close();
+        catch (IOException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            bufferedWriter.close();
+        }
     }
     
     @Override

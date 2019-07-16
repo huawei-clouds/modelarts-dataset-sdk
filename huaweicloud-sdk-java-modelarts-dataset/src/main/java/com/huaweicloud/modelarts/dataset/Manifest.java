@@ -84,21 +84,31 @@ public class Manifest
         File file = new File(path);
         InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
         BufferedReader bufferedReader = new BufferedReader(reader);
-        String line;
         Dataset dataset = new Dataset();
-        int sum = 0;
-        properties = addRelativePath(properties, path);
-        while ((line = bufferedReader.readLine()) != null)
+        try
         {
-            Sample sample = parseSample(line, properties, null);
-            if (null != sample)
+            String line;
+            int sum = 0;
+            properties = addRelativePath(properties, path);
+            while ((line = bufferedReader.readLine()) != null)
             {
-                dataset.addSample(sample);
-                sum++;
+                Sample sample = parseSample(line, properties, null);
+                if (null != sample)
+                {
+                    dataset.addSample(sample);
+                    sum++;
+                }
             }
+            dataset.setSize(sum);
         }
-        dataset.setSize(sum);
-        bufferedReader.close();
+        catch (IOException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            bufferedReader.close();
+        }
         return dataset;
     }
     
@@ -455,17 +465,27 @@ public class Manifest
         if (content != null)
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-            String line;
-            while ((line = reader.readLine()) != null)
+            try
             {
-                Sample sample = parseSample(line, properties, obsClient);
-                if (null != sample)
+                String line;
+                while ((line = reader.readLine()) != null)
                 {
-                    dataset.addSample(sample);
-                    sum++;
+                    Sample sample = parseSample(line, properties, obsClient);
+                    if (null != sample)
+                    {
+                        dataset.addSample(sample);
+                        sum++;
+                    }
                 }
             }
-            reader.close();
+            catch (IOException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                reader.close();
+            }
         }
         dataset.setSize(sum);
         return dataset;
