@@ -83,10 +83,11 @@ public class Manifest
     {
         File file = new File(path);
         InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
-        BufferedReader bufferedReader = new BufferedReader(reader);
+        BufferedReader bufferedReader = null;
         Dataset dataset = new Dataset();
         try
         {
+            bufferedReader = new BufferedReader(reader);
             String line;
             int sum = 0;
             properties = addRelativePath(properties, path);
@@ -464,9 +465,10 @@ public class Manifest
         properties = addRelativePath(properties, path);
         if (content != null)
         {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+            BufferedReader reader = null;
             try
             {
+                reader = new BufferedReader(new InputStreamReader(content));
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
