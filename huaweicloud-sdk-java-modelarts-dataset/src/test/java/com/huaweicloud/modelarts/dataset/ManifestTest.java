@@ -62,6 +62,54 @@ public class ManifestTest extends TestCase
         System.out.println(this.getName() + " Success");
     }
     
+    public void testParseManifestCarbonDataImageClassificationSample()
+    {
+        String path = resourcePath + "/carbon/ImageClassificationV003/V003.manifest";
+        Dataset dataset = null;
+        try
+        {
+            dataset = parseManifest(path);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
+        List<Sample> sampleList = dataset.getSamples();
+        Assert.assertTrue(sampleList.size() == 1);
+        for (int i = 0; i < sampleList.size(); i++)
+        {
+            Sample sample = sampleList.get(i);
+            Assert.assertTrue("carbondata".equalsIgnoreCase(sample.getSourceType()));
+            Assert.assertTrue(sample.getSchema().size() == 5);
+        }
+        System.out.println(this.getName() + " Success");
+    }
+    
+    public void testParseManifestCarbonDataObjectDetectionSample()
+    {
+        String path = resourcePath + "/carbon/ObjectDetectionV002/V002.manifest";
+        Dataset dataset = null;
+        try
+        {
+            dataset = parseManifest(path);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
+        List<Sample> sampleList = dataset.getSamples();
+        Assert.assertTrue(sampleList.size() == 1);
+        for (int i = 0; i < sampleList.size(); i++)
+        {
+            Sample sample = sampleList.get(i);
+            Assert.assertTrue("carbondata".equalsIgnoreCase(sample.getSourceType()));
+            Assert.assertTrue(sample.getSchema().size() == 5);
+        }
+        System.out.println(this.getName() + " Success");
+    }
+    
     public void testParseManifestImageClassificationSample2()
     {
         String path = resourcePath + "/V002.manifest";

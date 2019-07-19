@@ -17,6 +17,7 @@ package com.huaweicloud.modelarts.dataset;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,13 +79,26 @@ public class Sample
         this.source = source;
     }
     
-    public Sample(String source, String usage, String inferenceLoc, List<Annotation> annotations, String id)
+    public Sample(String source, String sourceType, Map<String, Object> property, String usage, String inferenceLoc,
+        List<Annotation> annotations, String id)
     {
         this.source = source;
+        this.sourceType = sourceType;
+        this.property = property;
         this.usage = usage;
         this.inferenceLoc = inferenceLoc;
         this.annotations = annotations;
         this.id = id;
+        if (property != null)
+        {
+            this.schema = new ArrayList<Schema>();
+            JSONObject jsonObject = (JSONObject)property.get(FieldName.PROPERTY_SCHEMA);
+            for (String key : jsonObject.keySet())
+            {
+                this.schema.add(new Schema(key, jsonObject.getString(key)));
+            }
+        }
+        
     }
     
     public Sample(String source, String sourceType, String usage, List<Schema> schema)
