@@ -15,6 +15,9 @@
 
 package com.huaweicloud.modelarts.dataset;
 
+import com.huaweicloud.modelarts.dataset.format.voc.PascalVocIO;
+import com.huaweicloud.modelarts.dataset.format.voc.VOCObject;
+import com.huaweicloud.modelarts.dataset.format.voc.position.BNDBox;
 import junit.framework.TestCase;
 import org.apache.carbondata.common.exceptions.sql.InvalidLoadOptionException;
 import org.apache.carbondata.core.metadata.datatype.DataTypes;
@@ -35,6 +38,7 @@ import java.util.Map;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_HARD;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_NAMES;
 import static com.huaweicloud.modelarts.dataset.FieldName.PARSE_PASCAL_VOC;
+import static com.huaweicloud.modelarts.dataset.Manifest.getAnnotations;
 import static com.huaweicloud.modelarts.dataset.Manifest.parseManifest;
 import static com.huaweicloud.modelarts.dataset.utils.Validate.*;
 import static org.apache.carbondata.core.util.path.CarbonTablePath.CARBON_DATA_EXT;
@@ -63,6 +67,7 @@ public class ManifestTest extends TestCase
     }
     
     public void testParseManifestCarbonDataImageClassificationSample()
+        throws IOException, InterruptedException
     {
         String path = resourcePath + "/carbon/ImageClassificationV003/V003.manifest";
         Dataset dataset = null;
@@ -77,16 +82,63 @@ public class ManifestTest extends TestCase
         }
         List<Sample> sampleList = dataset.getSamples();
         Assert.assertTrue(sampleList.size() == 1);
+        List files = new ArrayList();
+        String resourcesPath = new File(this.getClass().getResource("/").getPath() + ".").getCanonicalPath();
         for (int i = 0; i < sampleList.size(); i++)
         {
             Sample sample = sampleList.get(i);
             Assert.assertTrue("carbondata".equalsIgnoreCase(sample.getSourceType()));
             Assert.assertTrue(sample.getSchema().size() == 5);
+            files.add(resourcesPath + "/" + sample.getSource());
+        }
+        List<Schema> schemas = sampleList.get(0).getSchema();
+        String[] projection = new String[schemas.size()];
+        for (int i = 0; i < schemas.size(); i++)
+        {
+            projection[i] = schemas.get(i).getName();
+        }
+        CarbonReader reader = CarbonReader
+            .builder(files.get(0).toString().substring(0, Math.max(files.get(0).toString().lastIndexOf("/"), 1)))
+            .projection(projection)
+            .withFileLists(files)
+            .build();
+        List<Sample> carbonSamples = new ArrayList<Sample>();
+        while (reader.hasNext())
+        {
+            Object[] row = (Object[])reader.readNextRow();
+            List<Annotation> annotationList = getAnnotations(row[4].toString(), null);
+            System.out.println(row[0] + " " + row[1]);
+            carbonSamples.add(new Sample(row[1].toString(),
+                "carbondata",
+                sampleList.get(0).getProperty(),
+                row[3].toString(),
+                null,
+                annotationList,
+                row[1].toString()));
+        }
+        Assert.assertTrue(carbonSamples.size() == 15);
+        for (int i = 0; i < carbonSamples.size(); i++)
+        {
+            Sample sample = carbonSamples.get(i);
+            Assert.assertTrue(sample.getSource() != null);
+            Assert.assertTrue(sample.getSourceType().equalsIgnoreCase("carbondata"));
+            Assert.assertTrue(sample.getUsage().equalsIgnoreCase("train"));
+            Assert.assertTrue(sample.getSchema().size() == 5);
+            Assert.assertTrue(sample.getProperty() != null);
+            for (int j = 0; j < sample.getAnnotations().size(); j++)
+            {
+                Annotation annotation = sample.getAnnotations().get(j);
+                Assert.assertTrue(annotation.getName() != null);
+                Assert.assertTrue(annotation.getType().equalsIgnoreCase("modelarts/image_classification"));
+                Assert.assertTrue(annotation.getCreationTime() != null);
+                Assert.assertTrue(annotation.getAnnotatedBy() != null);
+            }
         }
         System.out.println(this.getName() + " Success");
     }
     
     public void testParseManifestCarbonDataObjectDetectionSample()
+        throws IOException, InterruptedException
     {
         String path = resourcePath + "/carbon/ObjectDetectionV002/V002.manifest";
         Dataset dataset = null;
@@ -101,11 +153,82 @@ public class ManifestTest extends TestCase
         }
         List<Sample> sampleList = dataset.getSamples();
         Assert.assertTrue(sampleList.size() == 1);
+        List files = new ArrayList();
+        String resourcesPath = new File(this.getClass().getResource("/").getPath() + ".").getCanonicalPath();
         for (int i = 0; i < sampleList.size(); i++)
         {
             Sample sample = sampleList.get(i);
             Assert.assertTrue("carbondata".equalsIgnoreCase(sample.getSourceType()));
             Assert.assertTrue(sample.getSchema().size() == 5);
+            files.add(resourcesPath + "/" + sample.getSource());
+        }
+        List<Schema> schemas = sampleList.get(0).getSchema();
+        String[] projection = new String[schemas.size()];
+        for (int i = 0; i < schemas.size(); i++)
+        {
+            projection[i] = schemas.get(i).getName();
+        }
+        CarbonReader reader = CarbonReader
+            .builder(files.get(0).toString().substring(0, Math.max(files.get(0).toString().lastIndexOf("/"), 1)))
+            .projection(projection)
+            .withFileLists(files)
+            .build();
+        List<Sample> carbonSamples = new ArrayList<Sample>();
+        while (reader.hasNext())
+        {
+            Object[] row = (Object[])reader.readNextRow();
+            List<Annotation> annotationList = getAnnotations(row[4].toString(), null);
+            System.out.println(row[0] + " " + row[1]);
+            carbonSamples.add(new Sample(row[1].toString(),
+                "carbondata",
+                sampleList.get(0).getProperty(),
+                row[3].toString(),
+                null,
+                annotationList,
+                row[1].toString()));
+        }
+        Assert.assertTrue(carbonSamples.size() == 5);
+        for (int i = 0; i < carbonSamples.size(); i++)
+        {
+            Sample sample = carbonSamples.get(i);
+            Assert.assertTrue(sample.getSource() != null);
+            Assert.assertTrue(sample.getSourceType().equalsIgnoreCase("carbondata"));
+            Assert.assertTrue(sample.getUsage().equalsIgnoreCase("train"));
+            Assert.assertTrue(sample.getSchema().size() == 5);
+            Assert.assertTrue(sample.getProperty() != null);
+            Assert.assertTrue(sample.getAnnotations().size() == 1);
+            for (int j = 0; j < sample.getAnnotations().size(); j++)
+            {
+                Annotation annotation = sample.getAnnotations().get(j);
+                Assert.assertTrue(annotation.getName() == null);
+                Assert.assertTrue(annotation.getType().equalsIgnoreCase("modelarts/object_detection"));
+                Assert.assertTrue(annotation.getCreationTime() != null);
+                Assert.assertTrue(annotation.getAnnotatedBy() != null);
+                PascalVocIO pascalVocIO = new PascalVocIO();
+                pascalVocIO = pascalVocIO.parseXMLValue(annotation.getAnnotationLoc());
+                Assert.assertTrue(pascalVocIO.getFolder().equalsIgnoreCase("images"));
+                Assert.assertTrue(pascalVocIO.getFileName().contains("ILSVRC2012_val"));
+                Assert.assertTrue(pascalVocIO.getSource().getDatabase().contains("Unknown"));
+                Assert.assertTrue(pascalVocIO.getWidth() != null);
+                Assert.assertTrue(pascalVocIO.getHeight() != null);
+                Assert.assertTrue(pascalVocIO.getDepth().equalsIgnoreCase("3"));
+                Assert.assertTrue(pascalVocIO.getSegmented().equalsIgnoreCase("0"));
+                Assert.assertTrue(pascalVocIO.getVocObjects().size() >= 1);
+                for (int k = 0; k < pascalVocIO.getVocObjects().size(); k++)
+                {
+                    VOCObject vocObject = pascalVocIO.getVocObjects().get(k);
+                    Assert.assertTrue(vocObject.getName() != null);
+                    Assert.assertTrue(vocObject.getPose().equalsIgnoreCase("Unspecified"));
+                    Assert.assertTrue(vocObject.getTruncated().equalsIgnoreCase("0"));
+                    Assert.assertTrue(vocObject.getOccluded().equalsIgnoreCase("0"));
+                    Assert.assertTrue(vocObject.getDifficult().equalsIgnoreCase("0"));
+                    BNDBox bndBox = (BNDBox)vocObject.getPosition();
+                    Assert.assertTrue(bndBox.getXMin() != null);
+                    Assert.assertTrue(bndBox.getYMin() != null);
+                    Assert.assertTrue(bndBox.getXMax() != null);
+                    Assert.assertTrue(bndBox.getYMax() != null);
+                }
+            }
         }
         System.out.println(this.getName() + " Success");
     }
