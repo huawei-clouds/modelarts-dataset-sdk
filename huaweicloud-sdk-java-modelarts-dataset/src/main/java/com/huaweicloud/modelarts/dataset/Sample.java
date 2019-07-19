@@ -33,6 +33,11 @@ public class Sample
     private String source;
     
     /**
+     * source content, line binary of image
+     */
+    private byte[] sourceContent;
+    
+    /**
      * source type of raw data
      * Optional field
      */
@@ -189,6 +194,16 @@ public class Sample
     public void setId(String id)
     {
         this.id = id;
+    }
+    
+    public byte[] getSourceContent()
+    {
+        return sourceContent;
+    }
+    
+    public void setSourceContent(byte[] sourceContent)
+    {
+        this.sourceContent = sourceContent;
     }
     
     @Override

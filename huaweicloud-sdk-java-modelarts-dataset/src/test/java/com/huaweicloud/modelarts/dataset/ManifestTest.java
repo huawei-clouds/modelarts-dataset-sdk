@@ -108,13 +108,15 @@ public class ManifestTest extends TestCase
             Object[] row = (Object[])reader.readNextRow();
             List<Annotation> annotationList = getAnnotations(row[4].toString(), null);
             System.out.println(row[0] + " " + row[1]);
-            carbonSamples.add(new Sample(row[1].toString(),
+            Sample sample = new Sample(row[1].toString(),
                 "carbondata",
                 sampleList.get(0).getProperty(),
                 row[3].toString(),
                 null,
                 annotationList,
-                row[0].toString()));
+                row[0].toString());
+            sample.setSourceContent((byte[])row[2]);
+            carbonSamples.add(sample);
         }
         Assert.assertTrue(carbonSamples.size() == 15);
         for (int i = 0; i < carbonSamples.size(); i++)
