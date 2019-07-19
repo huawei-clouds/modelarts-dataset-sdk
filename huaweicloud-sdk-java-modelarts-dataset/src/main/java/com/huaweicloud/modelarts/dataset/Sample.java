@@ -93,12 +93,14 @@ public class Sample
         {
             this.schema = new ArrayList<Schema>();
             JSONObject jsonObject = (JSONObject)property.get(FieldName.PROPERTY_SCHEMA);
-            for (String key : jsonObject.keySet())
+            if (jsonObject != null)
             {
-                this.schema.add(new Schema(key, jsonObject.getString(key)));
+                for (String key : jsonObject.keySet())
+                {
+                    this.schema.add(new Schema(key, jsonObject.getString(key)));
+                }
             }
         }
-        
     }
     
     public Sample(String source, String sourceType, String usage, List<Schema> schema)
