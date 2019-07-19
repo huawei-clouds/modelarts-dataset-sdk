@@ -370,6 +370,8 @@ public class Manifest
             if (annotationList.size() > 0)
             {
                 return new Sample(jObject.getString(SOURCE),
+                    jObject.getString(SOURCE_TYPE),
+                    jObject.getJSONObject(SOURCE_PROPERTY),
                     jObject.getString(FieldName.USAGE),
                     getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
                     annotationList,
@@ -384,6 +386,8 @@ public class Manifest
         else
         {
             return new Sample(jObject.getString(SOURCE),
+                jObject.getString(SOURCE_TYPE),
+                jObject.getJSONObject(SOURCE_PROPERTY),
                 jObject.getString(FieldName.USAGE),
                 getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
                 annotationList,
