@@ -114,7 +114,7 @@ public class ManifestTest extends TestCase
                 row[3].toString(),
                 null,
                 annotationList,
-                row[1].toString()));
+                row[0].toString()));
         }
         Assert.assertTrue(carbonSamples.size() == 15);
         for (int i = 0; i < carbonSamples.size(); i++)
@@ -185,7 +185,7 @@ public class ManifestTest extends TestCase
                 row[3].toString(),
                 null,
                 annotationList,
-                row[1].toString()));
+                row[0].toString()));
         }
         Assert.assertTrue(carbonSamples.size() == 5);
         for (int i = 0; i < carbonSamples.size(); i++)
