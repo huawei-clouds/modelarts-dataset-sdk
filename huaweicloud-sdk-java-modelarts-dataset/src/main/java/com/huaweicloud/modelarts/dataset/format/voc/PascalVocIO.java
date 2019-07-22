@@ -634,7 +634,6 @@ public class PascalVocIO
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             String msg = String.format("Can't parse the XML file, %s; The file is %s", e, filePath);
             LOGGER.error(msg);
             throw new RuntimeException(msg);
@@ -666,7 +665,6 @@ public class PascalVocIO
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             String msg = String.format("Can't parse the XML file, %s; The file is %s", e, filePath);
             LOGGER.error(msg);
             throw new RuntimeException(msg);
@@ -687,7 +685,6 @@ public class PascalVocIO
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             String msg = String.format("Can't parse the XML value, %s; ", e);
             LOGGER.error(msg);
             throw new RuntimeException(msg);
