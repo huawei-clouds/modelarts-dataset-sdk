@@ -182,7 +182,6 @@ def __getDataSet(lines):
                source_type=source_type, source_property=source_property))
   return DataSet(sample=sample_list, size=size)
 
-
 def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=None, obs_client=None, ssl_verify=False,
                    max_retry_count=3, timeout=60):
   """
