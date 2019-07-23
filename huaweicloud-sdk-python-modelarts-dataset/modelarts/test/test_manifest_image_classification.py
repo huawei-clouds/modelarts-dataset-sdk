@@ -37,7 +37,7 @@ def validate(data_set):
 
       annotation_name = annotation.get_name()
       assert (annotation_name == "Cat" or annotation_name == "Dog"
-              or annotation_name == str('狗') or annotation_name == str('猫'))
+              or annotation_name == u'狗' or annotation_name == u'猫')
 
       annotation_loc = annotation.get_loc()
       assert annotation_loc is None

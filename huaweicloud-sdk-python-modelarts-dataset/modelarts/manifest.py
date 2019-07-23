@@ -12,21 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
+import codecs
 import json
 
 from modelarts import field_name
+from modelarts import compat
 from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index, \
   property_content, sound_classification, audio_classification
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
 
-import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
 def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_key=None,
                     secret_key=None, end_point=None, usage=field_name.default_usage, ssl_verify=False,
                     max_retry_count=3, timeout=60):
@@ -81,17 +78,17 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
             flag = True
             if (task_type == field_name.image_classification or task_type == field_name.audio_classification
                     or task_type == field_name.text_classification):
-              label_list.append(str(annotation.get_name()))
+              label_list.append(annotation.get_name())
             elif task_type == field_name.text_entity:
               annotation_property = annotation.get_property()
-              label_list.append(str(annotation.get_name()
+              label_list.append(annotation.get_name()
                                     + label_separator + str(annotation_property[property_start_index])
-                                    + label_separator + str(annotation_property[property_end_index])))
+                                    + label_separator + str(annotation_property[property_end_index]))
             elif task_type == field_name.audio_content:
               annotation_property = annotation.get_property()
               label_list.append(str(annotation_property[property_content]))
             elif task_type == field_name.object_detection:
-              label_list.append(str(annotation.get_loc()))
+              label_list.append(annotation.get_loc())
             else:
               raise Exception("Don't support the task type:" + task_type)
 
@@ -101,18 +98,18 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
             if str(task_type).endswith("/" + field_name.image_classification) \
                     or str(task_type).endswith("/" + field_name.audio_classification) \
                     or str(task_type).endswith("/" + field_name.text_classification):
-              label_list.append(str(annotation.get_name()))
+              label_list.append(annotation.get_name())
             elif str(task_type).endswith("/" + field_name.text_entity):
               annotation_property = annotation.get_property()
-              label_list.append(str(annotation.get_name()
+              label_list.append(annotation.get_name()
                                     + label_separator + str(annotation_property[property_start_index])
-                                    + label_separator + str(annotation_property[property_end_index])))
+                                    + label_separator + str(annotation_property[property_end_index]))
 
             elif str(task_type).endswith("/" + field_name.audio_content):
               annotation_property = annotation.get_property()
               label_list.append(str(annotation_property[property_content]))
             elif str(task_type).endswith("/" + field_name.object_detection):
-              label_list.append(str(annotation.get_loc()))
+              label_list.append(annotation.get_loc())
             else:
               raise Exception("Don't support the task type:" + task_type)
 
@@ -170,6 +167,7 @@ def __getDataSet(lines):
   sample_list = []
   size = 0
   for line in lines:
+    line = compat.as_str(line)
     if line != '':
       size = size + 1
       text = json.loads(line)
@@ -204,7 +202,7 @@ def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=No
   local = __is_local(manifest_path)
 
   if local:
-    with open(manifest_path) as f_obj:
+    with codecs.open(manifest_path, encoding='utf-8') as f_obj:
       lines = f_obj.readlines()
       return __getDataSet(lines)
   else:
@@ -223,7 +221,7 @@ def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=No
         timeout=timeout
       )
     data = __read(manifest_path, obs_client)
-    result = __getDataSet(data.decode().split("\n"))
+    result = __getDataSet(compat.as_text(data, 'gbk').split("\n"))
     return result
 
 
@@ -333,10 +331,10 @@ class DataSet(object):
     :return: None
     """
     if access_key is None and secret_key is None and end_point is None:
-      with open(path, saveMode) as f_obj:
+      with codecs.open(path, saveMode, encoding='utf-8') as f_obj:
         for sample in self.get_sample_list():
           value = self.__toJSON(sample)
-          json.dump(value, f_obj, separators=(",", ":"))
+          json.dump(value, f_obj, separators=(",", ":"), ensure_ascii=False)
           f_obj.write('\n')
     elif access_key is None:
       raise Exception("access_key is None")
@@ -348,7 +346,7 @@ class DataSet(object):
       manifest_json = []
       for sample in self.get_sample_list():
         value = self.__toJSON(sample)
-        manifest_json.append(json.dumps(value, separators=(",", ":")))
+        manifest_json.append(json.dumps(value, separators=(",", ":"), ensure_ascii=False))
       save(manifest_json, path, access_key=access_key, secret_key=secret_key, end_point=end_point,
            saveMode=saveMode, ssl_verify=ssl_verify, max_retry_count=max_retry_count, timeout=timeout)
 

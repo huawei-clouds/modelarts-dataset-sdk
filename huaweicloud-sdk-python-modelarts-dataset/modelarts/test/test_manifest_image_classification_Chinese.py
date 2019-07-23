@@ -18,10 +18,6 @@ import sys
 
 from modelarts import manifest
 
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 def validate(data_set):
   assert data_set.get_size() > 18
@@ -73,7 +69,7 @@ def main(argv):
     for sample in data_set.get_sample_list():
       for annotation in sample.get_annotations():
         print(annotation.get_name())
-        if ("向日葵" == annotation.get_name()):
+        if (u"向日葵" == annotation.get_name()):
           chinese = True
     assert chinese;
   elif len(argv) < 3:
@@ -89,7 +85,7 @@ def main(argv):
     for sample in data_set.get_sample_list():
       for annotation in sample.get_annotations():
         print(annotation.get_name())
-        if ("向日葵" == annotation.get_name()):
+        if (u"向日葵" == annotation.get_name()):
           chinese = True
     assert chinese;
 
