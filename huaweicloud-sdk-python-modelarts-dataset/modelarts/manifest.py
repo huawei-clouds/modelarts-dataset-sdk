@@ -187,7 +187,7 @@ def parse_manifest(manifest_path, obs_client):
   local = __is_local(manifest_path)
 
   if local:
-    with open(manifest_path) as f_obj:
+    with open(manifest_path, encoding='utf-8') as f_obj:
       lines = f_obj.readlines()
       return __getDataSet(lines)
   else:
