@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2018 Deep Learning Service of Huawei Cloud. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,8 @@ import sys
 from modelarts import manifest, field_name
 from modelarts.field_name import audio_content
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def check_data(sample_list):
   assert len(sample_list) == 4
