@@ -30,11 +30,11 @@ import static com.huaweicloud.modelarts.dataset.utils.constants.S3_TEST_PREFIX;
 
 public class ManifestOBSTest
 {
-    
+    // VM parameter: -Dfile.encoding=POSIX
     public static void main(String[] args)
         throws Exception
     {
-        if (args.length < 4)
+        if (args.length < 3)
         {
             throw new RuntimeException(
                 "Please input access_key, secret_key, end_point, <parsePascalVOC>  for reading obs files! ");

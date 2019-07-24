@@ -48,7 +48,8 @@ public class Validate
             for (int j = 0; j < annotationList.size(); j++)
             {
                 Annotation annotation = annotationList.get(j);
-                Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()));
+                Assert.assertTrue("Cat".equals(annotation.getName()) || "Dog".equals(annotation.getName()) ||
+                    "猫".equals(annotation.getName()) || "狗".equals(annotation.getName()));
                 assertEquals(annotation.getType(), "modelarts/image_classification");
                 assertEquals(annotation.getAnnotationLoc(), null);
                 Assert.assertTrue("black".equals(annotation.getProperty().get("color")));

@@ -83,7 +83,7 @@ public class Manifest
         throws IOException
     {
         File file = new File(path);
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), UTF8);
         BufferedReader bufferedReader = null;
         Dataset dataset = new Dataset();
         try
@@ -120,7 +120,7 @@ public class Manifest
         {
             properties = new HashMap();
         }
-        properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf('/')));
+        properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf(File.separator)));
         return properties;
     }
     
@@ -489,7 +489,7 @@ public class Manifest
             BufferedReader reader = null;
             try
             {
-                reader = new BufferedReader(new InputStreamReader(content));
+                reader = new BufferedReader(new InputStreamReader(content, UTF8));
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
