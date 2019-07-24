@@ -120,7 +120,9 @@ public class Manifest
         {
             properties = new HashMap();
         }
-        properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf(File.separator)));
+        properties.put(RELATIVE_PATH,
+            relativePath.substring(0,
+                Math.max(relativePath.lastIndexOf(File.separator), relativePath.lastIndexOf("/"))));
         return properties;
     }
     
