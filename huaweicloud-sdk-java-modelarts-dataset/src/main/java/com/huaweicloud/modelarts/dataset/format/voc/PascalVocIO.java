@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.huaweicloud.modelarts.dataset.Constants.UTF8;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
 import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_KEY;
 import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_VALUE;
@@ -680,7 +681,7 @@ public class PascalVocIO
         {
             XmlSecurity.setupSecurity(documentBuilderFactory);
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(new ByteArrayInputStream(value.getBytes()));
+            Document document = documentBuilder.parse(new ByteArrayInputStream(value.getBytes(UTF8)));
             return parseXML(document);
         }
         catch (Exception e)

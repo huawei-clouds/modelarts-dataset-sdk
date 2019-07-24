@@ -29,4 +29,6 @@ public class Constants
     
     public static String SEPARATOR = "/";
     
+    public static String UTF8 ="utf-8";
+    
 }
