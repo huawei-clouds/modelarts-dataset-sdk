@@ -42,8 +42,13 @@ def validate(data_set):
     assert annotation.get_annotation_format() == "PASCAL VOC"
     annotation_annotated_by = annotation.get_annotated_by()
     assert annotation_annotated_by == "human"
+    annotation_hard = annotation.get_hard()
+    assert annotation_hard == True
+    annotation_hard_coefficient = annotation.get_hard_coefficient()
+    assert  annotation_hard_coefficient == 0.8
     print(str(annotation_type) + "\t" + str(annotation_name) + "\t" + str(annotation_loc) + "\t" + str(
-      annotation_property) + "\t" + str(annotation_create_time) + "\t" + str(annotation_annotated_by))
+      annotation_property) + "\t" + str(annotation_create_time) + "\t" + str(annotation_annotated_by) + "\t" +
+          str(annotation.get_hard()) + "\t" + str(annotation.get_hard_coefficient()))
 
 
 def main(argv):

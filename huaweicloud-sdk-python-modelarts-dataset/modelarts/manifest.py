@@ -23,6 +23,7 @@ from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
 
+import collections
 import sys
 
 reload(sys)
@@ -158,12 +159,16 @@ def __getAnnotationsInternal(text):
       annotation_confidence = annotation.get(field_name.annotation_confidence)
       annotated_by = annotation.get(field_name.annotation_annotated_by) or annotation.get(
         field_name.annotation_annotated_by2)
+      annotation_hard = annotation.get(field_name.annotation_hard)
+      annotation_hard_coefficient = annotation.get(field_name.annotation_hard_coefficient)
       annotations_list.append(
         Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
                    property=annotation_property,
                    confidence=annotation_confidence,
                    creation_time=annotation_creation_time,
-                   annotated_by=annotated_by, annotation_format=annotation_format))
+                   annotated_by=annotated_by, annotation_format=annotation_format,
+                   hard=annotation_hard,
+                   hard_coefficient=annotation_hard_coefficient))
   return annotations_list
 
 def __getDataSet(lines):
@@ -300,19 +305,20 @@ class DataSet(object):
     :return annotation json
     """
     annotations_json = []
-    annotation_json = {}
+    annotation_json = collections.OrderedDict()
     if annotations is None:
       return None
     for annotation in annotations:
       self.__put(annotation_json, field_name.annotation_name, annotation.get_name())
       self.__put(annotation_json, field_name.annotation_loc, annotation.get_loc())
       self.__put(annotation_json, field_name.annotation_type, annotation.get_type())
+      self.__put(annotation_json, field_name.annotation_format, annotation.get_annotation_format())
       self.__put(annotation_json, field_name.annotation_confidence, annotation.get_confidence())
-      self.__put(annotation_json, field_name.annotation_property, annotation.get_property())
       self.__put(annotation_json, field_name.annotation_hard, annotation.get_hard())
+      self.__put(annotation_json, field_name.annotation_hard_coefficient, annotation.get_hard_coefficient())
+      self.__put(annotation_json, field_name.annotation_property, annotation.get_property())
       self.__put(annotation_json, field_name.annotation_annotated_by, annotation.get_annotated_by())
       self.__put(annotation_json, field_name.annotation_creation_time, annotation.get_creation_time())
-      self.__put(annotation_json, field_name.annotation_format, annotation.get_annotation_format())
       annotations_json.append(annotation_json)
     return annotations_json
 
@@ -426,12 +432,13 @@ class Sample(object):
 class Annotation:
 
   def __init__(self, name=None, type=None, loc=None, property=None, confidence=None, creation_time=None,
-               annotated_by=None, annotation_format=None, hard=None):
+               annotated_by=None, annotation_format=None, hard=None, hard_coefficient=None):
     self._name = name
     self._type = type
     self._annotation_loc = loc
     self._property = property
     self._hard = hard
+    self._hard_coefficient = hard_coefficient
     self._confidence = confidence
     self._creation_time = creation_time
     self._annotated_by = annotated_by
@@ -472,6 +479,13 @@ class Annotation:
     Optional field
     """
     return self._hard
+
+  def get_hard_coefficient(self):
+    """
+    :return set the coefficient of hard
+    Optional field
+    """
+    return self._hard_coefficient
 
   def get_confidence(self):
     """

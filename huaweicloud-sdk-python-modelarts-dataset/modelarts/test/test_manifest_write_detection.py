@@ -35,10 +35,13 @@ def create_manifest():
       annotation_creation_time = "2019-02-20 03:16:58"
       annotation_format = "PASCAL VOC"
       annotated_by = "human"
+      annotation_hard = True
+      annotation_hard_coefficient = 0.8
       annotations_list.append(
         Annotation(type=annotation_type, loc=annotation_loc,
                    creation_time=annotation_creation_time,
-                   annotated_by=annotated_by, annotation_format=annotation_format))
+                   annotated_by=annotated_by, annotation_format=annotation_format,
+                   hard=annotation_hard, hard_coefficient=annotation_hard_coefficient))
     sample_list.append(
       Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc))
   return DataSet(sample=sample_list, size=size)

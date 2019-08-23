@@ -16,6 +16,7 @@
         <pose>0</pose>
         <truncated>0</truncated>
         <difficult>0</difficult>
+        <hard-coefficient>0.8</hard-coefficient>
         <bndbox>
             <xmin>199</xmin>
             <ymin>115</ymin>

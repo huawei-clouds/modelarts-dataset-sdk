@@ -39,12 +39,15 @@ def create_manifest():
       annotation_format = "manifest"
       annotation_property = {"color": "black"}
       annotation_confidence = 0.8
+      annoFtation_hard = True
+      annotation_hard_coefficient = 0.8
       annotated_by = "human"
       annotations_list.append(
         Annotation(name=annotation_name, type=annotation_type,
                    confidence=annotation_confidence,
                    creation_time=annotation_creation_time,
-                   annotated_by=annotated_by, annotation_format=annotation_format, property=annotation_property))
+                   annotated_by=annotated_by, annotation_format=annotation_format, property=annotation_property,
+                   hard=annotation_hard, hard_coefficient=annotation_hard_coefficient))
     sample_list.append(
       Sample(source=source, usage=usage, annotations=annotations_list, inference_loc=inference_loc))
   return DataSet(sample=sample_list, size=size)
