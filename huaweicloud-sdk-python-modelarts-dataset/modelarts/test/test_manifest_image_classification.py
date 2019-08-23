@@ -18,6 +18,8 @@ import sys
 
 from modelarts import manifest
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def validate(data_set):
   assert data_set.get_size() > 18
@@ -54,9 +56,16 @@ def validate(data_set):
       annotation_annotated_by = annotation.get_annotated_by()
       assert annotation_annotated_by == "human"
 
+      annotation_hard = annotation.get_hard()
+      assert annotation_hard == True
+
+      annotation_hard_coefficient = annotation.get_hard_coefficient()
+      assert annotation_hard_coefficient == 0.8
+
       print(annotation_type + "\t" + annotation_name + "\t" + str(annotation_loc) + "\t" + str(
         annotation_property) + "\t" + str(confidence) + "\t" + str(annotation_create_time) + "\t" + str(
-        annotation_annotated_by + "\t" + str(inference_loc)))
+        annotation_annotated_by + "\t" + str(inference_loc)) + "\t" +
+            str(annotation_hard) + "\t" + str(annotation_hard_coefficient))
 
 
 def main(argv):
@@ -64,7 +73,7 @@ def main(argv):
     if str(argv[0]).endswith(".manifest"):
       path = argv[0]
     else:
-      path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726.manifest"
+      path = os.path.abspath('../../../') + "/resources/classification-xy-V201902220937263726_2.manifest"
     data_set = manifest.parse_manifest(path)
     validate(data_set)
   elif len(argv) < 3:
