@@ -22,6 +22,7 @@ from modelarts.field_name import prefix_text, label_separator, property_start_in
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
+from copy import deepcopy
 
 import collections
 
@@ -300,7 +301,7 @@ class DataSet(object):
       self.__put(annotation_json, field_name.annotation_property, annotation.get_property())
       self.__put(annotation_json, field_name.annotation_annotated_by, annotation.get_annotated_by())
       self.__put(annotation_json, field_name.annotation_creation_time, annotation.get_creation_time())
-      annotations_json.append(annotation_json)
+      annotations_json.append(deepcopy(annotation_json))
     return annotations_json
 
   def __toJSON(self, sample):
