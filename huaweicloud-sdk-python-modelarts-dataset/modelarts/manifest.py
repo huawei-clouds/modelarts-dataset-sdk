@@ -22,6 +22,7 @@ from modelarts.field_name import prefix_text, label_separator, property_start_in
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
+from copy import deepcopy
 
 import collections
 import sys
@@ -204,7 +205,11 @@ def parse_manifest(manifest_path, obs_client):
       raise ValueError("Please input obs_client.")
 
     data = __read(manifest_path, obs_client)
-    result = __getDataSet(data.decode().split("\n"))
+    _is_python3 = sys.version_info.major == 3
+    if _is_python3:
+      result = __getDataSet(data.decode().split("\n"))
+    else:
+      result = __getDataSet(data.split("\n"))
     return result
 
 
@@ -245,7 +250,11 @@ def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=No
         timeout=timeout
       )
     data = __read(manifest_path, obs_client)
-    result = __getDataSet(data.decode().split("\n"))
+    _is_python3 = sys.version_info.major == 3
+    if _is_python3:
+      result = __getDataSet(data.decode().split("\n"))
+    else:
+      result = __getDataSet(data.split("\n"))
     return result
 
 
@@ -319,7 +328,7 @@ class DataSet(object):
       self.__put(annotation_json, field_name.annotation_property, annotation.get_property())
       self.__put(annotation_json, field_name.annotation_annotated_by, annotation.get_annotated_by())
       self.__put(annotation_json, field_name.annotation_creation_time, annotation.get_creation_time())
-      annotations_json.append(annotation_json)
+      annotations_json.append(deepcopy(annotation_json))
     return annotations_json
 
   def __toJSON(self, sample):
