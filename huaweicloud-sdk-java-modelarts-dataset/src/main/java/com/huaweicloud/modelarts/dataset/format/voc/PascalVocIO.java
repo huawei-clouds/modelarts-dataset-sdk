@@ -130,6 +130,7 @@ public class PascalVocIO
         String truncated = null;
         String occluded = null;
         String difficult = null;
+        String difficultCoefficient = null;
         String confidence = null;
         String xMin = null;
         String yMin = null;
@@ -499,7 +500,7 @@ public class PascalVocIO
                 position = new Point(x, y);
             }
         }
-        return new VOCObject(name, properties, pose, truncated, occluded, difficult, confidence, position, parts);
+        return new VOCObject(name, properties, pose, truncated, occluded, difficult, difficultCoefficient, confidence, position, parts);
     }
     
     private String getMandatoryNodeValue(NodeList nodeList, int i, String errorMsg)

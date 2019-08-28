@@ -111,6 +111,8 @@ public class FieldName
     
     public static final String DIFFICULT = "difficult";
     
+    public static final String DIFFICULT_COEFFICIENT = "difficult-coefficient";
+    
     public static final String CONFIDENCE = "confidence";
     
     public static final String XMIN = "xmin";
