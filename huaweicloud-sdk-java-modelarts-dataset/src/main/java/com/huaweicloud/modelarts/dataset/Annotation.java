@@ -58,7 +58,14 @@ public class Annotation
      * Optional field
      */
     private boolean hard;
-    
+
+    /**
+     * how hard annotation
+     * the value: 0 <= hardCoefficient <1
+     * Optional field
+     */
+    private double hardCoefficient;
+
     /**
      * Confidence for annotation that was annotated by machine
      * the value: 0 <= Confidence < 1
@@ -117,7 +124,7 @@ public class Annotation
     }
     
     public Annotation(String name, String type, String annotationLoc, JSONObject property, double confidence,
-        String creationTime, String annotatedBy, String annotationFormat, boolean hard)
+        String creationTime, String annotatedBy, String annotationFormat, boolean hard, double hardCoefficient)
     {
         this.name = name;
         this.type = type;
@@ -128,6 +135,7 @@ public class Annotation
         this.annotatedBy = annotatedBy;
         this.annotationFormat = annotationFormat;
         this.hard = hard;
+        this.hardCoefficient = hardCoefficient;
     }
     
     public String getName()
@@ -219,6 +227,16 @@ public class Annotation
     {
         this.hard = hard;
     }
+
+    public double getHardCoefficient()
+    {
+        return hardCoefficient;
+    }
+
+    public void setHardCoefficient(double hardCoefficient)
+    {
+        this.hardCoefficient = hardCoefficient;
+    }
     
     /**
      * get Pascal Voc by using obs client
@@ -281,6 +299,7 @@ public class Annotation
             ", annotationLoc='" + annotationLoc + '\'' +
             ", property=" + property +
             ", hard=" + hard +
+            ", hardCoefficient=" + hardCoefficient +
             ", confidence=" + confidence +
             ", creationTime='" + creationTime + '\'' +
             ", annotatedBy='" + annotatedBy + '\'' +

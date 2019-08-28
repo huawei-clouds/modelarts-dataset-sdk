@@ -53,6 +53,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/image_classification");
                 assertEquals(annotation.getAnnotationLoc(), null);
                 Assert.assertTrue("black".equals(annotation.getProperty().get("color")));
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0, 0);
                 assertEquals(annotation.getConfidence(), 0.8, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 08:2"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -83,6 +85,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/image_classification");
                 assertEquals(annotation.getAnnotationLoc(), null);
                 Assert.assertTrue(annotation.getProperty().isEmpty());
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0, 0);
                 assertEquals(annotation.getConfidence(), 0.0, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-03-30 17:22"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -269,6 +273,8 @@ public class Validate
                     Assert.assertTrue(null == annotation.getAnnotationLoc() ||
                         annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
                     Assert.assertTrue(null == annotation.getProperty() || annotation.getProperty().isEmpty());
+                    assertEquals(annotation.isHard(), false);
+                    assertEquals(annotation.getHardCoefficient(), 0,0);
                     Assert.assertTrue(0.8 == annotation.getConfidence() || 0 == annotation.getConfidence());
                     Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20"));
                     assertEquals(annotation.getAnnotatedBy(), "human");
@@ -299,6 +305,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/object_detection");
                 Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
                 assertEquals(annotation.getProperty(), null);
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0,0);
                 assertEquals(annotation.getConfidence(), 0, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -327,6 +335,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/object_detection");
                 Assert.assertTrue(annotation.getAnnotationLoc().startsWith("s3://path/manifest/data/2007_0"));
                 assertEquals(annotation.getProperty(), null);
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0,0);
                 assertEquals(annotation.getConfidence(), 0, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -362,6 +372,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/object_detection");
                 Assert.assertTrue(annotation.getAnnotationLoc().endsWith(".xml"));
                 assertEquals(annotation.getProperty(), null);
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0,0);
                 assertEquals(annotation.getConfidence(), 0, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-02-20 03:16"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -442,6 +454,8 @@ public class Validate
                 assertEquals(annotation.getType(), "modelarts/text_classification");
                 assertEquals(annotation.getAnnotationLoc(), null);
                 Assert.assertTrue("#3399ff".equals(annotation.getProperty().get(PROPERTY_COLOR)));
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0,0);
                 assertEquals(annotation.getConfidence(), 0.0, 0);
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-17 10:39:19"));
                 assertEquals(annotation.getAnnotatedBy(), "human");
@@ -590,6 +604,8 @@ public class Validate
                 Assert.assertTrue(0 == Integer.parseInt(annotation.getProperty().get(PROPERTY_START_INDEX).toString()));
                 Assert.assertTrue(3 <= Integer.parseInt(annotation.getProperty().get(PROPERTY_END_INDEX).toString()));
                 Assert.assertTrue(annotation.getCreationTime().startsWith("2019-04-17 11:22:12"));
+                assertEquals(annotation.isHard(), false);
+                assertEquals(annotation.getHardCoefficient(), 0,0);
                 assertEquals(annotation.getAnnotatedBy(), "human");
                 assertEquals(annotation.getAnnotationFormat(), null);
             }
