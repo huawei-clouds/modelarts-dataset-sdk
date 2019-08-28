@@ -161,6 +161,7 @@ public class Dataset
             put(jsonObject, FieldName.ANNOTATION_CONFIDENCE, annotation.getConfidence());
             put(jsonObject, FieldName.ANNOTATION_PROPERTY, annotation.getProperty());
             put(jsonObject, FieldName.ANNOTATION_HARD, annotation.isHard());
+            put(jsonObject, FieldName.ANNOTATION_HARD_COEFFICIENT, annotation.getHardCoefficient());
             put(jsonObject, FieldName.ANNOTATION_ANNOTATED_BY, annotation.getAnnotatedBy());
             put(jsonObject, FieldName.ANNOTATION_CREATION_TIME, annotation.getCreationTime());
             put(jsonObject, FieldName.ANNOTATION_FORMAT, annotation.getAnnotationFormat());

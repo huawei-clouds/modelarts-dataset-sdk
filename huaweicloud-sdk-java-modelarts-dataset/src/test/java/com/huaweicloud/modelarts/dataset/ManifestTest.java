@@ -35,7 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_CONFIDENCE;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_HARD;
+import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_HARD_COEFFICIENT;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATION_NAMES;
 import static com.huaweicloud.modelarts.dataset.FieldName.PARSE_PASCAL_VOC;
 import static com.huaweicloud.modelarts.dataset.Manifest.getAnnotations;
@@ -288,7 +290,7 @@ public class ManifestTest extends TestCase
     
     public void testParseManifestImageDetectionSimple()
     {
-        String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
+        String path = resourcePath + "/detect-test-xy-V201902220951335133_1.manifest";
         Dataset dataset = null;
         try
         {
