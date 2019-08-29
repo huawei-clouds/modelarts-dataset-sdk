@@ -201,7 +201,7 @@ public class Manifest
         List<Annotation> annotationList = new ArrayList<Annotation>();
         if (jsonArray == null)
         {
-            return null;
+            return annotationList;
         }
         for (int i = 0; i < jsonArray.size(); i++)
         {

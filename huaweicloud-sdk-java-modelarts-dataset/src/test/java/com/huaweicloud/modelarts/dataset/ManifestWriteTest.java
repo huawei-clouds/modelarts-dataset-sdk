@@ -64,7 +64,7 @@ public class ManifestWriteTest extends TestCase
     public void testWriteManifestClassificationSample()
     {
         String path = resourcePath + "/classification-xy-V201902220937263726.manifest";
-        String path2 = outputPath + "/classification-xy-V201902220937263726_3.manifest";
+        String path2 = outputPath + "/classification-xy-V201902220937263726_2.manifest";
         Dataset dataset = null;
         Dataset dataset2 = null;
         
@@ -95,7 +95,7 @@ public class ManifestWriteTest extends TestCase
     
     public void testParseManifestDetectionSample()
     {
-        String path = resourcePath + "/detect-test-xy-V201902220951335133_1.manifest";
+        String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
         String path2 = outputPath + "/detect-test-xy-V201902220951335133_6.manifest";
         Dataset dataset = null;
         Dataset dataset2 = null;

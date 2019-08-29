@@ -290,7 +290,7 @@ public class ManifestTest extends TestCase
     
     public void testParseManifestImageDetectionSimple()
     {
-        String path = resourcePath + "/detect-test-xy-V201902220951335133_1.manifest";
+        String path = resourcePath + "/detect-test-xy-V201902220951335133.manifest";
         Dataset dataset = null;
         try
         {
