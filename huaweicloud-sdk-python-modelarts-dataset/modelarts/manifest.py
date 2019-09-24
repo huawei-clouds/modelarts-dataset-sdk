@@ -183,22 +183,6 @@ def __getDataSet(lines):
   return DataSet(sample=sample_list, size=size)
 
 
-def parse_manifest(manifest_path, obs_client):
-  local = __is_local(manifest_path)
-
-  if local:
-    with open(manifest_path) as f_obj:
-      lines = f_obj.readlines()
-      return __getDataSet(lines)
-  else:
-    if obs_client is None:
-      raise ValueError("Please input obs_client.")
-
-    data = __read(manifest_path, obs_client)
-    result = __getDataSet(data.decode().split("\n"))
-    return result
-
-
 def parse_manifest(manifest_path, access_key=None, secret_key=None, end_point=None, obs_client=None, ssl_verify=False,
                    max_retry_count=3, timeout=60):
   """
