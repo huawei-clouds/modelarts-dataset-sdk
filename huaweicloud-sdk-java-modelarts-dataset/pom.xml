@@ -6,6 +6,7 @@
         <artifactId>huaweicloud-sdk-modelarts-dataset</artifactId>
         <groupId>com.huaweicloud.modelarts</groupId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -34,7 +35,6 @@
         <dependency>
             <groupId>org.apache.carbondata</groupId>
             <artifactId>carbondata-store-sdk</artifactId>
-            <version>1.6.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

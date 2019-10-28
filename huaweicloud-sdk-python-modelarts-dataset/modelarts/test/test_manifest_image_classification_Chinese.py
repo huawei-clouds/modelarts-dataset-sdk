@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2018 Deep Learning Service of Huawei Cloud. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +18,10 @@ import sys
 
 from modelarts import manifest
 
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def validate(data_set):
   assert data_set.get_size() > 18

@@ -25,9 +25,11 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.huaweicloud.modelarts.dataset.Constants.UTF8;
 import static com.huaweicloud.modelarts.dataset.FieldName.ANNOTATIONS;
 import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_KEY;
 import static com.huaweicloud.modelarts.dataset.FieldName.VOC_PROPERTY_VALUE;
@@ -633,7 +635,6 @@ public class PascalVocIO
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             String msg = String.format("Can't parse the XML file, %s; The file is %s", e, filePath);
             LOGGER.error(msg);
             throw new RuntimeException(msg);
@@ -665,8 +666,29 @@ public class PascalVocIO
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            throw new RuntimeException("Can't parse the XML file,", e);
+            String msg = String.format("Can't parse the XML file, %s; The file is %s", e, filePath);
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+    
+    public PascalVocIO parseXMLValue(String value)
+    {
+        
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = null;
+        try
+        {
+            XmlSecurity.setupSecurity(documentBuilderFactory);
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(new ByteArrayInputStream(value.getBytes(UTF8)));
+            return parseXML(document);
+        }
+        catch (Exception e)
+        {
+            String msg = String.format("Can't parse the XML value, %s; ", e);
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
         }
     }
     

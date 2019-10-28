@@ -18,6 +18,7 @@ package com.huaweicloud.modelarts.dataset;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.huaweicloud.modelarts.dataset.format.voc.PascalVocIO;
 import com.huaweicloud.modelarts.dataset.format.voc.VOCObject;
 import com.obs.services.ObsClient;
@@ -82,23 +83,34 @@ public class Manifest
         throws IOException
     {
         File file = new File(path);
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "GBK");
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        String line;
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), UTF8);
+        BufferedReader bufferedReader = null;
         Dataset dataset = new Dataset();
-        int sum = 0;
-        properties = addRelativePath(properties, path);
-        while ((line = bufferedReader.readLine()) != null)
+        try
         {
-            Sample sample = parseSample(line, properties, null);
-            if (null != sample)
+            bufferedReader = new BufferedReader(reader);
+            String line;
+            int sum = 0;
+            properties = addRelativePath(properties, path);
+            while ((line = bufferedReader.readLine()) != null)
             {
-                dataset.addSample(sample);
-                sum++;
+                Sample sample = parseSample(line, properties, null);
+                if (null != sample)
+                {
+                    dataset.addSample(sample);
+                    sum++;
+                }
             }
+            dataset.setSize(sum);
         }
-        dataset.setSize(sum);
-        bufferedReader.close();
+        catch (IOException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            bufferedReader.close();
+        }
         return dataset;
     }
     
@@ -108,7 +120,9 @@ public class Manifest
         {
             properties = new HashMap();
         }
-        properties.put(RELATIVE_PATH, relativePath.substring(0, relativePath.lastIndexOf('/')));
+        properties.put(RELATIVE_PATH,
+            relativePath.substring(0,
+                Math.max(relativePath.lastIndexOf(File.separator), relativePath.lastIndexOf("/"))));
         return properties;
     }
     
@@ -158,6 +172,22 @@ public class Manifest
                 return new JSONObject();
             }
         }
+    }
+    
+    /**
+     * Parse annotation string to List<Annotation>,
+     * which can be used for CarbonData or others
+     *
+     * @param line      annotation string value
+     * @param obsClient obs client
+     * @return List<Annotation>
+     */
+    public static List<Annotation> getAnnotations(String line, ObsClient obsClient)
+    {
+        JSONObject jObject = JSONObject.parseObject(line, Feature.OrderedField);
+        List<Annotation> annotationList =
+            parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS), new HashMap(), obsClient);
+        return annotationList;
     }
     
     /**
@@ -348,7 +378,7 @@ public class Manifest
      */
     private static Sample parseSample(String line, Map properties, ObsClient obsClient)
     {
-        JSONObject jObject = JSONObject.parseObject(line);
+        JSONObject jObject = JSONObject.parseObject(line, Feature.OrderedField);
         
         List<Annotation> annotationList =
             parseAnnotations(jObject.getJSONArray(FieldName.ANNOTATIONS), properties, obsClient);
@@ -359,6 +389,8 @@ public class Manifest
             if (annotationList.size() > 0)
             {
                 return new Sample(jObject.getString(SOURCE),
+                    jObject.getString(SOURCE_TYPE),
+                    JSONObject.parseObject(jObject.getString(SOURCE_PROPERTY), Feature.OrderedField),
                     jObject.getString(FieldName.USAGE),
                     getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
                     annotationList,
@@ -373,6 +405,8 @@ public class Manifest
         else
         {
             return new Sample(jObject.getString(SOURCE),
+                jObject.getString(SOURCE_TYPE),
+                JSONObject.parseObject(jObject.getString(SOURCE_PROPERTY), Feature.OrderedField),
                 jObject.getString(FieldName.USAGE),
                 getString(jObject, INFERENCE_LOC, INFERENCE_LOC2),
                 annotationList,
@@ -454,18 +488,29 @@ public class Manifest
         properties = addRelativePath(properties, path);
         if (content != null)
         {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-            String line;
-            while ((line = reader.readLine()) != null)
+            BufferedReader reader = null;
+            try
             {
-                Sample sample = parseSample(line, properties, obsClient);
-                if (null != sample)
+                reader = new BufferedReader(new InputStreamReader(content, UTF8));
+                String line;
+                while ((line = reader.readLine()) != null)
                 {
-                    dataset.addSample(sample);
-                    sum++;
+                    Sample sample = parseSample(line, properties, obsClient);
+                    if (null != sample)
+                    {
+                        dataset.addSample(sample);
+                        sum++;
+                    }
                 }
             }
-            reader.close();
+            catch (IOException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                reader.close();
+            }
         }
         dataset.setSize(sum);
         return dataset;

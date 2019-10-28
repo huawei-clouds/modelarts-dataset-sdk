@@ -301,7 +301,7 @@ public class PascalVocIOTest extends TestCase
         catch (Exception e)
         {
             Assert.assertTrue(e.getMessage()
-                .contains("Can't parse the XML file, org.xml.sax.SAXParseException; Premature end of file.; The file "));
+                .contains("Can't parse the XML file, org.xml.sax.SAXParseException"));
         }
     }
     
