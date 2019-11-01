@@ -1,4 +1,4 @@
-
+ 
 
 Hello huaweicloud-sdk-python-modelarts-dataset
 
@@ -8,7 +8,7 @@ Hello huaweicloud-sdk-python-modelarts-dataset
 
 
 
-- [VOC xml文件参数说明](#voc-xml文件参数说明)
+- [VOC xml文件内容参数说明](#voc-xml文件内容参数说明)
 - [Read and write VOC xml](#read-voc-xml)
 - [Read and write VOC manifest](#read-voc-manifest)
 - [API List for voc xml](#api-list-for-voc-xml)
@@ -16,30 +16,31 @@ Hello huaweicloud-sdk-python-modelarts-dataset
 
 
 
-## VOC xml文件参数说明
+## VOC xml文件内容参数说明
 
-#### 表1 VOC xml文件基本属性
+<h4>表1 VOC xml文件基本属性参数</h4>
 
-| 参数                  | 是否必选 | 参数类型             | 描述                                                         |
-| --------------------- | -------- | -------------------- | ------------------------------------------------------------ |
-| file_name             | 是       | String               | voc标记的图像文件名称                                        |
-| size_list             | 是       | List\<Int>           | voc标记的图像尺寸，列表[width, height, depth]或[width, height] |
-| voc_object_tags       | 否       | List\<String>        | voc标签名列表                                                |
-| voc_object_properties | 否       | List\<LabelProperty> | voc标签属性列表，见表2 VOC xml文件LabelProperty属性          |
 
-#### 表2 VOC xml文件LabelProperty属性
+| 参数                  | 是否必选   | 参数类型         | 描述     |
+| --------------------- | -------- | --------------- | -------- |
+| file_name             | 是       | String        | voc标记的图像文件名称 |
+| size_list             | 是       | List\<Int>    | voc标记的图像尺寸，列表格式为<br/>\[width, height]或[width, height, depth] |
+| voc_object_tags       | 否       | List\<String>   | voc标签名列表   |
+| voc_object_properties | 否       | List\<LabelProperty> | voc标签属性列表<br/>见表2 LabelProperty属性      |
 
-| 参数                       | 是否必选 | 参数类型 | 描述                                                         |
-| -------------------------- | -------- | -------- | ------------------------------------------------------------ |
-| pose                       | 否       | String   | 位置描述                                                     |
-| truncated                  | 否       | String   | 是否被截断                                                   |
-| difficult                  | 否       | String   | 是否属于难例                                                 |
-| occluded                   | 否       | String   | 是否被遮挡                                                   |
-| @modelarts:shortcut        | 否       | String   | 内置属性：标签快捷键，默认为空                               |
-| @modelarts:color           | 否       | String   | 内置属性：标签展示的颜色，为色彩的16进制码，默认为空         |
-| @modelarts:shape           | 否       | String   | 内置属性：物体检测标签的形状，默认为空。如设置该值，取值可选：                                                                                                             **· bndbox 矩形**                                                                                          **· polygon 多边形**                                                                                    **· polyline 折线形**                                                                                     **· circle 圆形**                                                                                             **· line 直线**                                                                                                 **· dashed 虚线**                                                                                               **· point 点** |
-| @modelarts:feature         | 否       | List     | 内置属性：物体检测标签的坐标，默认为空。各形状的坐标内容为：                                                                                                           · bndbox:  [[xmin, ymin], [xmax, ymax]]                                               · polygon:  List<[xi, yi]>                                                                         · polyline:  List<[xi, yi]>                                                                           · circle:  [center_x, center_y, radius]                                                      · line:  [[x1, y1], [x2, y2]]                                                                         · dashed:  [[x1, y1], [x2, y2]]                                                                     · point:  [x, y] |
-| 非@modelarts开头的其他属性 | 否       | String   | 用户自定义属性                                               |
+<h4>表2 VOC xml文件LabelProperty属性参数</h4>
+
+| 参数                            | 是否必选   | 参数类型   | 描述     |
+| ------------------------------- | -------- | -------- | ------- |
+| pose                            | 否       | String   | 位置描述                                                     |
+| truncated                       | 否       | String   | 是否被截断                                                   |
+| difficult                       | 否       | String   | 是否属于难例                                                 |
+| occluded                        | 否       | String   | 是否被遮挡                                                   |
+| @modelarts:shortcut             | 否       | String   | 内置属性：标签快捷键，默认为空                               |
+| @modelarts:color                | 否       | String   | 内置属性：标签展示的颜色，<br/>为色彩的16进制码，默认为空    |
+| @modelarts:shape                | 否       | String   | 内置属性：物体检测标签的形状，默认为空<br/>如设置该值，取值可选：<br/>**· bndbox 矩形**<br/>**· polygon 多边形**<br/>**· polyline 折线形**<br/>**· circle 圆形**<br/>**· line 直线**<br/>**· dashed 虚线**<br/>**· point 点** |
+| @modelarts:feature              | 否       | List     | 内置属性：物体检测标签的坐标，默认为空<br/>各形状的坐标内容为：<br/>**· bndbox**:   [[xmin, ymin], [xmax, ymax]]<br/>**· polygon**:  List<[xi, yi]><br/>**· polyline**:  List<[xi, yi]><br/>**· circle**:       [center_x, center_y, radius]<br/>**· line**:          [[x1, y1], [x2, y2]]<br/>**· dashed**:   [[x1, y1], [x2, y2]]<br/>**· point**:       [x, y] |
+| 非@modelarts开头<br/>的其他属性 | 否       | String   | 用户自定义属性                                               |
 
 
 
@@ -442,7 +443,7 @@ get_parts(self):
 
 ### modelarts.voc_position
 
-#### class modelarts.voc_position.Point
+- <h4>class modelarts.voc_position.Point</h4>
 
 ```python
 __init__(self, x_value=None, y_value=None, x_name='x', y_name='y')
@@ -462,7 +463,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.Line
+- <h4>class modelarts.voc_position.Line</h4>
 
 ```python
 __init__(self, x1=None, y1=None, x2=None, y2=None)
@@ -482,7 +483,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.Dashed
+- <h4>class modelarts.voc_position.Dashed</h4>
 
 ```python
 __init__(self, x1=None, y1=None, x2=None, y2=None)
@@ -502,7 +503,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.Circle
+- <h4>class modelarts.voc_position.Circle</h4>
 
 ```python
 __init__(self, cx=None, cy=None, r=None)
@@ -522,7 +523,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.BNDBox
+- <h4>class modelarts.voc_position.BNDBox</h4>
 
 ```python
 __init__(self, x_min=None, y_min=None, x_max=None, y_max=None)
@@ -542,7 +543,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.Polygon
+- <h4>class modelarts.voc_position.Polygon</h4>
 
 ```python
 __init__(self, points=None)
@@ -565,7 +566,7 @@ get_type(cls):
     """
 ```
 
-#### class modelarts.voc_position.Polyline
+- <h4>class modelarts.voc_position.Polyline</h4>
 
 ```python
 __init__(self, points=None)
@@ -592,7 +593,7 @@ get_type(cls):
 
 ## API List for manifest
 
-### class modelarts.manifest.DataSet 
+### class modelarts.manifest.DataSet
 
 ```python
 __init__(self, sample, size=None)
