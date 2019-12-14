@@ -35,7 +35,6 @@ def validate_python(pascal_voc):
             assert voc_object.get_pose() == "Unspecified"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "1"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
             position = voc_object.get_position()
@@ -47,7 +46,6 @@ def validate_python(pascal_voc):
             assert voc_object.get_pose() == "Unspecified"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "1"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
             position = voc_object.get_position()
@@ -74,7 +72,6 @@ def validate_uk(pascal_voc):
         assert voc_object.get_name() == "person"
         assert voc_object.get_pose() == "Unspecified"
         assert voc_object.get_difficult() == "0"
-        assert voc_object.get_difficult_coefficient() is None
         assert voc_object.get_occluded() is None
         assert voc_object.get_truncated() == "0"
         assert voc_object.get_confidence() == "0.8"

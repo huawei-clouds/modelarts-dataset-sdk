@@ -44,7 +44,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_occluded() is None
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
@@ -59,7 +58,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
@@ -76,7 +74,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
             assert isinstance(voc_object.get_position(), Polyline) is True
             assert voc_object.get_position().get_type() == PositionType.POLYLINE.value
@@ -97,7 +94,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
         elif voc_object.get_name() == "labelProperties4":
@@ -108,7 +104,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
         elif voc_object.get_name() == "small":
@@ -117,7 +112,6 @@ def validate_voc_label_properties(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value

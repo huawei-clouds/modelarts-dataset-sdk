@@ -39,7 +39,6 @@ def validate_voc_label_properties_empty(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_occluded() is None
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
@@ -54,7 +53,6 @@ def validate_voc_label_properties_empty(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
@@ -71,7 +69,6 @@ def validate_voc_label_properties_empty(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
         elif voc_object.get_name() == "labelProperties2":
@@ -82,7 +79,6 @@ def validate_voc_label_properties_empty(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
         elif voc_object.get_name() == "small":
@@ -91,7 +87,6 @@ def validate_voc_label_properties_empty(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() is None
 
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value

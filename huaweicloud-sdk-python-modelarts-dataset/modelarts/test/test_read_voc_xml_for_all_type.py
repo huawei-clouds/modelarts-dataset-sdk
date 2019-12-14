@@ -36,7 +36,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_occluded() is None
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_confidence() == "0.8"
             assert voc_object.get_position().get_type() == PositionType.POLYGON.value
             points = voc_object.get_position().get_points()
@@ -69,7 +68,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
             assert voc_object.get_occluded() is None
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_position().get_type() == PositionType.DASHED.value
             dashed = voc_object.get_position()
             if dashed.get_x1() == 474:
@@ -86,7 +84,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_pose() == "0"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.LINE.value
             line = voc_object.get_position()
@@ -100,7 +97,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_pose() == "0"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.BNDBOX.value
             bndbox = voc_object.get_position()
@@ -118,7 +114,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_pose() == "0"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "1"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.CIRCLE.value
             circle = voc_object.get_position()
@@ -131,7 +126,6 @@ def validate_voc_multiple_object(pascal_voc):
             assert voc_object.get_pose() == "0"
             assert voc_object.get_truncated() == "0"
             assert voc_object.get_difficult() == "0"
-            assert voc_object.get_difficult_coefficient() is None
             assert voc_object.get_occluded() is None
             assert voc_object.get_position().get_type() == PositionType.POINT.value
             point = voc_object.get_position()

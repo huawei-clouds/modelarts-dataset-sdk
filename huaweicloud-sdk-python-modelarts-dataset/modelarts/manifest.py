@@ -18,7 +18,7 @@ import json
 from modelarts import field_name
 from modelarts import compat
 from modelarts.field_name import prefix_text, label_separator, property_start_index, property_end_index, \
-  property_content, sound_classification, audio_classification
+  property_content, sound_classification, audio_classification, property_from, property_to
 from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
@@ -86,6 +86,12 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
               label_list.append(annotation.get_name()
                                     + label_separator + str(annotation_property[property_start_index])
                                     + label_separator + str(annotation_property[property_end_index]))
+            elif task_type == field_name.text_triplet:
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation.get_id())
+                                + label_separator + str(annotation_property[property_from])
+                                + label_separator + str(annotation_property[property_to]))
             elif task_type == field_name.audio_content:
               annotation_property = annotation.get_property()
               label_list.append(str(annotation_property[property_content]))
@@ -106,7 +112,12 @@ def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_k
               label_list.append(annotation.get_name()
                                     + label_separator + str(annotation_property[property_start_index])
                                     + label_separator + str(annotation_property[property_end_index]))
-
+            elif str(task_type).endswith("/" + field_name.text_triplet):
+              annotation_property = annotation.get_property()
+              label_list.append(annotation.get_name()
+                                + label_separator + str(annotation.get_id())
+                                + label_separator + str(annotation_property[property_from])
+                                + label_separator + str(annotation_property[property_to]))
             elif str(task_type).endswith("/" + field_name.audio_content):
               annotation_property = annotation.get_property()
               label_list.append(str(annotation_property[property_content]))
@@ -148,6 +159,7 @@ def __getAnnotationsInternal(text):
     for annotation in annotations:
       annotation_type = annotation.get(field_name.annotation_type)
       annotation_name = annotation.get(field_name.annotation_name)
+      annotation_id = annotation.get(field_name.annotation_id)
       annotation_loc = annotation.get(field_name.annotation_loc) or annotation.get(field_name.annotation_loc2)
       annotation_creation_time = annotation.get(field_name.annotation_creation_time) or annotation.get(
         field_name.annotation_creation_time2)
@@ -160,7 +172,7 @@ def __getAnnotationsInternal(text):
       annotation_hard = annotation.get(field_name.annotation_hard)
       annotation_hard_coefficient = annotation.get(field_name.annotation_hard_coefficient)
       annotations_list.append(
-        Annotation(name=annotation_name, type=annotation_type, loc=annotation_loc,
+        Annotation(name=annotation_name, type=annotation_type, id=annotation_id, loc=annotation_loc,
                    property=annotation_property,
                    confidence=annotation_confidence,
                    creation_time=annotation_creation_time,
@@ -294,6 +306,7 @@ class DataSet(object):
       self.__put(annotation_json, field_name.annotation_name, annotation.get_name())
       self.__put(annotation_json, field_name.annotation_loc, annotation.get_loc())
       self.__put(annotation_json, field_name.annotation_type, annotation.get_type())
+      self.__put(annotation_json, field_name.annotation_id, annotation.get_id())
       self.__put(annotation_json, field_name.annotation_format, annotation.get_annotation_format())
       self.__put(annotation_json, field_name.annotation_confidence, annotation.get_confidence())
       self.__put(annotation_json, field_name.annotation_hard, annotation.get_hard())
@@ -413,10 +426,11 @@ class Sample(object):
 
 class Annotation:
 
-  def __init__(self, name=None, type=None, loc=None, property=None, confidence=None, creation_time=None,
+  def __init__(self, name=None, type=None, id=None, loc=None, property=None, confidence=None, creation_time=None,
                annotated_by=None, annotation_format=None, hard=None, hard_coefficient=None):
     self._name = name
     self._type = type
+    self._id = id
     self._annotation_loc = loc
     self._property = property
     self._hard = hard
@@ -439,6 +453,13 @@ class Annotation:
     Mandatory field if get_loc is None
     """
     return self._name
+
+  def get_id(self):
+    """
+    :return: the id of this annotation, used in Triplet
+    Optional field
+    """
+    return self._id
 
   def get_loc(self):
     """

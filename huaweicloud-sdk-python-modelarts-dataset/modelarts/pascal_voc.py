@@ -20,7 +20,6 @@ from modelarts.file_util import __is_local, save
 from modelarts.file_util import __read
 from obs import ObsClient
 
-import xml.etree.ElementTree as ET
 import xml.sax
 import xml.sax.handler
 
@@ -161,13 +160,6 @@ def generate_xml(file_name, xml_file_path, width=None, height=None, depth=None, 
             voc_object_element.appendChild(difficult_element)
             properties.pop(field_name.DIFFICULT)
 
-        # difficult coefficient
-        if field_name.DIFFICULT_COEFFICIENT in properties:
-            difficult_coef_element = doc.createElement(field_name.DIFFICULT_COEFFICIENT)
-            difficult_coef_element.appendChild(doc.createTextNode(str(properties[field_name.DIFFICULT_COEFFICIENT])))
-            voc_object_element.appendChild(difficult_coef_element)
-            properties.pop(field_name.DIFFICULT_COEFFICIENT)
-
         # occluded
         if field_name.OCCLUDED in properties:
             occluded_element = doc.createElement(field_name.OCCLUDED)
@@ -249,7 +241,6 @@ def get_voc_object(object_element):
     truncated = None
     occluded = None
     difficult = None
-    difficult_coefficient = None
     confidence = None
     position = None
     parts = None
@@ -332,14 +323,6 @@ def get_voc_object(object_element):
                 difficult = difficult_node_list[0].data
             else:
                 raise Exception(field_name.OBJECT + " " + field_name.DIFFICULT + " can't be empty in VOC file!")
-
-        # difficult_coefficient
-        elif object_child_element.nodeName == field_name.DIFFICULT_COEFFICIENT:
-            difficult_coefficient_node_list = object_child_element.childNodes
-            if len(difficult_coefficient_node_list) > 0:
-                difficult_coefficient = difficult_coefficient_node_list[0].data
-            else:
-                raise Exception(field_name.OBJECT + " " + field_name.DIFFICULT_COEFFICIENT + " can't be empty in VOC file!")
 
         # confidence
         elif object_child_element.nodeName == field_name.CONFIDENCE:
@@ -533,7 +516,7 @@ def get_voc_object(object_element):
                 parts = []
             parts.append(get_voc_object(object_child_element))
 
-    return VocObject(name, properties, pose, truncated, occluded, difficult, difficult_coefficient, confidence,
+    return VocObject(name, properties, pose, truncated, occluded, difficult, confidence,
                      position, parts)
 
 
@@ -827,7 +810,7 @@ class PascalVocIO(object):
 
 class VocObject(object):
     def __init__(self, name=None, properties=None, pose=None, truncated=None, occluded=None,
-                 difficult=None, difficult_coefficient=None, confidence=None, position=None, parts=None):
+                 difficult=None, confidence=None, position=None, parts=None):
         """
         Constructor for VOC Object
 
@@ -847,9 +830,6 @@ class VocObject(object):
                 Objects marked as difficult are currently ignored in the evaluation of the challenge.
                 The difficult field being set to 1 indicates that the object has been annotated as "difficult",
                 for example an object which is clearly visible but difficult to recognize without substantial use of context.
-        :param difficult_coefficient: difficult coefficient describes how difficult it is to recognize the object
-                if an object marked as 'difficult'. The difficult coefficient field being set to 1 indicates that the
-                object is hardly to recognize.
         :param confidence: Confidence for annotation that was annotated by machine, the value: 0 <= Confidence < 1, optional field.
         :param position: position can be point, line or others.
         :param parts: one object may have subobjects
@@ -860,7 +840,6 @@ class VocObject(object):
         self._truncated = truncated
         self._occluded = occluded
         self._difficult = difficult
-        self._difficult_coefficient = difficult_coefficient
         self._confidence = confidence
         self._position = position
         self._parts = parts
@@ -903,12 +882,6 @@ class VocObject(object):
         :return: whether the object is difficult, optional field
         """
         return self._difficult
-
-    def get_difficult_coefficient(self):
-        """
-        :return: how difficult the object is to recognize, optional field
-        """
-        return self._difficult_coefficient
 
     def get_confidence(self):
         """
