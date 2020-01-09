@@ -201,7 +201,7 @@ public class Manifest
         List<Annotation> annotationList = new ArrayList<Annotation>();
         if (jsonArray == null)
         {
-            return null;
+            return annotationList;
         }
         for (int i = 0; i < jsonArray.size(); i++)
         {
@@ -220,7 +220,8 @@ public class Manifest
                 getString(jsonObject, ANNOTATION_CREATION_TIME, ANNOTATION_CREATION_TIME2),
                 getString(jsonObject, ANNOTATION_ANNOTATED_BY, ANNOTATION_ANNOTATED_BY2),
                 getString(jsonObject, ANNOTATION_FORMAT, ANNOTATION_FORMAT2),
-                Boolean.parseBoolean(jsonObject.getString(ANNOTATION_HARD)));
+                Boolean.parseBoolean(jsonObject.getString(ANNOTATION_HARD)),
+                getDouble(jsonObject, ANNOTATION_HARD_COEFFICIENT));
             if (null != properties && 0 != properties.size() &&
                 Boolean.parseBoolean(String.valueOf(properties.get(PARSE_PASCAL_VOC)))
                 && null != annotationLoc)

@@ -42,6 +42,7 @@ public class ValidatePascalVocIO
             Assert.assertTrue("trafficlight".equals(vocObject.getName()));
             Assert.assertTrue("0".equals(vocObject.getPose()));
             Assert.assertTrue("0".equals(vocObject.getDifficult()));
+            Assert.assertTrue(null == vocObject.getDifficultCoefficient());
             Assert.assertTrue(null == vocObject.getOccluded());
             Assert.assertTrue("0".equals(vocObject.getTruncated()));
             Assert.assertTrue(PositionType.BNDBOX.equals(vocObject.getPosition().getType()));

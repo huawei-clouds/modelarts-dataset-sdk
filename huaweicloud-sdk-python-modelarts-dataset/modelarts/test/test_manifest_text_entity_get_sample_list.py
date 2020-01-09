@@ -21,8 +21,8 @@ from modelarts.field_name import text_entity, label_separator
 
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 def check_data(sample_list):
   assert len(sample_list) == 6 or len(sample_list) == 7

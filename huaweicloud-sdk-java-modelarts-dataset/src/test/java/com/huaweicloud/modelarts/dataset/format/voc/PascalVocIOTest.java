@@ -440,6 +440,7 @@ public class PascalVocIOTest extends TestCase
             Assert.assertTrue("person".equals(vocObject.getName()));
             Assert.assertTrue("Unspecified".equals(vocObject.getPose()));
             Assert.assertTrue("0".equals(vocObject.getDifficult()));
+            Assert.assertTrue(null == vocObject.getDifficultCoefficient());
             Assert.assertTrue("0.8".equals(vocObject.getConfidence()));
             Assert.assertTrue(null == vocObject.getOccluded());
             Assert.assertTrue("0".equals(vocObject.getTruncated()));
@@ -567,6 +568,7 @@ public class PascalVocIOTest extends TestCase
                 Assert.assertTrue("0".equals(vocObject.getTruncated()));
                 Assert.assertTrue(null == vocObject.getOccluded());
                 Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == vocObject.getDifficultCoefficient());
                 Assert.assertTrue(null == (vocObject.getConfidence()));
                 
                 BNDBox bndBox = (BNDBox)vocObject.getPosition();
@@ -690,6 +692,7 @@ public class PascalVocIOTest extends TestCase
                 Assert.assertTrue("0".equals(vocObject.getTruncated()));
                 Assert.assertTrue(null == vocObject.getOccluded());
                 Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == vocObject.getDifficultCoefficient());
                 Assert.assertTrue(null == (vocObject.getConfidence()));
                 Assert.assertTrue(vocObject.getPosition() instanceof Polyline);
                 Assert.assertTrue(PositionType.POLYLINE.equals(vocObject.getPosition().getType()));
@@ -861,6 +864,7 @@ public class PascalVocIOTest extends TestCase
                 Assert.assertTrue("0".equals(vocObject.getTruncated()));
                 Assert.assertTrue(null == vocObject.getOccluded());
                 Assert.assertTrue("0".equals(vocObject.getDifficult()));
+                Assert.assertTrue(null == vocObject.getDifficultCoefficient());
                 Assert.assertTrue("0.8".equals(vocObject.getConfidence()));
                 Assert.assertTrue(PositionType.POLYGON.equals(vocObject.getPosition().getType()));
                 Polygon polygon = (Polygon)vocObject.getPosition();

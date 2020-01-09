@@ -56,6 +56,8 @@ public class FieldName
     
     public static final String ANNOTATION_HARD = "hard";
     
+    public static final String ANNOTATION_HARD_COEFFICIENT = "hard-coefficient";
+    
     public static final String ANNOTATION_CONFIDENCE = "confidence";
     
     public static final String ANNOTATION_CREATION_TIME = "creation-time";
@@ -108,6 +110,8 @@ public class FieldName
     public static final String OCCLUDED = "occluded";
     
     public static final String DIFFICULT = "difficult";
+    
+    public static final String DIFFICULT_COEFFICIENT = "difficult-coefficient";
     
     public static final String CONFIDENCE = "confidence";
     

@@ -19,8 +19,8 @@ import sys
 from modelarts import manifest, field_name
 from modelarts.field_name import audio_content
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 def check_data(sample_list):
   assert len(sample_list) == 4
