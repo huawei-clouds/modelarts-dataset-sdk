@@ -25,8 +25,12 @@ from obs import ObsClient
 
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+try:
+  reload(sys)
+  sys.setdefaultencoding('utf-8')
+except Exception as e:
+  pass
+
 def get_sample_list(manifest_path, task_type, exactly_match_type=False, access_key=None,
                     secret_key=None, end_point=None, usage=field_name.default_usage, ssl_verify=False,
                     max_retry_count=3, timeout=60):
